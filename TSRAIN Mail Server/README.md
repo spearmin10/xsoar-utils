@@ -29,8 +29,10 @@ How to configure instances
    - https://xsoar-server/instance/execute/tsrain/
    - http://xsoar-server:8888/
     
+      ```
       username: any email address (e.g. test@test.lan)
       password: Password123$
+      ```
 
    [Admin UI]
    - https://xsoar-server/instance/execute/tsrain/?admin
