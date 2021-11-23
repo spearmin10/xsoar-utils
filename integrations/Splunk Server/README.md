@@ -1,7 +1,7 @@
 Splunk Server
 ===========
 
-Splunk Server is an integration to run a Splunk on a XSOAR.
+Splunk Server is an integration to run a Splunk (8.2.1) on a XSOAR.
 
 
 Installing
