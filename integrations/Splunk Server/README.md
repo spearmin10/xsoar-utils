@@ -17,10 +17,10 @@ How to configure an instance
 
 #### 0. Go to ABOUT > Troubleshooting > Server Configuration
 
-  Set  instance.execute.external = true
+  Set  `instance.execute.external` = true
   
-  If you failed to run the container due to the out of memory, please do this setting.
-  Set  limit.docker.memory = false
+  If you failed to run the container due to the out of memory, please do this setting.<br>
+  Set  `limit.docker.memory` = false
 
 
 #### 1. Create a Splunk server instance
