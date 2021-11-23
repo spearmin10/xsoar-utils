@@ -10,7 +10,7 @@ description: Splunk Server on XSOAR
 detaileddescription: "How to configure the instance.\n\n0.  Go to ABOUT > Troubleshooting
   > Server Configuration\n  Set  instance.execute.external = true\n  \n  If you failed
   to run the container due to the out of memory, please do this setting.\n  Set  limit.docker.memory
-  = false\n\n1. Create an Splunk server instance\n  Add instance with the parameters
+  = false\n\n1. Create a Splunk server instance\n  Add instance with the parameters
   below:\n   - Instance Name: splunk\n   - Listen Port: 8089\n   - Splunk Admin Password:
   Password123$\n\n  You can access the Splunk UI at\n    - https://xsoar-server/instance/execute/splunk/\n
   \   or\n    - http://xsoar-server:8089/\n    \n      username: admin\n      password:
