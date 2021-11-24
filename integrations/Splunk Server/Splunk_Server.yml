@@ -7,18 +7,19 @@ display: Splunk Server
 category: Utilities
 image: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHoAAAAkCAYAAABG3S5jAAABhGlDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9TRSktDnaQ4pChioMFURFHqWIRLJS2QqsOJpd+QZOGJMXFUXAtOPixWHVwcdbVwVUQBD9A3NycFF2kxP8lhRYxHhz34929x907QGhWmWr2TACqZhnpRFzM5VfFvlcEEIGAMYQkZurJzGIWnuPrHj6+3sV4lve5P0dIKZgM8InEc0w3LOIN4plNS+e8TxxmZUkhPiceN+iCxI9cl11+41xyWOCZYSObnicOE4ulLpa7mJUNlXiaOKqoGuULOZcVzluc1Wqdte/JXxgsaCsZrtMcRgJLSCIFETLqqKAKCzFaNVJMpGk/7uGPOP4UuWRyVcDIsYAaVEiOH/wPfndrFqcm3aRgHOh9se2PEaBvF2g1bPv72LZbJ4D/GbjSOv5aE5j9JL3R0aJHwMA2cHHd0eQ94HIHGHrSJUNyJD9NoVgE3s/om/LA4C0QWHN7a+/j9AHIUlfLN8DBITBaoux1j3f3d/f275l2fz9wanKmTA7nlQAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAN1wAADdcBQiibeAAAAAd0SU1FB+UKGgIoNfcjMSwAAAmKSURBVHja7VptbFPnFX7Oe52Y2NchoNjXBFpBfE0KqJOArkXqWqF1LYxCy7qq+6g0SqFUlLbrNqn7QgwqrV01rZ90qgoajAmqsQFiBFGxaqAM2kFFt6LRQnwNUZYQ3wRCg6/z6XvPfiQY+/rajkOnusxHyo8cv9/Pe855znkvocTEp4T3M3hRus6U+Ma+89H/4Asinjp1jjBxwqb+k6FrD31eaxIoy/+FlIEuA12W60lc5SP4Yoivtn46S7SAgH4mes+IaafKFn09iiRmMMRFizFAjPqyRV+vYoluQaYAkcmEeDlGX6cS72r+O1zSJ0zQjJh2+JosesKE+vFDldIyAhYwOExAJQOXiHCSmQ8YFQN70dbWd6W9HFSfIMB3dQTqjMciWwBAVkIBhviOAO5h8A0jc3UAdEgC7ejRm8+OZcPegPqwEJiScQjjkq+ipaXfqX1NzdQac5zr8XQdWxQxOiO7r+bu6kqAU5fegogn9Mjbw/NNU0CubwP8NQKmAKggRisDx0xTbO672Nx+7bUD9ScWoz1RjZ3QtAGnNhMm1I+/dL75DAAeyxyUAk0JfRWgHQCUPO3PW4Lv6+2Inhjuo7YCuCHt938bunazLxhezswvAxifY5xBBl5O6FPWAoeTxRRM5ECoCUR3ZIQv9+DEntbWS04TjVem15uwojb1XkPXll7duzqUfukZ3JLQo9PkoLoGjOcBVOfcB/GqRCz6+7EWTORg6EkwvT7yrw7Cm5WDeKm7W7tsuwwrmbGaCOvjutZYLOBixDJnAtToAPIFAOkT9vVKAx/nG88XDD/LzL/LAzIAVBLwY6/SthuYW1FqbpJAQlbUl8HYmAfk4X0wba0Ohu8dmyWHF4PplTSVAguzuru1RI6FzWHgLz5F/cCnqEvSDXV0MZqxDkBVmn4ITA8auuY3dG08mVYDgM3MWJPuuh1EZeYXAZhEeIkk6Sajot8jQYQA+iWAIZs7WeJVejaUYEi8EcAzACxiHABhAwE/B2EXADOLJzG/Uizf8fjV2Qx+G4CUpj5o+N0PO82REXqAuSOAH/cp4cXFxOj5Nv1xozOyKxUDL5xtBvDYKMarBAAiWhmPRbZeUfYAZwGs9Srhjwm83Qb2s+OVhk09+plzJQb2ZQhaEu+INNlc6P0M7LYBq3omhWZfCWmFpKoudIMw0QhATlO/54XnAePUyUGnPm5T+uOAZPoZ+AEA/wjgtwC8z6eEPyDChsuxyP5CrLvKpm+oqZlaM5bTYfD+dJDTJaFHdhDjgD1DtMh8stRMmoH1hg1kAIjr2l4AWayXTMwazbi1tQ0+yRSNAOrSep+U3IOLdf1kIle/CxfOxOO69oIXnmnM+BHAHWln/mWLudGrqMc8wfpFeVw3f2Rfj+l2veupbagr/oRSxCLHAdLmLB1jYcmlrUmxM2cMJxx00NYWHnW+a8Bl7gT4S2lKja2hBbnIpF10/WQi0am9ZFSZ9SA8CaA1zTveKljs9yrqP7z+0MJsoAV+YWdxDMwVwjzmmRSaW8T5DCWqcTg/0MmjDuoZfv8suZTS1rxpE+NilsUIVBRwEYpXaXvLdqnbXeS6O9HVEit6hS0t/UZMe8OodYdpOKyeTQP8NhJ0QFbU970BdUEKaCMWPQTGegeWN0VYdGQ4zxzd9LnywJT77jynA7ATOhoUQ4ESctxGgfAUd1CKAlT+TgKW2/jJ6k9jp1uuaamnTg3GdW2zoU9pYOZlAE6n/TqPCO9UK+q81OKMTu05ED9lZ8YAxjGwSQ6qvy3ELAnoGeXyspi7CdNTQunVYP4GxPlqEjli/jEAn9p0v6qtbfB9Nqs+nEx0RrcZujYL4NcyQyOLDOCMWHSjIPEVBrc4rHS1V1HfyrchHlXtfG4FgCyiZ5mVF/8ntmmZojQuD1pBeNymntkvmduKyYfz5uX+6XfISvggQE/nYt1Xc4pY83GXe2gOA/scFrvCFwwvyzOXv3Bq8WnQYd6+3gtK1yiPLMuakn3Cnat1soKqS8VTGDFtJwNbbOqlckBddy3jykF1vqyoh1hYTQDflXbNOxj0TNxjfuh423taWy8ldO0bGE7obQyZ8wE92RuYpuRN3JO4xcHujtpLoXlMI6udqKjMnQparJQSm/dY7qdBaLbtaZ1PUe8rdiyvUn+XHAg1gXEosxYyDLBRMRBK6JFX0dLSn8+tmeSqeAqAZdOH8uIgpAfzZ1/0LYeYt6eoQoZ9zCTPzFkoYLqnlIDu6jplWMTfBTCYsUzgD/Kk8IxRARxQF8iKeoQg3rXV/c8D9P0UwGlVTAEA1f6Q6hQn4u3BnixyRugrkEb8NFexxVOnzgHwTZu60xC9W4uIuq0OaK5yjFl1028CsKrUcvTejugJIlprU1fDtPZMmFCf843AE6xfJCvq+0R4B8DtWQBXJUOGHnnNqUwtamqm1liCjsiKuqdqsprx/CcH2lcAcNuAbCqwj8lJt6vRUztjUuahNzRIJnbDRtiY8UOcP987epxFk8PlWuANhLYMAzvf5altqPMp6go2rSYAHpSgxGOR3wD4q82zNQxW0nYn7uQNhL4nWOwHMC8TYH46BXCOp9rhkDnO9TwYCoD7pSQW+gLq35jQBkYDiO+0te8n0/p1nvXHRoC8XUhDmqyoB8FoZ8KNbJoLAVtRgfjNhB7dXhSh6Zy8V1baTgGZJUcieoRN6xFZabuSAVy5BB+CMKcEsbYss2KZkIY+SiexBLpXVsLPGXokw+IFUWUaC20H+EWjytyUD1w76+4EUgTHzYSvA3gMBDvIvQQ8NPLAkYsodbBFdwPoGrGkpSCsIWCJDWSTgReMWPSJseSLgsSjALoLGj/zVlBe8vj5uvALn3QQ6FFkvS3zGl9t/XSHLu0gfsqoSqqGHn19tCADgDBi2nqAZxNhG5wLHpcBbHaRa1Zc1/YVGjDRFfkXs3kzgB0ABrIKJYRdloRbE7r2Mzg8nlvg2Eg5L/VHg5VJewooLL5tJCvozxoCOCqIFic6o8slSL328QDSbX3Opf/O7MADMiawDPuYzEjVqoWFgaw5GZ2OLlyPNAJ4A0A/GH8m5geMquQku0Elk+KA4UPIiEU3FgNwrmqOJE8KT6ck1bJkSSDSjY5IM3K8j2Z9YUL4pxHTUm5y4kS1OllBM0yQj2DGvPCey/dCMxbx+2fJfaJ/KoMVJlyWpMqz8fbTF/FFElV1T+yG2/5VyWdcsLmGRL0A0GUpHSl/BVoGuixloMtSBrosZaDLUga6LGWgy/KZyH8BvGDjyHJVUz4AAAAASUVORK5CYII=
 description: Splunk Server on XSOAR
-detaileddescription: "How to configure the instance.\n\n0.  Go to ABOUT > Troubleshooting
-  > Server Configuration\n  Set  instance.execute.external = true\n  \n  If you failed
-  to run the container due to the out of memory, please do this setting.\n  Set  limit.docker.memory
-  = false\n\n1. Create a Splunk server instance\n  Add instance with the parameters
-  below:\n   - Instance Name: splunk\n   - Listen Port: 8089\n   - Splunk Admin Password:
-  Password123$\n\n  You can access the Splunk UI at\n    - https://xsoar-server/instance/execute/splunk/\n
-  \   or\n    - http://xsoar-server:8089/\n    \n      username: admin\n      password:
-  Password123$\n\n  Also, the REST API is available at\n    - http://xsoar-server:8089/\n
-  \   or\n    - https://<your XSOAR GW IP>:8089/\n      e.g. https://172.17.0.1:8089/\n\n2.
-  Check the gateway address of the docker bridge network\n\n  Run !splunkd-get-gateways
-  in CLI,\n  and memorize the gateway IP for the REST API\n\nNOTE:\n - Data and configurations
-  are gone whenever restarting the docker container."
+detaileddescription: "### How to configure the instance.\n\n#### 0.  Go to ABOUT >
+  Troubleshooting > Server Configuration\nSet  instance.execute.external = true\n
+  \ \nIf you failed to run the container due to the out of memory, please do this
+  setting.\nSet  limit.docker.memory = false\n\n#### 1. Create a Splunk server instance\nAdd
+  instance with the parameters below:\n  - Instance Name: splunk\n  - Listen Port:
+  8089\n  - Splunk Admin Password: Password123$\n\nYou can access the Splunk UI at\n
+  \ - https://xsoar-server/instance/execute/splunk/\n   or\n  - http://xsoar-server:8089/\n
+  \   ```  \n      username: admin\n      password: Password123$\n    ```\n\nAlso,
+  the REST API is available at\n   - http://xsoar-server:8089/\n   or\n   - https://<your
+  XSOAR GW IP>:8089/\n      e.g. https://172.17.0.1:8089/\n\n#### 2. Check the gateway
+  address of the docker bridge network\nRun `!splunkd-get-gateways` in CLI, and memorize
+  the gateway IP for the REST API\n\n### NOTE:\n - Data and configurations are gone
+  whenever restarting the docker container."
 configuration:
 - display: Long Running Instance
   name: longRunning
@@ -484,7 +485,7 @@ script:
     - contextPath: Splunkd.Service.Name
       description: The instance name of the service
     description: Get the service information
-  dockerimage: spearmint/xsoar-splunk:1.11.23.2256
+  dockerimage: spearmint/xsoar-splunk:1.11.25.0048
   runonce: true
   longRunning: true
   longRunningPort: true
