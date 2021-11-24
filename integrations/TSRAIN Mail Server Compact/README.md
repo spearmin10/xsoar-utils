@@ -1,4 +1,19 @@
-### How to configure an instance.
+TSRAIN Mail Server Compact
+===========
+
+TSRAIN Mail Server Compact is an integration to run a mail system (IMAP server, SMTP server as well as Web Mail UI) on a XSOAR.
+
+
+Installing
+----------
+
+1. Upload TSRAIN_mail_server_compact.yml onto your integration screen on your XSOAR.
+
+2. Make sure that `TSRAIN mail server Compact` is shown on the list of your integrations.
+
+
+How to configure an instance
+----------
 
 #### 0.  Go to ABOUT > Troubleshooting > Server Configuration
   Set  instance.execute.external = true
