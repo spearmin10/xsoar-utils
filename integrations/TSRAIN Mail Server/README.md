@@ -71,11 +71,11 @@ How to configure instances
   - Listen Port: 8143
   - Service Type: Select 'imap4 adapter'
 
-##### 4.1. Configure 'Mail Listener' to connect to the IMAP4 adapter.
+##### 4.1. Configure 'Mail Listener v2' to connect to the IMAP4 adapter.
  Add instance with the parameters below:
   - Mail server hostname or IP address: <gateway IP>
   - IMAP Port: 8143 (Specify the IMAP4 adapter port)
-   - Credentials: your email address
+   - Username: your email address
    - Password: Password123$
 
 
