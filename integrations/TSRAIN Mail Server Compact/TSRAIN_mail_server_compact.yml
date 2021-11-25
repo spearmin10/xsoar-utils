@@ -423,14 +423,8 @@ script:
         """
         Get default admin password
         """
-        instance_name = demisto.integrationInstance()
-        if params['serviceType'] == 'mail server':
-            pwd = get_default_admin_password(params)
-            hr = instance_name + ' admin password: ' + pwd
-            return hr, {}, pwd
-        else:
-            hr = instance_name + ': admin console is not available'
-            return hr, {}, []
+        pwd = get_default_admin_password(params)
+        return f'admin password: {pwd}', {}, pwd
 
 
     def restart_command(args, params):
