@@ -21,11 +21,11 @@ How to configure an instance
 #### 1. Create an instance
 Add instance with the parameters below:
   - Instance Name: tsrain
-  - Listen Port: 8888
+  - Listen Port: 8118
 
 You can access the webmail UI at
   - https://xsoar-server/instance/execute/tsrain/
-  - http://xsoar-server:8888/
+  - http://xsoar-server:8118/
     ```
       username: any email address (e.g. test@test.lan)
       password: Password123$
@@ -33,7 +33,7 @@ You can access the webmail UI at
 
 Admin UI
   - https://xsoar-server/instance/execute/tsrain/?admin
-  - http://xsoar-server:8888/?admin
+  - http://xsoar-server:8118/?admin
     ```
        username: admin
        password: <Run !tsrc-get-default-admin-password>
@@ -45,13 +45,13 @@ Run !tsrc-get-gateways in CLI, and memorize the gateway IP for 3 and 4
 #### 3. (Optional) Configure 'Mail Sender (New)' to connect to the server.
 Add an instance with the parameters below:
   - Mail server hostname or IP address: <gateway IP>
-  - SMTP Port: 8888
+  - SMTP Port: 8118
   - Sender address: any email address
 
 #### 4. (Optional) Configure 'Mail Listener v2' to connect to the server.
 Add an instance with the parameters below:
   - Mail server hostname or IP address: <gateway IP>
-   - IMAP Port: 8888
+   - IMAP Port: 8118
    - Username: your email address
    - Password: Password123$
    - Incoming mail folder: INBOX
