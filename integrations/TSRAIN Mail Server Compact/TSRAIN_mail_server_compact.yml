@@ -554,7 +554,7 @@ script:
       description: True if the IP is Default gateway
       type: boolean
     description: Get gateway addresses of the instance running
-  dockerimage: spearmint/xsoar-tsrain:1.11.26.2007
+  dockerimage: spearmint/xsoar-tsrain:1.11.26.2318
   runonce: false
   longRunning: true
   longRunningPort: true
