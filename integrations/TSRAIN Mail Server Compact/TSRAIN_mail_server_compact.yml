@@ -358,7 +358,7 @@ script:
                 self.request.close()
 
         def handle(self):
-            r, _, _ = select.select([self.request], [], [], 0)
+            r, _, _ = select.select([self.request], [], [], 1)
             if self.request in r:
                 h = self.request.recv(1, socket.MSG_PEEK)
                 if h == b'\x16':
