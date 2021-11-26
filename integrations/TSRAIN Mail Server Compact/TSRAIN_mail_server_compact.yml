@@ -360,16 +360,15 @@ script:
         def handle(self):
             r, _, _ = select.select([self.request], [], [], 1)
             if self.request in r:
-                h = self.request.recv(1, socket.MSG_PEEK)
-                if h == b'\x16':
+                h = self.request.recv(3, socket.MSG_PEEK)
+                if h[:1] == b'\x16':
                     # TLS
                     self.forward_ssl_tcp(IMAP4_PORT)
-                elif h == b'E':
+                elif h[:1] == b'E':
                     # EHLO
                     self.forward_tcp_tcp(SMTP_PORT)
-                elif h == b'H':
+                elif h[:1] == b'H':
                     # HEAD or HELO?
-                    h = self.request.recv(3, socket.MSG_PEEK)
                     if h == b'HEA':
                         self.forward_tcp_tcp(RAINLOOP_PORT)
                     elif h == b'HEL':
@@ -381,6 +380,7 @@ script:
             else:
                 # Client is waiting for SMTP greeting
                 self.forward_tcp_tcp(SMTP_PORT)
+            self.request.close()
 
 
     ''' COMMAND FUNCTIONS '''
