@@ -360,12 +360,26 @@ script:
         def handle(self):
             r, _, _ = select.select([self.request], [], [], 0)
             if self.request in r:
-                c1 = self.request.recv(1, socket.MSG_PEEK)
-                if c1 != b'\x16':
-                    self.forward_tcp_tcp(RAINLOOP_PORT)
-                else:
+                h = self.request.recv(1, socket.MSG_PEEK)
+                if h == b'\x16':
+                    # TLS
                     self.forward_ssl_tcp(IMAP4_PORT)
+                elif h == b'E':
+                    # EHLO
+                    self.forward_tcp_tcp(SMTP_PORT)
+                elif h == b'H':
+                    # HEAD or HELO?
+                    h = self.request.recv(3, socket.MSG_PEEK)
+                    if h == b'HEA':
+                        self.forward_tcp_tcp(RAINLOOP_PORT)
+                    elif h == b'HEL':
+                        self.forward_tcp_tcp(SMTP_PORT)
+                    else:
+                        self.forward_tcp_tcp(RAINLOOP_PORT)
+                else:
+                    self.forward_tcp_tcp(RAINLOOP_PORT)
             else:
+                # Client is waiting for SMTP greeting
                 self.forward_tcp_tcp(SMTP_PORT)
 
 
@@ -540,7 +554,7 @@ script:
       description: True if the IP is Default gateway
       type: boolean
     description: Get gateway addresses of the instance running
-  dockerimage: spearmint/xsoar-tsrain:1.11.25.0145
+  dockerimage: spearmint/xsoar-tsrain:1.11.26.2007
   runonce: false
   longRunning: true
   longRunningPort: true
