@@ -59,8 +59,9 @@ script:
     import netifaces
     import ipaddress
     import urllib.parse
+    import threading
     from socketserver import BaseRequestHandler
-    from socketserver import ThreadingTCPServer
+    from socketserver import ThreadingTCPServer, ThreadingUDPServer
     from socketserver import BaseServer
     from multiprocessing import Process
     from typing import List, Dict, Any, Pattern
@@ -171,7 +172,7 @@ script:
         :param params: The integration parameters
         :return: Port mappings
         """
-        port_map = params.get('syslogPortMapping') or 514
+        port_map = json.loads(params.get('syslogPortMapping') or '514')
         if isinstance(port_map, (int, str)):
             return {None: int(port_map)}
         elif isinstance(port_map, dict):
@@ -181,11 +182,14 @@ script:
         raise ValueError('Invalid a syslog port mapping')
 
 
-    class PortForwardingHandler(BaseRequestHandler):
+    class TcpPortForwardingHandler(BaseRequestHandler):
         """
         Port Forwarding for Splunk Management Port and Splunk Web UI
         """
         def forward_tcp(self, port: int):
+            """
+            TCP forwarding
+            """
             cs = self.request
             try:
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rs:
@@ -207,25 +211,55 @@ script:
             finally:
                 cs.close()
 
-        """
-        Syslog fowarding
-        """
         def forward_syslog(self):
+            """
+            Syslog fowarding
+            """
             with self.request.makefile('rb') as cs:
-                for line in cs:
+                for line_bin in cs:
+                    line_str = line_bin.decode('utf-8', errors='ignore')
                     for pattern, port in SYSLOG_PORT_MAPPINGS.items():
-                        if pattern is None or pattern.match(line):
+                        if pattern is None or pattern.match(line_str):
                             # Send a syslog message
                             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as rs:
-                                rs.sendto(line, ('127.0.0.1', port))
+                                rs.sendto(line_bin, ('127.0.0.1', port))
                                 break
                     else:
-                        demisto.debug(f'No pattern match for {line}')
+                        demisto.debug(f'No pattern match for {line_str}')
 
-        """
-        Handle a command
-        """
+        def forward_syslog_with_size(self):
+            """
+            Syslog fowarding
+            """
+            cs = self.request
+            while True:
+                # Read payload size
+                payload_size = 0
+                while True:
+                    c = cs.recv(1)
+                    if len(c) == 0:
+                        return
+                    elif c == b' ':
+                        break
+                    payload_size = (payload_size * 10) + int(c)
+
+                # Read payload
+                if payload_size != 0:
+                    payload_bin = cs.recv(payload_size)
+                    payload_str = payload_bin.decode('utf-8', errors='ignore')
+                    for pattern, port in SYSLOG_PORT_MAPPINGS.items():
+                        if pattern is None or pattern.match(payload_str):
+                            # Send a syslog message
+                            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as rs:
+                                rs.sendto(payload_bin, ('127.0.0.1', port))
+                                break
+                    else:
+                        demisto.debug(f'No pattern match for {payload_str}')
+
         def handle_command(self):
+            """
+            Handle a command
+            """
             with self.request.makefile('rb') as cs:
                 try:
                     payload = cs.read().decode()
@@ -252,12 +286,12 @@ script:
                     self.request.send(payload.encode())
                     self.request.close()
 
-        """
-        Make a response to a service-info command
-
-        :return: A response to service-info command
-        """
         def make_cmd_service_info(self) -> Dict[str, Any]:
+            """
+            Make a response to a service-info command
+
+            :return: A response to service-info command
+            """
             for ai in get_local_addresses():
                 ip = str(ai['addr'])
                 if ip not in ('127.0.0.1'):
@@ -281,8 +315,31 @@ script:
                 self.handle_command()
             elif c1 == b'<':
                 self.forward_syslog()
+            elif c1 in (b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9'):
+                self.forward_syslog_with_size()
             else:
                 self.forward_tcp(REVERSE_PROXY_SPLUNK_HTTP_PORT)
+
+
+    class UdpPortForwardingHandler(BaseRequestHandler):
+        """
+        Port Forwarding for Splunk Syslog Port
+        """
+        def forward_syslog(self):
+            payload_bin, cs = self.request
+            payload_str = payload_bin.decode('utf-8', errors='ignore')
+
+            for pattern, port in SYSLOG_PORT_MAPPINGS.items():
+                if pattern is None or pattern.match(payload_str):
+                    # Send a syslog message
+                    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as rs:
+                        rs.sendto(payload_bin, ('127.0.0.1', port))
+                        break
+            else:
+                demisto.debug(f'No pattern match for {payload_str}')
+
+        def handle(self):
+            self.forward_syslog()
 
 
     def run_server(server: BaseServer, is_test=False):
@@ -326,8 +383,22 @@ script:
             global SYSLOG_PORT_MAPPINGS
             SYSLOG_PORT_MAPPINGS = make_port_mappings(params)
 
-            with ThreadingTCPServer(('', longRunningPort), PortForwardingHandler) as server:
-                run_server(server, is_test)
+            if is_test:
+                with ThreadingUDPServer(('', longRunningPort), UdpPortForwardingHandler) as udpsv:
+                    run_server(udpsv, is_test)
+            else:
+                udpsv = ThreadingUDPServer(('', longRunningPort), UdpPortForwardingHandler)
+                try:
+                    svthreat = threading.Thread(target=udpsv.serve_forever)
+                    svthreat.daemon = True
+                    svthreat.start()
+                except Exception:
+                    udpsv.server_close()
+                    raise
+
+            with ThreadingTCPServer(('', longRunningPort), TcpPortForwardingHandler) as tcpsv:
+                run_server(tcpsv, is_test)
+
         except Exception as e:
             demisto.error(f'An error occurred in long running loop: {str(e)}')
             raise ValueError(str(e))
@@ -485,7 +556,7 @@ script:
     - contextPath: Splunkd.Service.Name
       description: The instance name of the service
     description: Get the service information
-  dockerimage: spearmint/xsoar-splunk:1.11.25.0048
+  dockerimage: spearmint/xsoar-splunk:1.11.28.2321
   runonce: true
   longRunning: true
   longRunningPort: true
