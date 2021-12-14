@@ -10,16 +10,18 @@ description: Splunk Server on XSOAR
 detaileddescription: "### How to configure the instance.\n\n#### 0.  Go to ABOUT >
   Troubleshooting > Server Configuration\nSet  instance.execute.external = true\n
   \ \nIf you failed to run the container due to the out of memory, please do this
-  setting.\nSet  limit.docker.memory = false\n\n#### 1. Create a Splunk server instance\nAdd
-  instance with the parameters below:\n  - Instance Name: splunk\n  - Listen Port:
-  8089\n  - Splunk Admin Password: Password123$\n\nYou can access the Splunk UI at\n
-  \ - https://xsoar-server/instance/execute/splunk/\n   or\n  - http://xsoar-server:8089/\n
-  \   ```  \n      username: admin\n      password: Password123$\n    ```\n\nAlso,
-  the REST API is available at\n   - http://xsoar-server:8089/\n   or\n   - https://<your
-  XSOAR GW IP>:8089/\n      e.g. https://172.17.0.1:8089/\n\n#### 2. Check the gateway
-  address of the docker bridge network\nRun `!splunkd-get-gateways` in CLI, and memorize
-  the gateway IP for the REST API\n\n### NOTE:\n - Data and configurations are gone
-  whenever restarting the docker container."
+  setting.\nSet  `limit.docker.memory` = false\nAnd run `/reset_containers` in the
+  CLI to take effect.\n\nSet  `limit.docker.cpu` = false\nAnd run `/reset_containers`
+  in the CLI to take effect if the CPU limit is applied for the docker.\n\n#### 1.
+  Create a Splunk server instance\nAdd instance with the parameters below:\n  - Instance
+  Name: splunk\n  - Listen Port: 8089\n  - Splunk Admin Password: Password123$\n\nYou
+  can access the Splunk UI at\n  - https://xsoar-server/instance/execute/splunk/\n
+  \  or\n  - http://xsoar-server:8089/\n    ```  \n      username: admin\n      password:
+  Password123$\n    ```\n\nAlso, the REST API is available at\n   - http://xsoar-server:8089/\n
+  \  or\n   - https://<your XSOAR GW IP>:8089/\n      e.g. https://172.17.0.1:8089/\n\n####
+  2. Check the gateway address of the docker bridge network\nRun `!splunkd-get-gateways`
+  in CLI, and memorize the gateway IP for the REST API\n\n### NOTE:\n - Data and configurations
+  are gone whenever restarting the docker container."
 configuration:
 - display: Long Running Instance
   name: longRunning
@@ -521,7 +523,7 @@ script:
     - contextPath: Splunkd.Service.Name
       description: The instance name of the service
     description: Get the service information
-  dockerimage: spearmint/xsoar-splunk:1.12.1.0029
+  dockerimage: spearmint/xsoar-splunk:1.12.14.2354
   runonce: true
   longRunning: true
   longRunningPort: true
