@@ -23,6 +23,10 @@ How to configure an instance
   Set  `limit.docker.memory` = false<br>
   And run `/reset_containers` in the CLI to take effect.
 
+  Set  `limit.docker.cpu` = false<br>
+  And run `/reset_containers` in the CLI to take effect if the CPU limit is applied for the docker.
+
+
 #### 1. Create a Splunk server instance
 
   Add instance with the parameters below:
