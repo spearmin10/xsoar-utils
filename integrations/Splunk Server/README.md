@@ -20,10 +20,11 @@ How to configure an instance
   Set  `instance.execute.external` = true
   
   If you failed to run the container due to the out of memory, please do this setting.<br>
-  Set  `limit.docker.memory` = false<br>
+  Set `limit.docker.memory` = `false`<br>
+  Set `python.pass.extra.keys` = `--pids-limit=1024`<br>
   And run `/reset_containers` in the CLI to take effect.
 
-  Set  `limit.docker.cpu` = false<br>
+  Set `limit.docker.cpu` = `false`<br>
   And run `/reset_containers` in the CLI to take effect if the CPU limit is applied for the docker.
 
 
