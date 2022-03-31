@@ -85,23 +85,23 @@ script:
     from typing import Dict, Any
 
 
-    DOKUWIKI_PORT = 1
+    DOKUWIKI_PORT = '/tmp/dokuwiki.sock'
 
     DEFAULT_SOCKET_TIMEOUT = 30
     INTEGRATION_NAME = 'DocuWiki Server'
 
 
-    def start_services(params: Dict[str, Any], restart: bool = False):
+    def start_services(params: Dict[str, Any]):
         """
         Start services
 
         :param params: The integration parameters
-        :param restart: True if it re-starts the service.
         """
         instance_name = demisto.integrationInstance()
         if instance_name != urllib.parse.quote(instance_name):
             raise DemistoException(f'The instance name must not include any special/control charactors: {instance_name}')
 
+        backup_file = ''
         if backupfile_url := params.get('restoreFrom'):
             # Download a backup file
             client = BaseClient(
@@ -124,18 +124,13 @@ script:
             with NamedTemporaryFile(mode='wb', delete=False) as f:
                 f.write(backup_data)
                 f.flush()
-                os.fsync(f.fileno())
+                backup_file = f.name
 
-                os.environ['DOKUWIKI_PORT'] = str(DOKUWIKI_PORT)
-                os.environ['DOKUWIKI_NAME'] = instance_name
-                os.environ['DOKUWIKI_BACKUP_FILE'] = f.name
-                ret = subprocess.call(['restart.sh' if restart else 'start.sh'])
-                demisto.debug('A {}start command has been requested: {}'.format('re' if restart else '', ret))
-        else:
-            os.environ['DOKUWIKI_PORT'] = str(DOKUWIKI_PORT)
-            os.environ['DOKUWIKI_NAME'] = instance_name
-            ret = subprocess.call(['restart.sh' if restart else 'start.sh'])
-            demisto.debug('A {}start command has been requested: {}'.format('re' if restart else '', ret))
+        os.environ['DOKUWIKI_PORT'] = f'unix://{DOKUWIKI_PORT}'
+        os.environ['DOKUWIKI_NAME'] = instance_name
+        os.environ['DOKUWIKI_BACKUP_FILE'] = backup_file
+        ret = subprocess.call('start.sh')
+        demisto.debug(f'A start command has been requested: {ret}')
 
 
     class PortForwardingHandler(BaseRequestHandler):
@@ -145,14 +140,14 @@ script:
         def __init__(self, request, client_address, server):
             BaseRequestHandler.__init__(self, request, client_address, server)
 
-        def forward_tcp_tcp(self, port: int):
+        def forward_tcp_tcp(self, endpoint: Any):
             """
             Port Forwarding: tcp-tcp:port
             """
             cs = self.request
             try:
-                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rs:
-                    rs.connect(('127.0.0.1', port))
+                with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as rs:
+                    rs.connect(endpoint)
                     while True:
                         r, w, x = select.select([cs, rs], [], [])
                         if cs in r:
@@ -214,13 +209,11 @@ script:
         """
         try:
             longRunningPort = int(params['longRunningPort'])
-            if longRunningPort < 0:
+            if longRunningPort <= 0:
                 raise ValueError(f'Invalid long running port: {longRunningPort}')
-            if longRunningPort == DOKUWIKI_PORT:
-                raise ValueError(f'Port {DOKUWIKI_PORT} is reserved for system.')
 
             if not is_test:
-                start_services(params, False)
+                start_services(params)
 
             # Run the server
             with ThreadingTCPServer(('', longRunningPort), PortForwardingHandler) as server:
