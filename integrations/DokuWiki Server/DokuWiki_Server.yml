@@ -53,7 +53,7 @@ configuration:
   type: 0
   required: false
   additionalinfo: The URL from which a backup file is downloaded to restore.
-- display: ZIP password
+- display: ZIP password for the backup file
   name: backupfileArchivePassword
   type: 4
   required: false
