@@ -523,7 +523,7 @@ script:
     - contextPath: Splunkd.Service.Name
       description: The instance name of the service
     description: Get the service information
-  dockerimage: spearmint/xsoar-splunk:2.3.26.0000
+  dockerimage: spearmint/xsoar-splunk:2.3.31.1925
   runonce: true
   longRunning: true
   longRunningPort: true
