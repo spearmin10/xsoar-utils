@@ -68,6 +68,16 @@ configuration:
   defaultvalue: "false"
   type: 8
   required: false
+- display: Cron schedule to run the backup script
+  name: cronSchedule
+  type: 0
+  required: false
+  additionalinfo: 'Specify this in crontab format. e.g: */10 * * * *'
+- display: Backup script in base64
+  name: backupScript
+  type: 4
+  required: false
+  additionalinfo: A backup file is given to the first argument of the script
 script:
   script: |-
     import os
@@ -77,6 +87,8 @@ script:
     import select
     import subprocess
     import traceback
+    import base64
+    import binascii
     import zipfile
     import urllib.parse
     from tempfile import NamedTemporaryFile
@@ -91,15 +103,19 @@ script:
     INTEGRATION_NAME = 'DocuWiki Server'
 
 
-    def start_services(params: Dict[str, Any]):
+    def start_services(params: Dict[str, Any], test: bool):
         """
         Start services
 
         :param params: The integration parameters
+        :param test: True to do a dry run, false otherwise.
         """
-        instance_name = demisto.integrationInstance()
-        if instance_name != urllib.parse.quote(instance_name):
-            raise DemistoException(f'The instance name must not include any special/control charactors: {instance_name}')
+        if test:
+            instance_name = 'test'
+        else:
+            instance_name = demisto.integrationInstance()
+            if instance_name != urllib.parse.quote(instance_name):
+                raise DemistoException(f'The instance name must not include any special/control charactors: {instance_name}')
 
         backup_file = ''
         if backupfile_url := params.get('restoreFrom'):
@@ -126,9 +142,20 @@ script:
                 f.flush()
                 backup_file = f.name
 
+        # Test the encoding of the backup script
+        b64backup_script = params.get('backupScript') or ''
+        if b64backup_script:
+            try:
+                base64.b64decode(b64backup_script.encode())
+            except binascii.Error:
+                raise ValueError('Backup script must be in base64')
+
+        # Run
         os.environ['DOKUWIKI_PORT'] = f'unix://{DOKUWIKI_PORT}'
         os.environ['DOKUWIKI_NAME'] = instance_name
         os.environ['DOKUWIKI_BACKUP_FILE'] = backup_file
+        os.environ['DOKUWIKI_BACKUP_POST_SCRIPT'] = b64backup_script
+        os.environ['DOKUWIKI_BACKUP_CRON_SCHEDULE'] = params.get('cronSchedule') or ''
         ret = subprocess.call('start.sh')
         demisto.debug(f'A start command has been requested: {ret}')
 
@@ -212,8 +239,7 @@ script:
             if longRunningPort <= 0:
                 raise ValueError(f'Invalid long running port: {longRunningPort}')
 
-            if not is_test:
-                start_services(params)
+            start_services(params, is_test)
 
             # Run the server
             with ThreadingTCPServer(('', longRunningPort), PortForwardingHandler) as server:
@@ -253,7 +279,7 @@ script:
   - name: dokuwiki-restart
     arguments: []
     description: Restart the services
-  dockerimage: spearmint/xsoar-dokuwiki:2.3.31.0315
+  dockerimage: spearmint/xsoar-dokuwiki:2.4.2.2030
   runonce: false
   longRunning: true
   longRunningPort: true
