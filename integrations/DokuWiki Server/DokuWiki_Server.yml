@@ -279,7 +279,7 @@ script:
   - name: dokuwiki-restart
     arguments: []
     description: Restart the services
-  dockerimage: spearmint/xsoar-dokuwiki:2.4.2.2030
+  dockerimage: spearmint/xsoar-dokuwiki:2.4.3.0123
   runonce: false
   longRunning: true
   longRunningPort: true
