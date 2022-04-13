@@ -1,0 +1,688 @@
+commonfields:
+  id: TSRAIN mail server
+  version: -1
+vcShouldKeepItemLegacyProdMachine: false
+name: TSRAIN mail server
+display: TSRAIN mail server
+category: Utilities
+image: data:image/png;base64,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
+description: Air-gapped email server working on an integration instance.
+detaileddescription: "How to configure the instances.\n\n0.  Go to ABOUT > Troubleshooting
+  > Server Configuration\n  Set  instance.execute.external = true\n\n1. Create an
+  email server instance\n  Add instance with the parameters below:\n   - Instance
+  Name: tsrain\n   - Listen Port: 8888\n   - Service Type: Select 'mail server'\n\n
+  \ You can access the webmail UI at\n    - https://xsoar-server/instance/execute/tsrain/\n
+  \   - http://xsoar-server:8888/\n    \n      username: any email address (e.g. test@test.lan)\n
+  \     password: Password123$\n\n    * admin UI\n     - https://xsoar-server/instance/execute/tsrain/?admin\n
+  \    - http://xsoar-server:8888/?admin\n    \n       username: admin\n       password:
+  <Run !tsr-get-default-admin-password>\n\n2. Check the gateway address of the docker
+  bridge network\n\n  Run !tsr-get-gateways in CLI,\n  and memorize the gateway IP
+  for 3.1 and 4.1\n\n3. Create a SMTP adapter for 'Mail Sender (New)'\n  Add instance
+  with the parameters below:\n   - Listen Port: 8025\n   - Service Type: Select 'smtp
+  adapter'\n\n  3.1. Configure 'Mail Sender (New)' to connect to the SMTP adapter.\n
+  \   Add instance with the parameters below:\n     - Mail server hostname or IP address:
+  <gateway IP>\n     - SMTP Port: 8025  (Specify the SMTP adapter port)\n     - Sender
+  address: any email address\n\n4. Create a IMAP adapter for 'Mail Listener'\n  Add
+  instance with the parameters below:\n   - Listen Port: 8143\n   - Service Type:
+  Select 'imap4 adapter'\n\n  4.1. Configure 'Mail Listener' to connect to the IMAP4
+  adapter.\n    Add instance with the parameters below:\n     - Mail server hostname
+  or IP address: <gateway IP>\n     - IMAP Port: 8143 (Specify the IMAP4 adapter port)\n
+  \    - Credentials: your email address\n     - Password: Password123$\n\nNOTE:\n
+  - Emails are stored in memory. All the emails are gone whenever restarting the docker
+  container."
+configuration:
+- display: Long Running Instance
+  name: longRunning
+  defaultvalue: "true"
+  type: 8
+  required: false
+- display: Listen Port
+  name: longRunningPort
+  defaultvalue: "8888"
+  type: 0
+  required: true
+  additionalinfo: Rainloop Web UI port when selecting 'mail server', otherwise adapter
+    port for port forwarding to the mail server
+- display: Incident type
+  name: incidentType
+  type: 13
+  required: false
+- display: Service Type
+  name: serviceType
+  defaultvalue: mail server
+  type: 15
+  required: true
+  options:
+  - mail server
+  - smtp adapter
+  - pop3 adapter
+  - imap4 adapter
+- display: User's mailbox password ('mail server' mode only)
+  name: mailboxPassword
+  defaultvalue: Password123$
+  type: 4
+  required: false
+  additionalinfo: The password is applied for all the users, default password is 'Password123$'
+- display: Default 'admin' password( 'mail server' mode only)
+  name: deafultAdminPassword
+  type: 4
+  required: false
+  additionalinfo: The password is randomly generated by default
+- display: Server Name
+  name: serverName
+  type: 0
+  required: false
+  additionalinfo: In 'mail server' mode, the name is to provide the service. The default
+    is the instance name. In non- 'mail server mode', the name is used for finding
+    the server to connect. It connects any server by default.
+- display: Internal Communication Port
+  name: communicationPort
+  defaultvalue: "8553"
+  type: 0
+  required: true
+script:
+  script: |-
+    import json
+    import os
+    import time
+    import socket
+    import select
+    import string
+    import random
+    import subprocess
+    import threading
+    import traceback
+    import ipaddress
+    import netifaces
+    from socketserver import BaseRequestHandler
+    from socketserver import BaseServer
+    from socketserver import UDPServer
+    from socketserver import TCPServer
+    from socketserver import ThreadingMixIn
+    from multiprocessing import Process
+    from typing import Tuple, List, Dict, Any, Optional
+
+
+    DEFAULT_SMTP_PORT = 25
+    DEFAULT_POP3_PORT = 110
+    DEFAULT_IMAP4_PORT = 143
+    DEFAULT_RAINLOOP_PORT = 80
+    DEFAULT_SOCKET_TIMEOUT = 30
+    DEFAULT_SERVICE_QUERY_TIMEOUT = 5
+    DEFAULT_MAILBOX_PASSWORD = 'Password123$'
+    INTEGRATION_NAME = 'XSOAR tsrain mail server'
+
+    def get_default_admin_password(params:dict) -> str:
+        """
+        Retrieve default admin password
+
+        :param params: The integration parameters
+        :return: The default admin password.
+        """
+        x = update_integration_context({'deafultAdminPassword': params.get('deafultAdminPassword')})
+        return x.get('deafultAdminPassword','') or x.get('deafultAdminPasswordGenerated','')
+
+
+    def update_integration_context(params:dict):
+        """
+        Store the integration parameters to the integration context.
+
+        :param params: The integration parameters
+        :return: The integration context updated.
+        """
+        x = demisto.getIntegrationContext() or {}
+        for k in ('longRunningPort','deafultAdminPassword','mailboxPassword'):
+            if k in params:
+                x[k] = params.get(k,'')
+
+        if not params.get('deafultAdminPassword') and not x.get('deafultAdminPasswordGenerated'):
+            # Generate password randomly when the default passwod is not specified
+            x['deafultAdminPasswordGenerated'] = ''.join([random.choice(string.ascii_letters + string.digits + '$#!.@+/=_') for i in range(32)])
+
+        demisto.setIntegrationContext(x)
+        return x
+
+
+    def is_restart_required(params:dict) -> bool:
+        """
+        Check if the service restart is required
+
+        :param params: The integration parameters
+        :return: True - restart is required.
+        """
+        x = demisto.getIntegrationContext()
+        if x:
+            for k in ('longRunningPort','deafultAdminPassword','mailboxPassword'):
+                if x.get(k,'') != params.get(k,''):
+                    return True
+        return False
+
+
+    def start_tsrain(params: dict, restart: bool=False):
+        """
+        Start tsrain
+
+        :param params: The integration parameters
+        :param restart: True if it re-starts the service.
+        """
+        os.environ['SMTP_PORT'] = str(DEFAULT_SMTP_PORT)
+        os.environ['POP3_PORT'] = str(DEFAULT_POP3_PORT)
+        os.environ['IMAP4_PORT'] = str(DEFAULT_IMAP4_PORT)
+        os.environ['RAINLOOP_PORT'] = str(int(params['longRunningPort']))
+        os.environ['MAILBOX_PASSWORD'] = params.get('mailboxPassword') or DEFAULT_MAILBOX_PASSWORD
+        os.environ['RAINLOOP_DEFAULT_ADMIN_PASSWORD'] = get_default_admin_password(params)
+        ret = subprocess.call(['restart.sh' if restart else 'start.sh'], shell=True)
+        demisto.debug('A {}start command has been requested: {}'.format('re' if restart else '', ret))
+        os.system('restart.sh' if restart else 'start.sh')
+
+
+    def stop_tsrain():
+        """
+        Stop tsrain
+        """
+        subprocess.call(['stop.sh'])
+
+
+    def get_local_addresses() -> List[dict]:
+        """
+        Get local addresses
+
+        :return: List of local address object {'addr','netmask','broadcast'}
+        """
+        alist = []
+        for ifname in netifaces.interfaces():
+            ifinfo = netifaces.ifaddresses(ifname)
+            for ininfo in ifinfo.values():
+                for ainfo in ininfo:
+                    if ainfo.get('addr') and ainfo.get('netmask'):
+                        try:
+                            addr = ipaddress.ip_address(ainfo['addr'])
+                            mask = ipaddress.ip_network(ainfo['netmask'], strict=False)
+                            if addr.version == 4:
+                                bcast = int(addr) | (0xffffffff ^ int(ipaddress.IPv4Address(mask.broadcast_address.exploded)))
+                                bcast = ipaddress.IPv4Address(bcast)
+                            else: # version 6
+                                bcast = int(addr) | (0xffffffffffffffffffffffffffffffff ^ int(ipaddress.IPv6Address(mask.broadcast_address.exploded)))
+                                bcast = ipaddress.IPv6Address(bcast)
+
+                            alist.append({
+                              'addr': addr,
+                              'netmask': mask,
+                              'broadcast': bcast
+                            })
+                        except ValueError:
+                            pass
+        return alist
+
+
+    def get_broadcast_addresses() -> List[str]:
+        """
+        Get broadcast addresses for the local interfaces
+
+        :return: List of broadcast IP address
+        """
+        return [a['broadcast'].exploded for a in get_local_addresses()]
+
+
+    class ServiceQuery:
+        """
+        The service query
+        """
+        @classmethod
+        def __get_service_port(cls, service_type:str, response:dict) -> int:
+            """
+            Retrive the service port from a response
+
+            :param service_type: The service type.
+            :param response: The response to a query
+            :return: Service port.
+            """
+            error = response.get('error')
+            if error:
+                err_msg = demisto.get(response,'error.message','')
+                raise RuntimeError(f'Failed to query: {err_msg}')
+
+            port = None
+            if service_type in ('smtp adapter','SMTP'):
+                port = demisto.get(response,'responses.services.SMTP.port')
+            elif service_type in ('pop3 adapter','POP3'):
+                port = demisto.get(response,'responses.services.POP3.port')
+            elif service_type in ('imap4 adapter','IMAP4'):
+                port = demisto.get(response,'responses.services.IMAP4.port')
+            elif service_type in ('RAINLOOP'):
+                port = demisto.get(response,'responses.services.RAINLOOP.port')
+            else:
+                raise ValueError(f'Incorrect service type: {service_type}')
+            if port is None:
+                raise RuntimeError('service is not available')
+            return port
+
+        @classmethod
+        def __query(cls, communication_port: int, server_name: Optional[str], query_params: Dict[str, Any], request_only: bool=False) -> Optional[Tuple[str, Dict[str, Any]]]:
+            """
+            Query to the server
+
+            :param communication_port: The communication port
+            :param server_name: The server name.
+            :param query_params: The parameters which to query
+            :param request_only: True if the client doesn't need responses, False otherwise.
+            :return: The server address and A response from the server.
+            """
+            with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+                s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+
+                # Send a broadcast request
+                payload = json.dumps(query_params)
+                demisto.debug(f'C: Service Request: {payload}')
+                for rhost in get_broadcast_addresses():
+                    s.sendto(payload.encode('utf-8'), (rhost,communication_port))
+
+                if request_only:
+                    return None
+
+                # Receive responses
+                stime = time.time()
+                timeout = DEFAULT_SERVICE_QUERY_TIMEOUT
+                while True:
+                    r, w, x = select.select([s], [], [], 0 if timeout < 0 else timeout)
+                    if s in r:
+                        payload, srvaddr = s.recvfrom(8192)
+                        try:
+                            payload = payload.decode('utf-8')
+                            demisto.debug(f'C: Service Response: {payload}')
+                            response_params = json.loads(payload)
+                        except:
+                            pass
+                        else:
+                            if not server_name or demisto.get(response_params,'server.name') == server_name:
+                                return srvaddr, response_params
+                    else:
+                        break
+                    timeout = 5 - (time.time() - stime)
+
+                raise RuntimeError("Mail server didn't respond")
+
+        @classmethod
+        def query_service_address(cls, communication_port: int, service_type: str, server_name: Optional[str]) -> Tuple[str,int]:
+            """
+            Query service address
+
+            :param communication_port: The communication port
+            :param service_type: The service type.
+            :param server_name: The server name.
+            :return: Service address and port.
+            """
+            qroot = {
+                'requests': {
+                    'services': None
+                }
+            }
+            srvaddr, rroot = ServiceQuery.__query(communication_port, server_name, qroot)
+
+            port = cls.__get_service_port(service_type, rroot)
+            host = srvaddr[0]
+            demisto.debug(f'Found a mail server {host}:{port}')
+            return (host, port)
+
+        @classmethod
+        def query_restart_service(cls, communication_port: int, server_name: Optional[str]):
+            """
+            Query service address
+
+            :param communication_port: The communication port
+            :param service_type: The service type.
+            :param server_name: The server name.
+            """
+            qroot = {
+                'requests': {
+                    'restart': server_name
+                }
+            }
+            ServiceQuery.__query(communication_port, server_name, qroot, True)
+
+
+    class ServiceResponseHandler(BaseRequestHandler):
+        """
+        The UDP handler that responses to the service requrest.
+        """
+        def handle(self):
+            """
+            Respond to the service request.
+            """
+            payload, s = self.request
+            try:
+                payload = payload.decode('utf-8')
+                demisto.debug(f'S: Service Request: {payload}')
+
+                rroot = self.make_reqponse(payload)
+
+                payload = json.dumps(rroot)
+                demisto.debug(f'S: Service Response: {payload}')
+                s.sendto(payload.encode('utf-8'), self.client_address)
+            except Exception as e:
+                demisto.debug(traceback.format_exc())
+
+
+        def make_reqponse(self, request:str) -> Dict:
+            """
+            Create response data to the service request.
+
+            :param request: The udp data that a client sent.
+            :return: Response data.
+            """
+            params = demisto.params()
+            server_name = params.get('serverName') or demisto.integrationInstance()
+
+            rroot = {
+                'server': {
+                    'name': server_name
+                }
+            }
+            try:
+                qroot = json.loads(request)
+                req = qroot['requests']
+                if not isinstance(req,dict):
+                    raise ValueError('Incorrect request format.')
+            except (json.JSONDecodeError, ValueError ) as e:
+                rroot['error'] = {'message': f'Incorrect request format.'}
+                return rroot
+
+            resp = {}
+            for k,v in req.items():
+                if k == 'services':
+                    resp['services'] = {
+                        'SMTP' : {
+                            'port': DEFAULT_SMTP_PORT
+                        },
+                        'POP3' : {
+                            'port': DEFAULT_POP3_PORT
+                        },
+                        'IMAP4' : {
+                            'port': DEFAULT_IMAP4_PORT
+                        },
+                        'RAINLOOP' : {
+                            'port': int(params.get('longRunningPort',DEFAULT_RAINLOOP_PORT))
+                        }
+                    }
+                elif k == 'restart':
+                    target_server = v if v else ''
+                    if target_server != server_name:
+                        resp['restart'] = {
+                            'status': None
+                        }
+                    else:
+                        start_tsrain(params, True)
+                        resp['restart'] = {
+                            'status': True
+                        }
+                else:
+                    rroot['error'] = {'message': f'Unknown request name: {k}'}
+                    return rroot
+
+            rroot['responses'] = resp
+            return rroot
+
+
+
+    class ThreadedServiceResponseServer(ThreadingMixIn, ServiceResponseHandler):
+        pass
+
+
+
+    class PortForwardingHandler(BaseRequestHandler):
+        """
+        The TCP port fowarder
+        """
+        def handle(self):
+            params = demisto.params()
+            try:
+                cs = self.request
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rs:
+                    raddr = ServiceQuery.query_service_address(int(params['communicationPort']), params['serviceType'], params.get('serverName'))
+                    rs.connect(raddr)
+
+                    while True:
+                        r, w, x = select.select([cs, rs], [], [])
+                        if cs in r:
+                            payload = cs.recv(1024)
+                            if len(payload) == 0:
+                                break
+                            rs.send(payload)
+                        if rs in r:
+                            payload = rs.recv(1024)
+                            if len(payload) == 0:
+                                break
+                            cs.send(payload)
+            except Exception as e:
+                demisto.debug(traceback.format_exc())
+            finally:
+                cs.close()
+
+
+    class ThreadedPortForwardingServer(ThreadingMixIn, PortForwardingHandler):
+        pass
+
+
+
+    ''' COMMAND FUNCTIONS '''
+
+
+
+    def test_module(args, params):
+        """
+        Validates:
+        """
+        on_demand = params.get('on_demand', None)
+        if not on_demand:
+            pass
+        run_long_running(params, is_test=True)
+        return 'ok', {}, {}
+
+
+    def get_server_addresses_command(args, params):
+        """
+        Get server IP addresses
+        """
+        addrs = []
+        for service_type in ['RAINLOOP','SMTP','POP3','IMAP4']:
+            try:
+                host, port = ServiceQuery.query_service_address(int(params['communicationPort']), service_type, params.get('serverName'))
+            except:
+                pass
+            else:
+                addrs.append({
+                    'Service': service_type,
+                    'IP': host,
+                    'Port': int(port),
+                    'Instance': demisto.integrationInstance()
+                })
+
+        if addrs:
+            hr = tblToMd('Server', addrs)
+            return hr, {'Tsrain': addrs}, addrs
+        else:
+            return 'Unable to get server addresses', {}, {}
+
+
+    def get_gateways_command(args, params):
+        """
+        Get gateway list
+        """
+        gateways = netifaces.gateways()
+
+        tbl = [{
+            'IP': a[0] if len(a) > 0 else None,
+            'Interface': a[1] if len(a) > 1 else None,
+            'Default': a[2] if len(a) > 2 else None
+        } for k,v in gateways.items() if k != 'default' for a in v]
+
+        if tbl:
+            hr = tblToMd('Gateways', tbl)
+            return hr, {'Tsrain': tbl}, tbl
+        else:
+            hr = 'No gateway addresses'
+            return hr, {}, tbl
+
+
+    def get_default_admin_password_command(args, params):
+        """
+        Get default admin password
+        """
+        instance_name = demisto.integrationInstance()
+        if params['serviceType'] == 'mail server':
+            pwd = get_default_admin_password(params)
+            hr = instance_name + ' admin password: ' + pwd
+            return hr, {}, pwd
+        else:
+            hr = instance_name + ': admin console is not available'
+            return hr, {}, {}
+
+
+    def restart_command(args, params):
+        """
+        Restart the core service
+        """
+        instance_name = demisto.integrationInstance()
+        if params['serviceType'] == 'mail server':
+            server_name = params.get('serverName') or instance_name
+            ServiceQuery.query_restart_service(int(params['communicationPort']), server_name)
+            hr = instance_name + ': core service has been restarted'
+        else:
+            hr = instance_name + ': core service is not available'
+        return hr, {}, {}
+
+
+    def run_server(server:BaseServer, is_test=False):
+        """
+        Run the server
+
+        :param server: The server instance
+        :param is_test: Indicates whether it's test-module run or regular run
+        :return: None
+        """
+        if is_test:
+            svproc = Process(target=server.serve_forever)
+            svproc.start()
+            time.sleep(5)
+            svproc.terminate()
+        else:
+            socket.setdefaulttimeout(DEFAULT_SOCKET_TIMEOUT)
+            server.serve_forever()
+
+
+    def run_long_running(params, is_test=False):
+        """
+        Start the long running server
+
+        :param params: Demisto params
+        :param is_test: Indicates whether it's test-module run or regular run
+        :return: None
+        """
+        try:
+            service_type = params['serviceType']
+
+            if service_type == 'mail server':
+                if not is_test:
+                    start_tsrain(params, is_restart_required(params))
+                    update_integration_context(params)
+
+                communication_port = int(params['communicationPort'])
+                with UDPServer(('',communication_port),ThreadedServiceResponseServer) as server:
+                    run_server(server, is_test)
+
+            elif service_type in ['smtp adapter','pop3 adapter','imap4 adapter']:
+                if not is_test:
+                    stop_tsrain()
+                    update_integration_context({})
+                else:
+                    # Test to connect the server
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rs:
+                        raddr = ServiceQuery.query_service_address(int(params['communicationPort']), params['serviceType'], params.get('serverName'))
+                        rs.connect(raddr)
+
+                # Run the server
+                longRunningPort = int(params['longRunningPort'])
+                with TCPServer(('',longRunningPort),ThreadedPortForwardingServer) as server:
+                    run_server(server, is_test)
+            else:
+                raise ValueError(f'Incorrect service type: {service_type}')
+
+        except Exception as e:
+            demisto.error(f'An error occurred in long running loop: {str(e)}')
+            raise ValueError(str(e))
+
+
+
+    def main():
+        """
+        Main
+        """
+        params = demisto.params()
+
+        command = demisto.command()
+        demisto.debug('Command being called is {}'.format(command))
+        commands = {
+            'test-module': test_module,
+            'tsr-get-server-addresses': get_server_addresses_command,
+            'tsr-get-gateways': get_gateways_command,
+            'tsr-get-default-admin-password': get_default_admin_password_command,
+            'tsr-restart': restart_command
+        }
+
+        try:
+            if command == 'long-running-execution':
+                run_long_running(params)
+            else:
+                readable_output, outputs, raw_response = commands[command](demisto.args(), params)
+                return_outputs(readable_output, outputs, raw_response)
+        except Exception as e:
+            raise
+            err_msg = f'Error in {INTEGRATION_NAME} Integration [{e}]'
+            return_error(err_msg)
+
+
+    if __name__ in ['__main__', '__builtin__', 'builtins']:
+        main()
+  type: python
+  commands:
+  - name: tsr-get-server-addresses
+    arguments: []
+    outputs:
+    - contextPath: Tsrain.IP
+      description: IP Address
+      type: string
+    - contextPath: Tsrain.Port
+      description: Port Number
+      type: number
+    - contextPath: Tsrain.Service
+      description: Service Name
+      type: string
+    - contextPath: Tsrain.Instance
+      description: Integration instance name
+      type: string
+    description: Get the mail server addresses
+  - name: tsr-get-default-admin-password
+    arguments: []
+    description: Print default 'admin' password
+  - name: tsr-restart
+    arguments: []
+    description: Restart the core service
+  - name: tsr-get-gateways
+    arguments: []
+    outputs:
+    - contextPath: Tsrain.IP
+      description: Gateway IP Address
+      type: string
+    - contextPath: Tsrain.Interface
+      description: Interface name
+      type: string
+    - contextPath: Tsrain.Default
+      description: True if the IP is Default gateway
+      type: boolean
+    description: Get gateway addresses of the instance running
+  dockerimage: spearmint/xsoar-tsrain:2.4.13.1812
+  runonce: false
+  longRunning: true
+  longRunningPort: true
+  subtype: python3
+sourcemoduleid: ExportIndicators
