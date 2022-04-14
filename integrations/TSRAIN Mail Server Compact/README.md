@@ -49,13 +49,13 @@ Run !tsrc-get-gateways in CLI, and memorize the gateway IP for 3 and 4
 
 #### 3. (Optional) Configure 'Mail Sender (New)' to connect to the server.
 Add an instance with the parameters below:
-  - Mail server hostname or IP address: &gt;gateway IP&lt;
+  - Mail server hostname or IP address: &lt;gateway IP&gt; (In many cases：172.17.0.1)
   - SMTP Port: 8118
   - Sender address: any email address
 
 #### 4. (Optional) Configure 'Mail Listener v2' to connect to the server.
 Add an instance with the parameters below:
-  - Mail server hostname or IP address: <gateway IP>
+  - Mail server hostname or IP address: &lt;gateway IP&gt; (In many cases：172.17.0.1)
    - IMAP Port: 8118
    - Username: your email address
    - Password: Password123$
