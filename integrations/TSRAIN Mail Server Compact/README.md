@@ -27,7 +27,12 @@ You can access the webmail UI at
   - https://xsoar-server/instance/execute/tsrain/
   - http://xsoar-server:8118/
     ```
-      username: any email address (e.g. test@test.lan)
+      username: any email address or wild-card email address (e.g. test@test.lan, *@test.lan)
+      password: Password123$
+    ```
+    or
+    ```
+      username: *
       password: Password123$
     ```
 
