@@ -45,7 +45,7 @@ Add instance with the parameters below:
 
 Keep the default value in other parameters
 
-### 4. Configure 'Active Directory Authentication'
+#### 4. Configure 'Active Directory Authentication'
 
 Add the instance with the parameters below:
   - Server IP: The gateway IP of XSOAR server (In the step 2.)
