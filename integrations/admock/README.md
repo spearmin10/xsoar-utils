@@ -31,3 +31,29 @@ Run
 !admock-get-gateways
 ```
 in CLI, in order to get the gateway IP on which the admock is running.
+
+#### 3. Configure 'Active Directory Query v2'
+
+Add instance with the parameters below:
+  - Server IP: The gateway IP of your XSOAR server
+  - Port: 636
+  - Credentials: Any DN (e.g. CN=user,DC=CORP,DC=CORTEX,DC=COM)
+  - Password: Any password
+  - Base DN: Your Base DN (e.g. DC=CORP,DC=CORTEX,DC=COM)
+  - Secure Connection: SSL
+  - Trust any certificate (not secure): Yes
+
+Keep the default value in other parameters
+
+### 4. Configure 'Active Directory Authentication'
+
+Add the instance with the parameters below:
+  - Server IP: The gateway IP of XSOAR server (In the step 2.)
+  - Port: 636
+  - Credentials: Any username (e.g. Administrator)
+  - Password: Any password
+  - Base DN: Your Base DN (e.g. DC=CORP,DC=CORTEX,DC=COM)
+  - Security Type: ssl
+  - Do not validate server certificate (insecure): Yes
+
+Keep the default value in other parameters
