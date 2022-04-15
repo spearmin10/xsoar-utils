@@ -13,8 +13,6 @@ Installing
 How to configure an instance
 ----------
 
-### How to configure an instance.
-
 #### 1. Create an instance
 Add instance with the parameters below:
   - Instance Name: admock
