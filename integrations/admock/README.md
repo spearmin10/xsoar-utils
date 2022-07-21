@@ -18,6 +18,7 @@ Add instance with the parameters below:
   - Instance Name: admock
   - Long running instance: Yes
   - Port: 636
+  - Where to read LDIF: URL
   - LDIF URL: <An URL your LDIF file located at>
               Sample LDIF file: https://github.com/spearmin10/test/blob/master/admock-ldif.zip?raw=true (Temporary)
   - Run as LDAPS server: Yes
