@@ -61,11 +61,25 @@ configuration:
   name: incidentType
   type: 13
   required: false
+- display: Where to read a LDIF
+  name: ldifStoreType
+  defaultvalue: Text
+  type: 15
+  required: false
+  options:
+  - URL
+  - Text
+- display: LDIF Text
+  name: ldifText
+  type: 12
+  required: false
+  additionalinfo: A LDIF is read from this when `Text` is specified in `where to read
+    LDIF`.
 - display: LDIF URL
   name: ldifURL
   defaultvalue: local://context
   type: 0
-  required: true
+  required: false
   additionalinfo: LDIF file is downloaded from this URL when starting up. The LDIF
     in the integration context is used when 'local://context' is specified.  .Zip
     file is acceptable for the file.
@@ -436,30 +450,41 @@ script:
 
     def load_ldif(params, is_test, long_running):
 
-        url = params.get('ldifURL')
-        if url == 'local://context':
-            if is_test:
-                raise RuntimeError(
-                    'Unable to load the integration context in test mode')
-
-            while long_running:
-                x = demisto.getIntegrationContext() or {}
-                ldif: bytes = base64.a85decode(x.get('LDIF', '')) if x else b''
-                if ldif:
-                    break
-                demisto.debug('Waiting for LDIF data available')
-                time.sleep(5)
+        store_type = params.get('ldifStoreType') or ''
+        if store_type == 'Text':
+            ldif = params.get('ldifText') or ''
             if not ldif:
-                raise RuntimeError('No LDIF in the integration context')
-        else:
-            client = BaseClient(
-                base_url='',
-                verify=params.get('insecure', False),
-                proxy=params.get('proxy', False))
+                raise ValueError(f'LDIF is required')
 
-            ldif = client._http_request('GET', None,
-                                        full_url=params.get('ldifURL'),
-                                        resp_type='content')
+            ldif = ldif.encode('utf-8')
+        elif store_type == 'URL':
+            url = params.get('ldifURL')
+            if url == 'local://context':
+                if is_test:
+                    raise RuntimeError(
+                        'Unable to load the integration context in test mode')
+
+                while long_running:
+                    x = demisto.getIntegrationContext() or {}
+                    ldif: bytes = base64.a85decode(x.get('LDIF', '')) if x else b''
+                    if ldif:
+                        break
+                    demisto.debug('Waiting for LDIF data available')
+                    time.sleep(5)
+                if not ldif:
+                    raise RuntimeError('No LDIF in the integration context')
+            else:
+                client = BaseClient(
+                    base_url='',
+                    verify=params.get('insecure', False),
+                    proxy=params.get('proxy', False))
+
+                ldif = client._http_request('GET', None,
+                                            full_url=params.get('ldifURL'),
+                                            resp_type='content')
+        else:
+            raise ValueError(f'Unknown store type: {store_type}')
+
 
         if ldif[:4] == b'PK\x03\x04':
             with zipfile.ZipFile(io.BytesIO(ldif), 'r') as z:
@@ -634,7 +659,7 @@ script:
 
         except Exception as e:
             demisto.error(f'An error occurred in long running loop: {str(e)}')
-            raise ValueError(str(e))
+            raise
 
 
     def main():
@@ -2780,7 +2805,7 @@ script:
       description: Entry ID of the LDIF file
     description: Store a LDIF into the integration context
   dockerimage: spearmint/ldaptor:0.1.5.0037
-  runonce: false
+  runonce: true
   longRunning: true
   longRunningPort: true
   subtype: python3
