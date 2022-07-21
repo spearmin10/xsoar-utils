@@ -15,6 +15,7 @@ detaileddescription: |-
      - Instance Name: admock
      - Long running instance: Yes
      - Port: 636
+     - Where to read LDIF: URL
      - LDIF URL: An URL your LDIF file located at
      - Run as LDAPS server: Yes
      - Trust any certificate (not secure): Yes
