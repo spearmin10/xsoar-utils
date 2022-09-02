@@ -230,7 +230,7 @@ script:
 
         x = demisto.getIntegrationContext() or {}
         if ips is None:
-            x.pop('ServerAddresses')
+            x.pop('ServerAddresses', None)
         else:
             x['ServerAddresses'] = json.dumps([{
                 'Host': ip,
