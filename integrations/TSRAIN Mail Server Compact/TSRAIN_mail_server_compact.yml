@@ -421,44 +421,33 @@ script:
         Get the service information
         """
         sinfo = []
-        for ai in get_local_addresses():
-            ip = str(ai['addr'])
-            if ip not in ('127.0.0.1'):
-                sinfo.append({
-                    'IP': ip,
-                    'Name': demisto.integrationInstance()
-                })
+
+        x = demisto.getIntegrationContext() or {}
+        addrs = x.get('ServerAddresses')
+        if addrs:
+            # Service is running
+            sinfo = [{
+                'IP': a['Host'],
+                'Port': int(a['Port']),
+                'Instance': demisto.integrationInstance(),
+                'Status': 'Running'
+            } for a in json.loads(addrs)]
+        else:
+            # Service is not running
+            for ai in get_local_addresses():
+                ip = str(ai['addr'])
+                if ip not in ('127.0.0.1'):
+                    sinfo.append({
+                        'IP': ip,
+                        'Name': demisto.integrationInstance(),
+                        'Status': 'Not Running'
+                    })
 
         if not sinfo:
             return 'Unable to get the service information', {}, {}
 
-        # Format the service information
-        ec = {
-            'TsrainCompact': {
-                'Service': sinfo
-            }
-        }
-        hr = tblToMd('Service', demisto.get(ec, 'TsrainCompact.Service'))
-        return hr, ec, sinfo
-
-
-    def get_server_addresses_command(args, params):
-        """
-        Get server IP addresses
-        """
-        x = demisto.getIntegrationContext() or {}
-        addrs = x.get('ServerAddresses')
-        if addrs:
-            addrs = [{
-                'IP': a['Host'],
-                'Port': int(a['Port']),
-                'Instance': demisto.integrationInstance()
-            } for a in json.loads(addrs)]
-            hr = tblToMd('Server IPs', addrs)
-            return hr, {'TsrainCompact.Server': addrs}, addrs
-        else:
-            hr = 'Unable to get server IP addresses'
-            return hr, {}, {}
+        hr = tblToMd('Service', sinfo)
+        return hr, {'TsrainCompact.Service': sinfo}, sinfo
 
 
     def get_gateways_command(args, params):
@@ -549,7 +538,6 @@ script:
         commands = {
             'test-module': test_module,
             'tsrc-get-service-info': get_servcie_info_command,
-            'tsrc-get-server-addresses': get_server_addresses_command,
             'tsrc-get-gateways': get_gateways_command,
             'tsrc-get-default-admin-password': get_default_admin_password_command,
             'tsrc-restart': restart_command
@@ -579,6 +567,10 @@ script:
     - contextPath: TsrainCompact.Service.Name
       description: The instance name of the service
       type: string
+    - contextPath: TsrainCompact.Service.Port
+      description: The port number on which the service is running
+    - contextPath: TsrainCompact.Service.Status
+      description: The service status
     description: Get the service information
   - name: tsrc-get-default-admin-password
     arguments: []
@@ -599,16 +591,6 @@ script:
       description: True if the IP is Default gateway
       type: boolean
     description: Get gateway addresses of the instance running
-  - name: tsrc-get-server-addresses
-    arguments: []
-    outputs:
-    - contextPath: TsrainCompact.Server.IP
-      description: IP Address
-    - contextPath: TsrainCompact.Server.Port
-      description: Port Number
-    - contextPath: TsrainCompact.Server.Instance
-      description: Integration instance name
-    description: Get the server IP addresses of the instance
   dockerimage: spearmint/xsoar-tsrain:1.11.28.1822
   runonce: false
   longRunning: true
