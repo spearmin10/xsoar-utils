@@ -22,12 +22,7 @@ detaileddescription: |-
     - https://xsoar-server/instance/execute/tsrain/
     - http://xsoar-server:8118/
       ```
-        username: any email address or wild-card email address (e.g. test@test.lan, *@test.lan)
-        password: Password123$
-      ```
-      or
-      ```
-        username: *
+        username: any email address (e.g. test@test.lan)
         password: Password123$
       ```
 
@@ -219,6 +214,29 @@ script:
                         except ValueError:
                             pass
         return alist
+
+
+    def save_server_address(ips: Optional[List[str]], port: Optional[int]):
+        """
+        Save the server addresses to the integration context
+
+        :param ips: The list of IP addresses of the server
+        :param port: The port number
+        """
+        if port is None:
+            ips = None
+        elif not ips:
+            ips = [a['addr'].exploded for a in get_local_addresses() if not a['addr'].is_loopback]
+
+        x = demisto.getIntegrationContext() or {}
+        if ips is None:
+            x.pop('ServerAddresses')
+        else:
+            x['ServerAddresses'] = json.dumps([{
+                'Host': ip,
+                'Port': port
+            } for ip in ips])
+        demisto.setIntegrationContext(x)
 
 
     def create_ssl_server_context() -> ssl.SSLContext:
@@ -424,6 +442,25 @@ script:
         return hr, ec, sinfo
 
 
+    def get_server_addresses_command(args, params):
+        """
+        Get server IP addresses
+        """
+        x = demisto.getIntegrationContext() or {}
+        addrs = x.get('ServerAddresses')
+        if addrs:
+            addrs = [{
+                'IP': a['Host'],
+                'Port': int(a['Port']),
+                'Instance': demisto.integrationInstance()
+            } for a in json.loads(addrs)]
+            hr = tblToMd('Server IPs', addrs)
+            return hr, {'TsrainCompact.Server': addrs}, addrs
+        else:
+            hr = 'Unable to get server IP addresses'
+            return hr, {}, {}
+
+
     def get_gateways_command(args, params):
         """
         Get gateway list
@@ -431,7 +468,7 @@ script:
         ifs = get_gateway_interfaces()
         if ifs:
             hr = tblToMd('Gateways', ifs)
-            return hr, {'TsrainCompact.Gateway': ifs}, ifs
+            return hr, {'TsrainCompact.GW': ifs}, ifs
         else:
             hr = 'No gateway addresses'
             return hr, {}, []
@@ -492,10 +529,13 @@ script:
 
             # Run the server
             with ThreadingTCPServer(('', longRunningPort), PortForwardingHandler) as server:
+                save_server_address(None, longRunningPort)
                 run_server(server, is_test)
         except Exception as e:
             demisto.error(f'An error occurred in long running loop: {str(e)}')
             raise ValueError(str(e))
+        finally:
+            save_server_address(None, 0)
 
 
     def main():
@@ -509,6 +549,7 @@ script:
         commands = {
             'test-module': test_module,
             'tsrc-get-service-info': get_servcie_info_command,
+            'tsrc-get-server-addresses': get_server_addresses_command,
             'tsrc-get-gateways': get_gateways_command,
             'tsrc-get-default-admin-password': get_default_admin_password_command,
             'tsrc-restart': restart_command
@@ -548,17 +589,27 @@ script:
   - name: tsrc-get-gateways
     arguments: []
     outputs:
-    - contextPath: TsrainCompact.IP
+    - contextPath: TsrainCompact.GW.IP
       description: The IP address of the gateway
       type: string
-    - contextPath: TsrainCompact.Interface
+    - contextPath: TsrainCompact.GW.Interface
       description: The interface name
       type: string
-    - contextPath: TsrainCompact.Default
+    - contextPath: TsrainCompact.GW.Default
       description: True if the IP is Default gateway
       type: boolean
     description: Get gateway addresses of the instance running
-  dockerimage: spearmint/xsoar-tsrain:2.4.17.1338
+  - name: tsrc-get-server-addresses
+    arguments: []
+    outputs:
+    - contextPath: TsrainCompact.Server.IP
+      description: IP Address
+    - contextPath: TsrainCompact.Server.Port
+      description: Port Number
+    - contextPath: TsrainCompact.Server.Instance
+      description: Integration instance name
+    description: Get the server IP addresses of the instance
+  dockerimage: spearmint/xsoar-tsrain:1.11.28.1822
   runonce: false
   longRunning: true
   longRunningPort: true
