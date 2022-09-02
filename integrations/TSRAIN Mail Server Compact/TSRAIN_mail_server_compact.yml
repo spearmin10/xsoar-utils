@@ -100,10 +100,10 @@ script:
     from typing import Tuple, List, Dict, Any
 
 
-    SMTP_PORT = 25
-    POP3_PORT = 110
-    IMAP4_PORT = 143
-    RAINLOOP_PORT = 80
+    SMTP_PORT = 10025
+    POP3_PORT = 10110
+    IMAP4_PORT = 10143
+    RAINLOOP_PORT = 10080
 
     DEFAULT_SOCKET_TIMEOUT = 30
     DEFAULT_PUBLIC_KEY_SIZE = 2048
