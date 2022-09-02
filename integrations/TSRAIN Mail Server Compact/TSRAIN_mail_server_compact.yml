@@ -535,7 +535,7 @@ script:
             demisto.error(f'An error occurred in long running loop: {str(e)}')
             raise ValueError(str(e))
         finally:
-            save_server_address(None, 0)
+            save_server_address(None, None)
 
 
     def main():
