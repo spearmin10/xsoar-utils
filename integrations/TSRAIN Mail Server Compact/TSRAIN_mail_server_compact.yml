@@ -509,8 +509,9 @@ script:
             longRunningPort = int(params['longRunningPort'])
             if longRunningPort < 0:
                 raise ValueError(f'Invalid long running port: {longRunningPort}')
-            if longRunningPort < 1024:
-                raise ValueError(f'Listen ports less than 1024 are reserved for system: {longRunningPort}')
+            if longRunningPort < 1024 or longRunningPort in (SMTP_PORT, POP3_PORT, IMAP4_PORT, RAINLOOP_PORT):
+                raise ValueError(f'Listen ports less than 1024, {SMTP_PORT}, {POP3_PORT}, {IMAP4_PORT}'
+                                 f' and {RAINLOOP_PORT} are reserved for system: {longRunningPort}')
 
             if not is_test:
                 start_services(params, is_restart_required(params))
