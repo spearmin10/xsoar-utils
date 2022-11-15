@@ -506,20 +506,22 @@ script:
         :return: None
         """
         try:
-            longRunningPort = int(params['longRunningPort'])
-            if longRunningPort < 0:
-                raise ValueError(f'Invalid long running port: {longRunningPort}')
-            if longRunningPort < 1024 or longRunningPort in (SMTP_PORT, POP3_PORT, IMAP4_PORT, RAINLOOP_PORT):
+            port_mapping = params.get('longRunningPort', '')
+            host_port, _, docker_port = port_mapping.partition(':')
+            listen_port = int(docker_port or host_port)
+            if listen_port < 0:
+                raise ValueError(f'Invalid long running port: {listen_port}')
+            if listen_port < 1024 or listen_port in (SMTP_PORT, POP3_PORT, IMAP4_PORT, RAINLOOP_PORT):
                 raise ValueError(f'Listen ports less than 1024, {SMTP_PORT}, {POP3_PORT}, {IMAP4_PORT}'
-                                 f' and {RAINLOOP_PORT} are reserved for system: {longRunningPort}')
+                                 f' and {RAINLOOP_PORT} are reserved for system: {listen_port}')
 
             if not is_test:
                 start_services(params, is_restart_required(params))
                 update_context(params)
 
             # Run the server
-            with ThreadingTCPServer(('', longRunningPort), PortForwardingHandler) as server:
-                save_server_address(None, longRunningPort)
+            with ThreadingTCPServer(('', listen_port), PortForwardingHandler) as server:
+                save_server_address(None, listen_port)
                 run_server(server, is_test)
         except Exception as e:
             demisto.error(f'An error occurred in long running loop: {str(e)}')
