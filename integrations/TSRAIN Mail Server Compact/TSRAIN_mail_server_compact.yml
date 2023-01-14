@@ -5,7 +5,7 @@ vcShouldKeepItemLegacyProdMachine: false
 name: TSRAIN mail server compact
 display: TSRAIN mail server compact
 category: Utilities
-image: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAyCAYAAAAA9rgCAAAir3pUWHRSYXcgcHJvZmlsZSB0eXBlIGV4aWYAAHjarZtpciS3doX/YxVeAuZhObgYIrwDL9/fQbJb0pPssB3ulkh2VVYmcIczAKA7//Hv1/0bf3rI3uXSeh21ev7kkUec/ND99+f7Hnx+X9+ftH7eC3993aX480bkpaQrv3/W83P95PXyxwda/nnd/vq6az9PiP3nRj9v/Lph0pP1sP0zyJ8bpfi9Hn7+7cbPiGb903R+/refD78n+7//OzeCsQv3S9HFk0Ly72v8npT0f0iT//U1phJ/vZJ+ff17/Nzv0P1DAHf55/j59XNF+iMc341+Tav+S5x+Xg/ln+P3ovTnEYX4c0n8440XkxR+cvf3+N27+73nm93M1RGu+jOpX1N8P3GhEc70Plb52/i/8HN7fwd/u59+kbXNVM154x8jRCJ+Qw47zHDDed9XWAwxxxMb32NcRFyv9dTiiIukhJT1N9zYXBppp05WFplLvBx/jyW85w49j4d1nrwDV8bAzcjxX/+6f33h//r3Lze6V2UegoK5y4sV44qqL4ahzOkrV5GQcH9iWl58g/u++X/9o8QmMlhemDsTnN6+W1gJf9RWenlOvjguzf7rl9D2zw0IEc8uDIbqzsHXkEqowbcYWwjEsZOfychjytHIQCiuxM0oY06pkpwe9Ww+08K7Npb4vQy8kIiSamqkZqRJsnIuudJvnRKarqSSSym1tNLLKLOmmmuptbYqnJottdxKq6213kabPfXcS6+99d5HnyOOBIwVN+poo48x5uShM0/uNbl+8oJFS5atWLVm3YbNRfmsvMqqq62+xpo77rSBALfrbrvvsecJh1I6+ZRTTzv9jDMvtXbTzbfcetvtd9z5O2s/Wf1r1v41c/991sJP1uJLlK5rf2SNl1v7dYsgOCnKGRmLOZDxpgxQ0FE58+B9jsqccuZHTC6BW4yyKDk7KGNkMJ8Qyw2/c/dH5v7LvDmi+7/NW/ynzDml7v8jc06p+1Pm/p63f8jang9u00uQupCYgpCJ9uOC02e0enhKvM2YAKVM2fNTzf6kZskfvm/bp/PJaDPsBPjovmk2t0prty4evNa6y06phDgSlXWNsI3aZtyj2J4rhb0URfFxrnOefUocC6pcw60RSjupHzJKyxU/Mzc6RHGq6jpE0mK24yvxuLcKqDNA7P1Zc/jbqcwW7nYz6cXBBK/FeVYfpeY9Z/K1UzZt1JWHz7ot87uHgjp8y/EvnxsAG0V0SZheJnE1Bf2U18+NJ7U1zt2HZMXRr5C5bfg9kS8ERTF9gDp1S/cfvenjtWSSw8+Wq77otUtl6vsbroi40ZOWz0hx2ohNNN5Cue4Sm/uGGYOwtr8REd04FAf/c0e973laLWVbiFRtgS38pWDGGla662W1MzKB5/IV7d1mMVmySuG0/Sb9xSHyb0os+nrPpiCbvbffeB0DHou78Yx+8xwhUZHMkbH4N+qoC/2xGhZ1Mk8jb+O2n7z1Tvx3G8Nxxz7mUcjyuT/TarXSdptSJKCHAJeY1RUGyYbB87jJC8EJZb/PZKD2zb/8mgBNttLeR7UxSdO19uvpZrNUP8aGSQfhGCHHa/3GNAsiojHs6y/gQOzPJh9/HhujYej1DrpfE0v7nvUeqoE3Ukdl+bK8U3dkMM98URQSqVXg012pb9DihfUkSmT/KoNSbq/bRksMmldH5Iv7YsKw/DLwtPl8W8oTtp/UJ2DgE/gXq0qQT/rdaCLKwBpfZ6u/msUFhm71EsKzARgEhP0UZ9nL13hQHaTwhrXLyHl3A9besE9blNq+r2Wiq7vr48nuT23nxrv2vfv7za8UQZoRegfpGJ+S12GGkvcege4/ydThfu0LT9T5qo1nKuRfaseOdHkNrzSHbn3yu3Uj9zOv2JA+rhKZ0sZpYPeg7NeA0Bm8+nLZ5VL/KoZJ9tvCpBMFzCBR3XfvO4K1NKp3thslU0hstb3jnYAP3ZD7qbmQDzoLeM/BRmaIqzFWouVtEgAqpQHve+VSHZFXIBIAB+zXU+EwehA1EZa4aKlP+i6UcKZqO7ok7zQZ0Th1nLVHjX2t7pAkuw8AIpO5wuNKi5ec7Nx6Aku32r9SMHXT6BYs1cP7SFrb41jZpNICqtZL5JR+JZrq7DDiGQua45IISpOSL5u9ETE0v9mpNY3V8mEuzHL6ktve7pVESpSZH5P7ZRM6zAKdUdlU4khNozHNkXq3yrgE7yO0RqBKp20QsY65hgJCz9nG9DFREkvOId+0GkO+aa9BU0K4l6vglUK1y0vN0CddAD/AKmC2OMXSunOnWzPY2S7dPExChIFwd0/6QkOuL8Uf+qy+8yMFWW3OuRD+/rrB0FADdc3Sow3aXCgcbXUDeyUgs55xUuSiAD7lGRHxdxRafNcJ4/RAhzo6lHiToIr94hP0NoGBOoH4Eu7aRqcfIFykuQ9o3PUYbkNHN78/vdYRow1eKHUFnsulPa8j4CqJuZVXECQjIGT4nhgBkUKUrepPbkZ0OmgKsm0XDcFkLQa16WRWcOGCpBkjfQkz8GmYABgBrIkcP0BCI4nP6AP6igmHUF0ZjVn52xRUYRKV1JkAFI9zvIX4MeKzl6EG8EEIOO6ocYJxe6E6KlZlKmsIMMRQLJRa64CBYrONsR+ge/OBWzqCg66FAgEP3scC5ROBXevUEgzFjWhUo+1hdD5OqNEtZ4dTIE0BIuOk5LBYHkUPUNdZb1xzhvgc5ThxquQM38/HuX6gajy9jjokElXVQwqJhcTnuqEP9CWwQ/zUUwY4GLNdgPQGG+ZxeAnE4mYyq9YtIUhhSQ/TR+sw0FBoPoRn7ys3rF+HN0i/QS67CB/RsaCAm7stZB/x7sUW7XogmXBI7pSU2StR3EOOk4DvGKUkmR6MZ717cvPosh2XwDUSvCzMkRg0GFcIcFtgGHXVIAoKCFaXbsSPetJBz1AURQ14QBjkzh6uEqPOp3Ohf/jO1YJgeCZKJgRPK8He6pswEoWjfuzTMgALgxhClep+vNapa1ANZShtXyfTzwMQgOquxhjAOiqS6uBBMMrHtDVlG4OBA8YWU3NINJA2ExVx4KQw+ByNsPapBalGFeRPLmRKP6AuiHlo9gm/8aTQWqc75nLz0iVH0Ovb/ggSHwJC4woSCZgRBsu0LIRS1qMlfX7X/j5+mJCTLkdCP+HwwermgfeNosk/ENut6rYjPYf00ztQwCk4D66Z4CqN6jDU/cnP857zXRlS5rkLNIkU2Pk0EBrrtie7cFtoK4pPxD266VmOQeNapClQqE90kQzSNbEFVzLj6aeyPknK2+oQsScgdFHemesmet69oF275/y+tEhTnM7gYQ7GlyhwUD98givSG9xJwUEMpFVV48EzotGKvMhY3KzKvrzoQPjwIuoN8gEooGrArd+9FGtNjZ/f1HAKioGDDXmUNIdiLAUyyE2H0YgOFAIGfOLhxDfiFx6w893DqtB0yyE4BCkqeEmNosF+DX4Cmp36NrWfCvx1+8U5tQO9zUGVJOQlegUHJbpz8G6mRW+UJGrQscGFpMFAdWRFxP9Q72LH4kHPmawiCtGqecJqIdINwFnajl4uLUf1KC6D6oPJoVhgnUcHebNQcpJTss6bSTLcMKM7V1E6ekVWN8pBFmQ11rQC+ChTGRb6bEKFjI9eAxODB8i6iWdW7tueX8MmoQ4A51ELlg018oRL7BsRBZCTfeBBNlFKahwhGTfkDkVrsI/MaDZkJV6+i20EGQ1gm6qHiE2/AxuhGB6lJB2kGkOl+x/INKnSlgqqBU2AE0AmMCZNHRA810FK0j3gB4J9iTgINdaYpzFwDCNOmo5TfGjhF7SE3JQQ2lIu5AnFuY+7SNcrSYyzIcyqLUgOE0VhoS1UhxO7xz/W67OtaEqrE0/UbmbI6sbq4LgcgFLuPNXMpINqK1rN/Z99RwjBXgh27BVSHCLq6DTYPpL4rl4/aWlBU6YMviXLfPcFPIEiE/fIAaEwH+BBU47mAjgoiQW70YRaKMDeUedo2GvIrEkPUroL5jUrJscG2SL8mJxVLQcrcA6EQuPy3EGNkzmwWaGVy6pGXcMvsDjYKGkDU0Kf1gahxIlDAUAEb9d1XEMoya4ldB3Z8nIGugsdR9BlEyQV0FUDKYnSAad7fRrioqFRXyGbR3Zg/IAmzLPW9igsOhFfPjP2BQUgTaNCkXjDacTecMjwqQpoxtWQxo0aUgAxNWhuZNl5n0lj6me9hZefGEVCiFSlwurr7iClmr36BItNcjbh5+nBlZ73E063ClxaTfJnWkrBDhc5/Qmf3z5RnC0nwi0d+jEJmoT24gm9NbdvZRITFkeA1SomiUfVDYS1AmtNdfuhrhe5VLqKVl1uLqQNhYerowZ2cAKvGB5Ro59Mudpiuo1e2yg1HDhqB7dKu8Wec1cJopao8EfwmCskIfIYAXEK+qHhsY14oQkpjfTQBFMPNqNFliHGcLHQC6ABhHcgY0R4u799juaDO1q60Lq7FmkK8h1SOkgsdNiQeKQkpGeEeWLkPHkNOzNpdfQPVHFa0X+OCVDREz/GtJBembrPSK+2tJwo26jell9at7z+AnT/4bt7PyBiDoAEfe15/BZWgewVtQ5bYeVu5OGUKRC3yUbF5KHDoIKkpRtLgJBD7UMkVNhA1DIbZBeEpTKmh6g78B+Xh8QzjHP0p423JBNAVz4Xp5FiLsXT0q9AJ/kVifEpuGKJCxUSxQw3i46jMFFs4BBcB4QBC5dbSzW11qDW4bQKhkuqMBcpHgg1SmNDu/WJN2wpT+n0L3ElsmtsLzyBTNDqVDhltVGtx1VKF3Y3mhtc3Cqdu5B4Ur4b5paBicJBr7V/q/wIUrx7o8iwLCNjqmWO46GXCNsggCPkBKZ4o0fTHaqQuS++hfkwtGwGCWulkWejYjEcACLwRzSdVp9AyKB6QYMgVmDGiVwg/l1bJE9ybUizmCeE3F6rSAAs6T7kNBpp2x6CPAiW0ZMMbyUjES7uj/+AzBLoC5zQQ/NIoA+jE9Nhk7DqsoR0DXYUT5v48G0exJLz1GNo7inijw3r0rWacQ7lz2Qpp00CwQOIP4cxUdQBqiHdji7L2GZCPJTycNF0WuKJWsCiv2m7vleOpbYBnhQkDWjDS4gVNSVSBScXisvzE1/MH5hAujerVe4AAzhpLCp6gIh0Z7MgC0boGGup9J5Ry+1oiTtvV1HjQHXBmYZifWhNF1mBLe4L2YQFseWZB06KcO6kwk1n0Ra0QhESCqpqc2idqdEL6WKifw4tq7XP2TtmlV7WniUYQd/0nbR0RCMjUSxV3NKDdKQwNguELgWyR3Q34HCIGdDuLZYiEoYAqFXaBMyh+LlFaPQktS+ASk8LdELu0Iu1NqMQE9EKlK5pFbXz9OiZW/jat6IL5+VNKLLBEPuNkWeSoZmAY/c4J1oPkgmoArxYPXwETTVCxT5waeyfy5pfNQNMRP6VVvotBNzPD2UPmBpOG/haKv3oQ7cWSgUXtWiDVCl6rEFDz2U0ywglNW1nBaA1U9kUFwzupeAisFa1gUJ1Mmw8LDJUC/3wM1UFCGX5QFwpzXg99UHo0eT6X+6ogFlW+tyhYnyhDGh3AC9d2++auSfDtFFYXloVzkYdeq2b3EvJgsjlmhNeXa0biEKjUbjNK7gDnp7Cvv4WdrQWxlyWOI9hgizAKyVItMZDdIccQptLu4yC2SPah5yD9OAxuRKawFOoCC26we9YIDFxRqoWLTLOdHo4FCRcCvWBQHxAC8GYP4QtYnIJjDdRArXIJ0xDu0YUEfrlnIPZ3oNSQtL0QqIBf8US4SjWLGA53TQmt6KVjlAvW65jQFMzKB8QwAJwCEbU1rcU7kAmBSdzsjBSk1TdhSAm0uEt1TPqQELJNraU9ETK7EQDe2lK08ZG/5BUxnW79K3yp4wiwGWEkUGfXGk4rVBtTDEY0+TQa9aWRvVzM6Qqy64tXPGdtoScybFAH6H01KRXAP1nuPG2yIwnASf0EYSLpBEoXY2eRhtnKh6bKWiXzYJdKIBUYBaei9MyUTg0D5LGZ9aq3IQguh6tiM3lZXpRufRe2bLjYKmTroSo5RoWlvKHzGVTyBaefz34wfZqwaqq2eYzAocel7DPZ+IzdnTwHGSJot2IO8O+NGEtJkDrYs+Ot9LrHFopVApqGqax3kC8C92+mL56DexDLzEUYooXpXzJdSLh/jw1oEfsGRlXlZBDnesRwn8c1yHNoDH3ei1CjuhT8BphA12ETgFLauHnuhIYASn4UXsu4bWxRJjFTP5GxazNS687rNlehekP8lixdyMT8iGDpGahv1cenR6BtboK3wu57S3/YZOa9lRJJwg5MxqjbtBGCJCIG4GdRg5ivnyqYVXR2GchhinzhvmspaA6BuDAfdLDJ2KEk+VSL6+Iul2WDdUM5zC/pUTdLTCuz8UBZ0lZQo+WCTystEKaE/ljLlVtRR6tgYDhMIwWvKlCgiltG2/XUq6Fpy9NG5cVTpCQ4LoXoopCbNNhtno0OA0ZTDAqUmYv/9BMmhD5UYOk3gYBwqwbcUYxvKR3it3UjwCid+iFTpvAiJ1LtP0wDoh68qQUnkjO8i6MHplKEWgdZQsjYq4Bk1crzroZqlalLXPUaHoiq9XaiNwG6BGglPFA09I5WFfpOop904xAJtobczqqqvPk7pbWgybjY9CxHsjiAhT1bXHMgnSFW6SgeAv6YyQXOoH5erC1akG+ktz6FhCky6ibyWggoYl50n6zdfp7zYXI0U5uEHJM/wJK4qCpPZtWRul9CBANSSNsVIAEfPiT5cVhI1bGt4vbc6QZylv5Wlo1+wRchLsuHsG0NemAHCAProKntLpKBc92IX+AbmOp0F9Yu/r8NIgGJR1TRhAcsKU2AUEKIoGpmag78kkvoFEAtpKpDo8DatpsSIjBZ+W1eQxIo5iZKsi8dl6wCHc62gHWmYg1s7gM2YUQxd4C5oDG24Jrb2o5CqW1WeoDFgIagXQWwSWAntrlxeEWxb+1ESbdBjVHYTFpxlGenelBnBLXo89Vb/hL0AsPTMFdeVcIE/qKBcWGF7GKnMtIRosVoYiTbWrfou1hCUiDyoP031JfIo97FXR6LQgYfpeyaw5aZEA8biLbVExaGURe7KmNJugzGgBOjB48ItSBufJgDu9kCiBNgwZwdFWj1dDQWYDl85C8wmYAgrA5fZ1qu0HCtC3wAMmUtWULviStDuGBEETLO5qIC0AqumeGmwjgGTLsHd8P9YhriBV1JOeOpxMOowOA6Lz6PRnbvkFtp06GwHn4lc6WJ2JMEQ2pAhpFR3wwRFteMNpR8IGpLAcwavZCAS31BMAfBIE9cImBKEMYyLF3MiBCvKhiKO1KCACzWiBAO4Ao8nNU4VsNTmK95rxstAZVvl10ROzVfq+2M+yt59MaMYu5gR8KKS8E/F4kX+slVaYSqzIduoJauC9yqPml1YYsIyXFQJojqpGmk79G4autcQYTD0mpkGXcuDqUGw3AGzuRk45MUuKoEW3764DKmDiaxxZIdWx3xJZi05k6pbpNahWSCOo9W65JD2ldXkut3+IS1IrTF69qTQmLtIYB2moyWfarBTet5u9x8TTwJ9oQC0GRxBO1iY5jhVvXs4hby1eJG938AnXjnJGETNBKeoRM7aqNPXg9KTVuN+RV0QLrFAfTzusX3hydL4qxaMlU/ggTtkoNiGuY7viNW0KrjPNWbtwny3QiBEPZ+ivAg5pba6C5ig4Ipj61j0yFansJzDKUIFLm9RXj7tHf7OZHhA0lzUtS0tq3RhpWrYbA0ws5gdWbCHeIImrtCZ8ySg+SdOrxom0Xl6GIxfSoq/YdjLjbo4vLt0lOH1a53kqFyMPzuRBKUI0vXhxL3lcLmCg2IQN9rsNPiSpvY5zyDslILkGDnnBrGwVRsACsIqGG5IjFyN+R380G+OvEgZbttKEcZxT9c8k7D2mqXQ9WnjUKELuIrhQletK0tiehS7VhOmk9t8WQUWswpBl61ImdpkM5KAnE6lstwtzJKiL8SmYcFIzWgAFeVBMtuXMEswewyYyFnYpPUPdL5YOvTcaNOyF1vXoVK46QIl4T1mZWcYNXUUoUjHNpya9wcaMG5RTems24J8oMQ6cjoiETc0wRuBhxMTLYs9xGEJ5BJya0SNaJlS0PjyJVWeNJKVw1BRUICsDXmAKQUJf3twADcU1SOapWqoWWJVR3Vu/r15rfeOuDVAXqCdnHLWLBsVsU0GnzWItzyLiu9fqX9UKfWYN/XT4I+xYYQNGuJPdAQWYdndPSFR08nqnwDztBPa0JS/prt74QDSluGMwc6lbblr01rSemjwIQkqIodKlWox4bajm76zwmuuVNXbtCQ9KCqFHKEOQAVQ5hqp3uGSh8ETtTST2/xSewSedkosz4GqmAlYyLTPBHZhg1RA07AG4j3LXh8fY1ss5g7awDVWnhdteHKw0UPVE7Q1qHEMFlIrLlF4s4YwEjPaPByuECwoQtPGhMOk0H3BAjt428EW7ERumHqPCwb+EPF03HazkTXj3uOUuVRkFvgN6wVkkIe22LaAELyaF9GntystSKXkClQU4QIzIAiRu1ZX1dpBZV6R7cFJdr5YcIL37ykn04tRh1lMFkI3S4CwOIaPiq+PigLRCSoqndM5/6wOTQHIt43IvwbKiPo4MiWsahg7QPr437oerFs4Ig8ECflKjO1ZIBfOEbpYRBR87zltzR8FoO9I+AVXtoXIQv3DTXt4DXngicWsWrxYGFpikzF4puJC3yHA1D0K+IkfY9YsesLi3zcGfigzjXFjptGySszC+aljIRC4F7OszIWys3DVD+eGiVlbEY5loHUSrOUuenVv8O0R0PNYCoaTkwExRuOqSNW5rA2HePLVuFA/NH+jnrIFd+lI4p2O/sSsLsIv+Zsc6EOlHyOyaFOLvpHVx5Z169DbqwqqHVPouCmhXbq5UpYX9YeI3U38GOOHtwuvod79cqMi8YnKOzKYQs6pxIHglpSKwQFyr9AJdCBqb1KNmzoDVYBJODEaOOivSyctJZ6KRtKYbHw1NPBw4CMd+WqHbkEK33W/fWmaQFNQ8d/iiL7ld/82nIjB7XUVwd8BsY+1/WXXv1paLpmAxB44dBE2J3/dIym3o7JTfkJXW0aiNy3h51vTmC5/xAoQx8QvDwRszazEA/RP9rL8OO5Pc7V0CvES74F0bXyghlC3eRjKY1Jh26irQUD5r9Z12TalcXYT5a014x6hPtjfBx30k1iSDSi2rs8GWNWmGaGWTmVtg9UoszLto9N6915kBlagG765QI6IcXsWcVEKm95t+75zAncs4gTx1ceOsZ+uUN2CPCKpbALWm1V2AThja5IwwmlWI6DaH9O0SzvE9WTLR0w7x0OrjP+WvdJKL+gPGJgypl5COx16OTMI9vs3xjHPB6cIAOF4jNprYd8LvU/dYOhja0vKhcmpc7NJ3dPOSARnetUZcex45XWB6jw3iCxNAYwEqvpRYJoM71AasvoSoFgIMueHnEsawm0t3xEbS+6Nljet9WMChPEEBtQtl0slREj7JNCfYskvz7+e1NujGecvIGjNRDyZFfFbv2BiBC+aCaBYshgP1ajSRahfyjYjvIYW0vnQpV42TB//bOQ8ejyhwPtSHeh4tvMI8iBSu0dyPsua368R1SA2Yl2uOT5kWnioCC4+Rj1WJew10zbElTiXys7ltIQevBn1UyRkeCdEYqvCOjpmMJo3dtE4SshSjKXgchaOur8/H9nawT/4yqtVZyxYipqoomFuXKtHMHHa1VberUUC+OMuSuIpVDDSM88307wTKUSXuhgMrbjYHnvm3A3d4ysgAQBiWACNndHZ9p0LqwBfPKvci97PrWJiBspCMoRIhkbb6horRIhHlGiBIjlAkVvQp4FJFW41tLov+Jpw6n+0UQvpPaYM93MGU+95wm4J3wD16WrOkQEZCEjIRFAARQiMcDbPuizd7JVerjE4JXp/tMx1wBk/TOfcdlz8ZXbIf2N3WA3vEIDLu2k7+DOPPeo7wikXPR/qD8cZgRUKT3xfjvrM3PLc5AOaH3Fi471Z9lgrK//n/D0Ekc06GrnhvNKnjnuneQd+uorLxKxoPRdt8JbgdeavOLBP8RiVh1F7rs8lmoETnPZVVn1DUnPUwbNpgKkWrqFsJ1qOY32Ptzj/buIbfU8qMBABsdJxvz0GpqDdVDQjlTh7O9uTIZvAgCSv2/gMl5Sy9vwFFH0NSTVx3/HaYquJOGZNIZ7yT7ra0NulCmmRExSh39QOM2nf6ih6g+VHCFIgEF678nDbfC3l3Pw2DqgCFtdN8JqpIdBL6V+1UJKVT1zmC376A3ZMugzpuUab1GR4eQj9V2CJXL0VTUMb29ttOmwu20uk4ioGmAlxta+J5T8HogtE7tHDRc1361p57D2GCUR2YdKWp0JeAvkGaokXIEToa8ko5l6lUQ2ChHMCBK773zsV7bIWgSakqLfxBQwL2e6QxdnJke3konTFGw4RE7uhqwMZs8sQD/OmTTn7XiR6ihEaFH/8R2xBpdxXuBY01GRgtN78hPxQPalMIt2jo3jPAWQb8lLgqv0sWEbGmdJOlIzQbYrKOlAQUkK1wVMuX9jtNoGbloSxe0PZcpNpIw3t41WKRlUDTVO0LbJsbSEeGxtQwNrPY2JoPWrrRHQn0LShjyd75PayyUYx0wI4XYdfhadnk2bXmYk07SL3egomhRkADJcEtceDd/CDKTQ5MtUVj2feBAtDIo4YipIHpaRdMahyuEhEfJcHBDncUIbxEOV1xJR9N2iHZfppAdraOTd0ecLb/TpX114CEfYKRkLSqCmbgtnTdM1DlSXAaGgWQcYtThhncECx2cjg6YxEn9proWBa2zt95NUGlFUZQWqsDMVr+zYnwItw4rYESKfilJSyJFKJi1Po/l8foFFP9zcIkR5Rzi+zUJbTygQPU7jAgY+BsIybyBnVNKzL/fgfGdhn9LYzG/42pLv8MRUGymE8RJx2b6JObwCVJWdhHnBmdRzcCExUeQQ9soFAVKER5q+o2ZBvfubs6/I2LgTtdRK+3mDRl2+EJlfYp2K7UBb0yl46O6fruyQmtUgJ5GcSCqE91ftEnwNH2EY3V2rEYyTZcIRyMoy5R0wIXe13lhHXDRfptkdAwUBORHbTi+zTXKOzsi/zuzjgXDrggWSCzk02WRKKakEVJYRyub+oVQvf+O2/kakTUR6fOdV5LCaaeqTnU2nkqZmMJhsfd6IrZ3Yq6KVmmqii6mqcW5Z6c3lE3wLWFVhgQj6pzupsBoePRVydobLNr6Qe6jFE9EA2CNTVtWGCbqIPSgX8Jzb63bpFjeL5ckiJYGL3DBY0RqQKsoCYF2MYe08p7+LcJpZ0xHf4AT6NicJkkj/TrZqsM+ViJCf2uvdWK2qUTtWWDhFJ4nTmXZYtThQJ1RQsC9X84xLRFpbX7LhmCCrphVCrB72Wht2+hUSQrfAjpq5XsbVXSWjm1utJNrOhL/+yQp94bPUH/cpVCZOhNoT6r0WX6uGFitDspl/YLdOyc05vXufHcXUNt7AOY5y0rf+6R8ZgT5u4bkX+YpoUHYjn9LBu/u54KQiHyUWNKBJx2KARS6DunoN2Sg228YgCpftHqF18JxCtWWlrQ1lm+iCK34dm9wRCCnSJ9azfpNHsLov+PFtqI2GuitIaVLvrQ65O17E9+npXpyGpmEznvpBIunXk04vO6Xye3FsCnIylSdjNDyLxS0+yt8/X5U0OaQo0Xf8eWktcKIP9Aemh6Y32iw3zoKzCU961BiVzwoBtzz8F17k+OtzUenTYCuhay+/+uTXP+D7+7/+sG/3QiJgkUBKv8TwRk0BHKlwH4AAAGFaUNDUElDQyBwcm9maWxlAAB4nH2RPUjDQBzFX1OlohUHO6h0yFDFwYKoiKNUsQgWSluhVQeTSz+EJg1Jiouj4Fpw8GOx6uDirKuDqyAIfoC4uTkpukiJ/0sKLWI8OO7Hu3uPu3eAUC8z1ewYB1TNMlLxmJjNrYiBV/RgEEGEMSoxU0+kFzLwHF/38PH1LsqzvM/9OXqVvMkAn0g8y3TDIl4nnt60dM77xCFWkhTic+Ixgy5I/Mh12eU3zkWHBZ4ZMjKpOeIQsVhsY7mNWclQiaeII4qqUb6QdVnhvMVZLVdZ8578hcG8tpzmOs0w4lhEAkmIkFHFBsqwEKVVI8VEivZjHv4hx58kl0yuDTByzKMCFZLjB/+D392ahckJNykYAzpfbPtjGAjsAo2abX8f23bjBPA/A1day1+pAzOfpNdaWuQI6NsGLq5bmrwHXO4AA0+6ZEiO5KcpFArA+xl9Uw7ovwW6V93emvs4fQAy1NXSDXBwCIwUKXvN491d7b39e6bZ3w+usXK/165fKAAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAAd0SU1FB+ULGQwfIsG8v4sAABM7SURBVGje7Vp7sF1Vff7W2u/XOefee3ITk0AY29GIPCqUTrGiAyGDCkiDHcTyHqKO4RGwEAtIZIgMEMChsSUdcFDe0qKjHRxJRCxMdUZBNGKxgsPDkMDNvefc89hnv9Zea/WP3N/y3jaRaqt0WtfMnbkz9+691+O3vt/3fb8f8P9ssP394cMf/jAAwPM8AEBVVbAsC0opcM7RaDQAAGmaIkkSVFUFKSU457AsC0IINJtN9Pt9tNttcM4xGo2glEKj0UCe59BaoyxLhGGIPM8RhiGKosDExARGoxGklIiiyHwzyzJEUYTRaIQoipBlGeI4RhzHSNMUlmXBtm1orXHVVVf91xZ8xhlnIAzDPxJCnGnb9jGWZR00GAws3/eR5zls2wbnHEEQQCkFpRQcx4GUEkmSYDQawXVdcM6hlIKUEq7roigKMMYQRRHyPAdjDHEcY3Z2Fr7vI4oidLtdxHEM13UhhMBwOITrugiCAFVVwXEchGGIqqoQxzF6vR7GxsYgpURd1+CcyyiKXnzhhReeiKLoHsdxnrnuuuv2veBjjz0WK1euXDIajf5Oa72GMcaklGbXfN/HYDCA4zjwfR9SSgghEEWROekwDCGlBABzElprtFot9Pt9uK6LOI4xMzODKIpQVRV830cQBBBCoCxLKKXgui4AIAxD2LaNTqcD13WRJAm01vB9H2VZIk1TOI6DwWCAFStWoNfrwXVdpGkKpZRuNBr/6Hnehbt3757esmXLLxd87rnngjH2diHEdtd1l0opUZYlHMeB1hp1XcOyLLPTjDEwxkyoMcZQ1/WC3Y7jGFVVYTQaIY5jAIDWGkEQIE1TlGVp3qmUQhAEC77ZaDRQFAW01uCcQ2sNxhiklAjDEMPhEJxz2LaNsixNVNHvvu9Daw0p5U7O+Wrbtn/2qU99Cvbc6SyxLGu753lL6aWO45iTqqoKSinUdQ3GGLTWUErBsixIKc3k0jQF5xyu66LX60FrDdd1F9xtpZSJhPHxcXOHKZroLsZxjOFwCABwXReMMdi2jaqqIIQw/++6LlqtFsqyRJIk6PV6CMMQjDE4joN+v39AURTbR6PRHwOYts477zxwzu+ybftP6CV0L5VS5iN0QvNPJY5jBEEAy7KQZRlarZY5lVarZSbr+z6UUijLElpr2LZt3k+RUJYlAKDRaJgoAYDx8XETMY7jwLIshGGIZrOJ4XCIJEkwOzsLAAYUy7JEXdcmErTWTaXU8u9973tfZmefffbhZVn+SGsNx3HAGDNhSycdhiFc1y2klOaO0t8YY+akfd9HmqbQWsPzPHieB8dxIISA1tqgflVVZuGe54HeS9hAG6WUAmMMaZrCtm0IIUyENRoN9Pt9NBoNCCHg+74fBAH6/T7CMAQACCHQ6/UwPj6ONE2167oH21VVnUEToUnRTtq2bRajlLpTa30FpZMoijAYDDAxMQG687RJjDFwztHpdDA5OWlSBd3DwWBgNoxQu91uY3Z2Fs1mE91uFwcddBAAQCmFXq+HoigAAEmSoNPpGECLogi9Xu+Wfr+/ttfrmQ2lyFRKIU1TuK7LtNZn2Jzzd1qWZSYjhEAYhgTzkFKiKAqUZblOaz2zZMmST3/2s5/9X0EiNm/eDCHEDVrrtZQqkyQxIU3py7ZtBEEAxtg7uVJqmVIKo9EIeZ7D930AgG3bqOsadV3DcRx4noc4jjemafrJD33oQ2/4Yu+8805wzj8tpfwkARQdEPED3/dR1zVc10WWZWCMLeNKKV5VFTzPM+hWFAWEEBBCIAgCADDsaTQaXR8Ewfp3vetdb9hit23bhpmZmQ1a62uqqkIQBAbUut0ufN9HGIYIggDj4+NwXRdRFIExFlhHHXXUpQCatm2DMWbymOM4uxzHaQghAGB+SmJBEJywaNGi15YuXfqD55577ne62Ouvvx579uy5WCl1S5qmEELAtm2MRiOTplzXfYVz3pifGYQQ4Jz3OeVIYjqe58GyLAwGg5OGw+FLZVkiz3ODonPgwwDctmLFinPXrl37O1vspZdeCinlR7XWt87MzBgmNwdKlJt/PhgM1gwGAwghUNe14eRlWYIXRWF4L6HzXBrZ6XnecUqpnZR6CJ1d14VlWVxK+XkAf7lu3brf+mLXrl0LrfW5ZVlulVKysbExtFotA7RBEMBxnBcZY8dKKV+lzEPio9fr7V0wPcA5R5qmC4h9p9N5sd1ur2q3268GQYBerwchBPI8R1mWyLLMAvBFpdSpF1100W9tsRs3boRt26d7nncHY4wTME1NTcFxHLRaLXS73Z27du1a9fzzz79SFAWklOj3+5iZmUFZlkb08Pm0jZJ9VVWYmprC17/+dQghns/z/Pg8z6c55wtUUF3XEEI4dV0/0Ov1TvxtLHrjxo0AsKbdbt/tuq7t+z5mZmaQZRna7TaSJAFj7DUAqw455JAX77rrLnDOEccxLMsyyo4oMCf4dl0XnuchSRI0Gg2Mj48DAG6//XZorZ9ljK32PK9LAGbbNlqtFgGcmyTJl/v9/vGXXHLJ/9hiL7jgAoRh+H7O+YNSSqff76Oua/i+j6IoUBQFlFLTnPNVzWbzedrw+fo8CAKD2gDASYQT0RBCoCgKjEYj8+EvfOELALADwAlFUQyCIMB8VJ8DD49z/tW6rt/zwQ9+8L+92MsvvxyWZR3f6XQeStPUkVKab0ZRRDm2m2XZ6omJiWevvvpq8yyh8hyPxmAwQL/fR7fbBSfaRxMnOtdsNhdM4K677kKe508BeF+WZWme5yiKwuhhy7LgOE6ktX7Y87yj16xZ8xsvdsOGDWg2m+8Ow/BrjLHA930wxhCGodHLYRj2y7J872g02nHBBRcsFPlzcrXVahkJS7SZF0UBz/PMHSZAIHk4fzz44IPwPO+7QRCcXNd1TuCQJAmyLCMJGI+Pj39j2bJlR/4m6H3xxRej1+v9aafTeRhAaFmWiSQpJYbDIaSUqRDi/ZOTk0/ui+bGcYyxsTEopUAHE4bhXvlq2zayLINlWSZJW5aF3bt375fSZVn2z7Zt/3kQBCW5FUTrAGAwGDQBbLMs67Dzzjvv1+LGtm0f0Ww2vzExMZEkSQI6kMWLF5N8zF944YUPHHPMMd+dA7T/NCic67pGu92G53no9/vwPA88yzLUdQ2ttbnYJPb3N+677z7Ytr1da/0Xg8GgInlHKSsMQ2itJwaDwaNpmr5t/fr1r7vYdevWYdeuXYdqrbczxlr9fh9pmhqtnKYpPM8rXNdds2zZsm+vXr16v+9yHMf8CCHgui6azeZe9ySKIsOXSdpprQ1K/yryXlXVw3Vdn6G1rquqMuKd6F4QBIsmJycfzfP8D4888sj9vuu4445DkiQrq6r6plJqYn7qI2NwdnZWDAaD04bD4bZrr732V1uxjKHRaMDzPHOfScry0WhkXArGGKkK2Lb9uqdy9913I47jryRJ8vjExISxeEjIz4nzpZzzxw4//PAV+wrBG2+8EYceeugfSCm/FcfxYkqPpIDIig3DcLvneQ//RxdyX2M4HGI4HJr50Fxc1917wiSm51ssU1NTr/vik046iVVV9Tkp5arBYADLsozhR8R9zn08QCn12K5du5bPD+8NGzZg586dKxhj38rzfCnNodvtgkhOHMfkSZ/IOb95f/d2/iBDgjz1ZrNpbCgOgGgilFLGeiGrdH/j/PPPxwEHHHBzGIbryG5NkgQTExML9DTl7ImJiTf7vv8tAIuTJMGSJUtQVdVSKeVjnPMVURQZczAMQyRJAsdxYNs20jQl5vSJqqquO/HEE183pEkDk12cZdleq4gcQN/3zS7Qovc3brvtNvzkJz+5LsuyTxCTUUoZtKdTJtuIJKZlWW+RUj564YUXHus4jtXtdh9zHOfNWmtUVYUkScxmzc7OGrOvKAosWrQIeZ5DCHHlwQcfXARBsOmhhx7a5/wsyzLP0JVtNpt7T5h0Li12vju5r3H77bfj2WefvVoIcaXneRgMBkjTdIF8ZIy9Ot+YGw6HxnRvtVqHaK23F0XxzWaz+VY6Ed/3jY89x6ZeJT+t3W5DKWU2Q0p57RFHHHH5Pffcs8850vzzPEe/3zfm3+zs7F61ZFmW+Wk0GkiSxJjn88dnPvMZPPXUU5fVdX0tpSCCf601RqMRwjB8xvO8Q2zbvtZ1XQyHQ4RhCMuyTCQopd6hlDq01+uBMIRIj23bKIriSs754UEQ/LSqKmM+UAYJwxDT09M3vvzyyxcfdthh+0xLZNAnSWKMwmazCU4Tng82FIL7yJMXpWl6E+Vtx3EMIMylkJ8qpY7fsmVLN4qiT2utNxMe2LaNPM+NrhZCIEkSzMzMYGZmBgDg+z6EEJueeeaZ6++4447pqampVUmSPD8cDtHr9Qz7s20bzWaTAbj1lFNO+ch8Hk062LIsUlIQQoBsLD7HS40spNLG/JA+88wzAeCjjLG/IRoaRRGI9s1p6J+XZXn8008/vQcAbrrpJvz4xz/+ayHE56qqQp7nRloSoBF3J5dUCHHz+Pj4xkceeQS7d+9GFEWvDofD44MgeImiqCxLc0WKomCMsa22bZ+zefPmBXdYCIEsy0xJZ3x8HK+99tovDQDbtpEkCTjnoAkCwFlnnQUhxDn9fv+2TqfDyMUcjUYoyxLdbhdBELzEOT9ux44dux9//HHz4UcffVS3Wq31tm3fTkBIpjqZ9PMqF3+rtd4wn1Rs3rwZnPNflGV5nJTyFapiUPqcixprOBx+3nGc0y+77DKTh4lskBM7GAz2WrWnnXbaywAOnB/aUkp0u912q9XqRFF0mpTyfiGERZYn1X3mKOQr/X7/PVNTUy888cQT+wSRj3/84xzAFwGcRf7S3LPI8xxZln1+cnLyo5s2bdL7q1W7rvuW5cuXP16W5RKqPXU6HbRaLTL6xfT09GnNZvOrY2NjywaDwStES4MgQBAEyPP8F5w8XDrZMAznV+VOEULcW1WVFcexKVdSyRTAFGNsled5+10sAGzdulX1er3zOOdfomxApiFj7O7hcPix/S0WAB544AGsXLnyuSRJjvd9f4Zzjm63CymlqUdXVeW86U1v+lKr1Xpft9tdQED6/T4455jz7ziBhdHEc0Xo9wdB8A9KKYfoGTkdc8AwHQTBqtFo9Ny99977uuzngQcekEmSnG1Z1s2e5+2RUr4WhuH1Wuvz77//fvV6z19xxRXodrv/6rru6rquu81m04id4XCIsiwhhPCyLPuKbdurwjA09S3LsjA7O7u3VrVmzZqXPc87kEg2wX5ZlnUQBDa1O5AJNlfjnU3T9Ljp6ekfbdu27dfSu+vXr8eiRYusOUCRt9xyy6/1/Kmnnorly5cfxTl/tN1uNwCg0+mYNJrnOVqtVq21tqlrgPRBWZa/YOecc87LZVkeSE6CEAKe55kcSxvgOA6llYHjOKs559/funXrG1J5uOSSSxAEwZ9FUfTIcDiMHccxxTyl1IKuhCiKzGENBoOXuJSyIElHCEwOPjEWuvyWZY1Go9GJY2Njb9hiAeDWW29FkiTfKYriA+Pj4zkRFsdxMD4+bkhOGIYYDAYGo/I8H3Ip5c/mTGz4vg/P80yiJrNszvYpZmdnT46i6F9uuOGGN7yYduWVV6LRaHybc77G87ySkLiqKmRZZqoNBFZzRuW/2VLKbbZtn0z6k8oqcxQPjuNQpeEbruu+TSn1tgsvvNDwbmoZCoLAuCTUtUN2ahzHEEIgTVO0223iw8jzHEmSLGB2nueRu2FCdPHixajrGnmeI45j40QCQL/fx2g02r5o0aKT9+zZAymlqUlTRUIIQR71dnb66aePaa1fCoKgwTnHcDiE53l7yxKcGwUzr8hmitP0MvK0qA5LqYsIPxWpyVFpNpuQUmJ2dtYIfcYYJiYmIIQw5lsQBAvMiSRJTIGbGCFZUpQ9yLem+TcaDWJ03TiOD7KOOOKIQmtdeJ73XkJqys1xHEMpZXopqMuGJCBjjGo6mF+Uo/RF6Eh1Zur4md9pkGUZ8jw3gEn/S2mQ2pqklKYtiTaJFk1Ki3g9UWRyU+ds3r/q9XrfsXbs2IGjjz76+3mev72u64OphYg4LtVlhBBmYQRyrusuMPvKssTY2JjZeWpkI63t+/6C9gdqNaK7Nr9ni9IhbRB135ETQptCfR3NZpMICBqNBqqqMk1to9HovkajcdWmTZtgAcDTTz+tjznmmK9prZdprd9BO6eUMomb+qioMYx0LG3M/L4P6vFoNpsmtOebAyT1XNdFWZbmfQSWc0IClG4mJyeNIKA+kizLDPenxhu6Sp1OB1EU0XX4+7quP3bNNdcoADCS6Mknn5Q33XTTP/3whz/8AWPsrXmeLyUgoo4A+pjneYakEDEvisKgJDkOdD0cxzGtT1ShpLxJOZI6fajCQJFD/zO/7XB+l1Bd14iiyLQ4Et8XQny/0Wh8hDF266ZNm9R+ey1POOEERFHEHMdZGUXRu23bPrAsS5sMAlooSUMCJmolou4cCjlyQYhDEx2kSoXv+wbwqNpH4Ut9V5xz43p0u12z0QRutGDHcWrG2EtJkjwB4LktW7bonTt34vfj9+P/8Ph32heW2rJU2rcAAAAASUVORK5CYII=
+image: data:image/png;base64,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
 description: Air-gapped email server working on an integration instance.
 detaileddescription: |-
   ### How to configure an instance.
@@ -82,6 +82,25 @@ configuration:
   type: 4
   required: false
   additionalinfo: The password is randomly generated by default
+- display: Enable send-mail command
+  name: enableSendMailCommand
+  defaultvalue: "false"
+  type: 8
+  required: false
+- display: Default sender address
+  name: senderAddress
+  defaultvalue: Cortex XSOAR <noreply@demisto.com>
+  type: 0
+  required: false
+- display: Fully Qualified Domain Name (FQDN) - used in EHLO
+  name: fqdnEHLO
+  type: 0
+  required: false
+- display: SMTP username
+  displaypassword: SMTP password
+  name: credentialsSMTP
+  type: 9
+  required: false
 script:
   script: |-
     import os
@@ -90,13 +109,25 @@ script:
     import select
     import string
     import random
+    import base64
+    import re
     import ssl
     import subprocess
     import traceback
     import ipaddress
     import netifaces
+    import smtplib
+    import mimetypes
+    import email.message
+    import email.encoders
+    from email.mime.text import MIMEText
+    from email.mime.audio import MIMEAudio
+    from email.mime.base import MIMEBase
+    from email.mime.image import MIMEImage
+    from email.mime.multipart import MIMEMultipart
     from socketserver import BaseServer, BaseRequestHandler, ThreadingTCPServer
     from multiprocessing import Process
+    from itertools import zip_longest
     from typing import Tuple, List, Dict, Any
 
 
@@ -150,15 +181,14 @@ script:
         :param params: The integration parameters
         :return: True - restart is required.
         """
-        x = demisto.getIntegrationContext()
-        if x:
+        if x := demisto.getIntegrationContext():
             for k in ('deafultAdminPassword', 'mailboxPassword'):
                 if x.get(k, '') != params.get(k, ''):
                     return True
         return False
 
 
-    def start_services(params: Dict[str, Any], restart: bool = False):
+    def start_services(params: Dict[str, Any], restart: bool = False) -> None:
         """
         Start services
 
@@ -216,7 +246,7 @@ script:
         return alist
 
 
-    def save_server_address(ips: Optional[List[str]], port: Optional[int]):
+    def save_server_address(ips: Optional[List[str]], port: Optional[int]) -> None:
         """
         Save the server addresses to the integration context
 
@@ -310,10 +340,10 @@ script:
         """
         ssl_server_context = create_ssl_server_context()
 
-        def __init__(self, request, client_address, server):
+        def __init__(self, request, client_address, server) -> None:
             BaseRequestHandler.__init__(self, request, client_address, server)
 
-        def forward_tcp_tcp(self, port: int):
+        def forward_tcp_tcp(self, port: int) -> None:
             """
             Port Forwarding: tcp-tcp:port
             """
@@ -338,7 +368,7 @@ script:
             finally:
                 cs.close()
 
-        def forward_ssl_tcp(self, port: int):
+        def forward_ssl_tcp(self, port: int) -> None:
             """
             Port Forwarding: ssl-tcp:port
             """
@@ -380,7 +410,7 @@ script:
             finally:
                 self.request.close()
 
-        def handle(self):
+        def handle(self) -> None:
             r, _, _ = select.select([self.request], [], [], 1)
             if self.request in r:
                 h = self.request.recv(3, socket.MSG_PEEK)
@@ -405,6 +435,330 @@ script:
             self.request.close()
 
 
+    class SMTPClient:
+        def __init__(self,
+                     host: str,
+                     port: int,
+                     fqdn: Optional[str],
+                     username: Optional[str],
+                     password: Optional[str],
+                     ssl_mode: Optional[str]) -> None:
+            """ Initialize a SMTP client instance
+
+            :param host: The SMTP server host name
+            :param port: The port number of the server
+            :param fqdn: The FQDN for the SMTP hello
+            :param username: The user name to login
+            :param password: The password of the user
+            :param ssl_mode: SSL or STARTTLS
+            """
+            self.__host = host
+            self.__port = port
+            self.__ssl_mode = ssl_mode
+
+            fqdn = (fqdn or '').strip() or None
+
+            if not ssl_mode:
+                self.__sess = smtplib.SMTP(host, port, local_hostname=fqdn)
+            elif ssl_mode in ('SSL', 'STARTTLS'):
+                self.__sess = smtplib.SMTP_SSL(host, port, local_hostname=fqdn)
+                self.__sess.ehlo()
+                if ssl_mode == 'STARTTLS':
+                    self.__sess.starttls()
+            else:
+                raise DemistoException(f'Unknown ssl_mode: {ssl_mode}')
+
+            if username:
+                self.__sess.login(username, password or '')
+
+        def send_mail(self, mail_from: str, rcpt_to: List[str], msg: str) -> None:
+            """ Send an email message
+
+            :param mail_from: The sender address
+            :param rcpt_to: List of recipient addresses
+            :param msg: An email message
+            """
+            self.__sess.sendmail(mail_from, rcpt_to, msg)
+
+        def quit(self) -> None:
+            self.__sess.quit()
+
+
+    class MessageBuilder:
+        @staticmethod
+        def __guess_file_type(filename: str) -> Tuple[str, str]:
+            """
+            Return the maintype and subtype guessed based on the extension
+            """
+            ctype, encoding = mimetypes.guess_type(filename)
+            if ctype is None or encoding is not None:
+                # No guess could be made, or the file is encoded (compressed), so
+                # use a generic bag-of-bits type.
+                ctype = 'application/octet-stream'
+            main_type, _, sub_type = ctype.partition('/')
+            return main_type, sub_type
+
+        @staticmethod
+        def __build_attachment_message(file_name: str,
+                                       file_data: Union[str, bytes],
+                                       main_type: str,
+                                       sub_type: str,
+                                       content_id: Optional[str]) -> MIMEBase:
+            """ Create an attachment email entity
+
+            :param file_name: The file name
+            :param file_data: The data of the file
+            :param main_type: The primary content type
+            :param sub_type: The content sub type
+            :param content_id: The content ID to set to Content-ID
+            :return An attachment email entity created.
+            """
+            if main_type == 'text':
+                # UTF-8 is a pretty safe bet
+                if isinstance(file_data, bytes):
+                    file_data = file_data.decode('utf-8', errors='ignore')
+                attachment: MIMEBase = MIMEText(file_data, sub_type, 'utf-8')
+            elif main_type == 'image':
+                attachment = MIMEImage(file_data, sub_type)
+            elif main_type == 'audio':
+                attachment = MIMEAudio(file_data, sub_type)
+            elif main_type == 'message':
+                attachment = MIMEBase(main_type, sub_type)
+                attachment.set_payload(file_data)
+            else:
+                attachment = MIMEBase(main_type, sub_type)
+                attachment.set_payload(file_data)
+                # Encode the payload using Base64
+                email.encoders.encode_base64(attachment)
+
+            # Set the filename parameter
+            if content_id:
+                attachment.add_header('Content-Disposition', 'inline', filename=file_name)
+                attachment.add_header('Content-ID', f'<{content_id}>')
+            else:
+                attachment.add_header('Content-Disposition', 'attachment', filename=file_name)
+            return attachment
+
+        @staticmethod
+        def __build_html_messages(html: str) -> Tuple[str, List[MIMEBase]]:
+            """ Extract all data-url content from within the html and return as separate attachments
+
+                Due to security implications, we support only images here
+                We might not have Beautiful Soup so just do regex search
+
+            :param html: The HTML text
+            :return An html text and images.
+            """
+            def _random_word(length):
+                """
+                Generate a random string of given length
+                """
+                letters = string.ascii_lowercase
+                return ''.join(random.choice(letters) for i in range(length))
+
+            attachments = []
+            clean_body = ''
+            last_index = 0
+            for i, m in enumerate(
+                    re.finditer(r'<img.+?src=\"(data:(image\/.+?);base64,([a-zA-Z0-9+/=\r\n]+?))\"', html, re.I)):
+                main_type, sub_type = m.group(2).split('/', 1)
+                file_name = f'image{i}.{sub_type}'
+                content_id = f'{file_name}{_random_word(8)}.{_random_word(8)}'
+
+                attachment = MessageBuilder.__build_attachment_message(
+                    file_name=file_name,
+                    file_data=base64.b64decode(m.group(3)),
+                    main_type=main_type,
+                    sub_type=sub_type,
+                    content_id=content_id
+                )
+                attachments.append(attachment)
+
+                clean_body += html[last_index:m.start(1)] + 'cid:' + content_id
+                last_index = m.end() - 1
+            clean_body += html[last_index:]
+            return clean_body, attachments
+
+        def __init__(self) -> None:
+            self.__from: Optional[str] = None
+            self.__to: List[str] = []
+            self.__cc: List[str] = []
+            self.__bcc: List[str] = []
+            self.__reply_to: Optional[str] = None
+            self.__body: Optional[str] = None
+            self.__html_body: Optional[str] = None
+            self.__subject: Optional[str] = None
+            self.__headers: List[str] = []
+            self.__attachments: List[MIMEBase] = []
+            self.__template_params: Dict[str, str] = {}
+
+        def set_from(self, address: Optional[str]) -> None:
+            self.__from = address
+
+        def set_to(self, addresses: Optional[List[str]]) -> None:
+            self.__to = addresses or list()
+
+        def set_cc(self, addresses: Optional[List[str]]) -> None:
+            self.__cc = addresses or list()
+
+        def set_bcc(self, addresses: Optional[List[str]]) -> None:
+            self.__bcc = addresses or list()
+
+        def set_reply_to(self, address: Optional[str]) -> None:
+            self.__reply_to = address
+
+        def set_subject(self, subject: Optional[str]) -> None:
+            self.__subject = subject
+
+        def set_body(self, body: Optional[str]) -> None:
+            self.__body = body
+
+        def set_html_body(self, html_body: Optional[str]) -> None:
+            self.__html_body = html_body
+
+        def set_additional_headers(self, headers: Optional[List[str]]) -> None:
+            self.__headers = headers or list()
+
+        def set_template_params(self, template: Optional[Union[str, Dict[str, Dict[str, str]]]]) -> None:
+            """ Set template parameters
+
+            :param template: The template parameters
+            """
+            self.__template_params = {}
+            if not template:
+                return
+
+            if isinstance(template, dict):
+                params = template
+            else:
+                try:
+                    params = json.loads(template)
+                except json.decoder.JSONDecodeError as e:
+                    raise DemistoException(f'Unable to parse templateParams: {str(e)}')
+
+            context = demisto.context()
+            for k, ent in params.items():
+                if value := ent.get('value'):
+                    self.__template_params[k] = value
+                elif key := ent.get('key'):
+                    self.__template_params[k] = demisto.dt(context, key)
+
+        def add_attachment_file_by_entry_id(self, entity_id: str, file_name: Optional[str], content_id: Optional[str]):
+            """ Add an attachment file by an entry ID
+
+            :param entry_id: The entry ID of the file
+            :param file_name: The file name
+            :param content_id: The content ID to set to Content-ID
+            """
+            try:
+                file_res = demisto.getFilePath(entity_id)
+                file_path = file_res['path']
+                file_name = file_name or file_res['name']
+
+                main_type, sub_type = MessageBuilder.__guess_file_type(file_name)
+                with open(file_path, 'r' if main_type == 'text' else 'rb') as f:
+                    file_data = f.read()
+
+                attachment = MessageBuilder.__build_attachment_message(
+                    file_name=file_name,
+                    file_data=file_data,
+                    main_type=main_type,
+                    sub_type=sub_type,
+                    content_id=content_id or '')
+                self.__attachments.append(attachment)
+            except Exception as e:
+                demisto.error(f'Invalid entry {entity_id} with exception: {str(e)}')
+                raise DemistoException(f'Entry {entity_id} is not valid or is not a file entry')
+
+        def add_attachment_file_by_data(self, file_name: str, file_data: Union[str, bytes], content_id: Optional[str]):
+            """ Add an attachment file by a payload
+
+            :param file_name: The file name
+            :param file_data: The payload of the file
+            :param content_id: The content ID to set to Content-ID
+            """
+            main_type, sub_type = MessageBuilder.__guess_file_type(file_name)
+            attachment = MessageBuilder.__build_attachment_message(
+                file_name=file_name,
+                file_data=file_data,
+                main_type=main_type,
+                sub_type=sub_type,
+                content_id=content_id or '')
+            self.__attachments.append(attachment)
+
+        def build(self) -> str:
+            def _new_header(s) -> Optional[email.header.Header]:
+                return email.header.Header(' '.join(s.splitlines()), 'utf-8') if s else None
+
+            # Basic validation - we allow pretty much everything but you have to have at least a recipient
+            # We allow messages without subject and also without body
+            if not self.__to and not self.__cc and not self.__bcc:
+                raise DemistoException('You must have at least one recipient')
+
+            if not self.__from:
+                raise DemistoException('You must have an sender address')
+
+            body = (self.__body or '').format(**self.__template_params)
+            html_body = (self.__html_body or '').format(**self.__template_params)
+            attachments = list(self.__attachments)
+
+            # Let's see what type of message we are talking about
+            if not html_body:
+                # This is a simple text message - we cannot have CIDs here
+                if len(attachments) > 0:
+                    # This is multipart - default is mixed
+                    msg: MIMEBase = MIMEMultipart()
+                    msg.preamble = 'The message is only available on a MIME-aware mail reader.\n'
+                    msg.attach(MIMEText(body, 'plain', 'utf-8'))
+                    for attachment in attachments:
+                        del attachment['Content-ID']
+                        msg.attach(attachment)
+                else:
+                    # Just text, how boring
+                    msg = MIMEText(body, 'plain', 'utf-8')
+            else:
+                html_body, html_attachments = MessageBuilder.__build_html_messages(html_body)
+                attachments.extend(html_attachments)
+                if len(attachments) > 0:
+                    msg = MIMEMultipart()
+                    msg.preamble = 'The message is only available on a MIME-aware mail reader.\n'
+                    if body:
+                        alt = MIMEMultipart('alternative')
+                        alt.attach(MIMEText(body, 'plain', 'utf-8'))
+                        alt.attach(MIMEText(html_body, 'html', 'utf-8'))
+                        msg.attach(alt)
+                    else:
+                        msg.attach(MIMEText(html_body, 'html', 'utf-8'))
+                    for attachment in attachments:
+                        msg.attach(attachment)
+                else:
+                    if body:
+                        msg = MIMEMultipart('alternative')
+                        msg.preamble = 'The message is only available on a MIME-aware mail reader.\n'
+                        msg.attach(MIMEText(body, 'plain', 'utf-8'))
+                        msg.attach(MIMEText(html_body, 'html', 'utf-8'))
+                    else:
+                        msg = MIMEText(html_body, 'html', 'utf-8')
+
+            # Add the relevant headers to the most outer message
+            msg['Subject'] = _new_header(self.__subject or '')
+            msg['From'] = _new_header(self.__from)
+            if self.__reply_to:
+                msg['Reply-To'] = _new_header(self.__reply_to)
+            if self.__to:
+                msg['To'] = _new_header(','.join(self.__to))
+            if self.__cc:
+                msg['CC'] = _new_header(','.join(self.__cc))
+            if self.__bcc:
+                msg['BCC'] = _new_header(','.join(self.__bcc))
+
+            for h in self.__headers:
+                name, value = h.split('=', 1)
+                msg[name] = _new_header(value)
+
+            return msg.as_string()
+
+
     ''' COMMAND FUNCTIONS '''
 
 
@@ -423,8 +777,7 @@ script:
         sinfo = []
 
         x = demisto.getIntegrationContext() or {}
-        addrs = x.get('ServerAddresses')
-        if addrs:
+        if addrs := x.get('ServerAddresses'):
             # Service is running
             sinfo = [{
                 'IP': a['Host'],
@@ -454,8 +807,7 @@ script:
         """
         Get gateway list
         """
-        ifs = get_gateway_interfaces()
-        if ifs:
+        if ifs := get_gateway_interfaces():
             hr = tblToMd('Gateways', ifs)
             return hr, {'TsrainCompact.GW': ifs}, ifs
         else:
@@ -477,6 +829,99 @@ script:
         """
         start_services(params, True)
         return 'The services have been restarted.', {}, {}
+
+
+    def send_mail_command(args, params):
+        """
+        Send an email message
+        """
+        def detect_smtp_ip_port() -> Tuple[str, int]:
+            """ Detect the IP:port of the SMTP server
+
+            :return: The IP and port number.
+            """
+            ips = ['127.0.0.1']
+            if addrs := (demisto.getIntegrationContext() or {}).get('ServerAddresses'):
+                ips.extend([a['Host'] for a in json.loads(addrs) if 'Host' in a])
+            ips.extend([gw['IP'] for gw in get_gateway_interfaces() if 'IP' in gw])
+            for ip in ips:
+                try:
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                        s.settimeout(1)
+                        s.connect((ip, SMTP_PORT))
+                        return ip, SMTP_PORT
+                except Exception:
+                    pass
+            raise DemistoException('Unable to get any SMTP server addresses.')
+
+        if not argToBoolean(params.get('enableSendMailCommand', 'false')):
+            return 'send-mail command is disabled', {}, {}
+
+        if not (mail_from := args.get('from') or params.get('senderAddress')):
+            raise DemistoException('You must have an sender address')
+
+        to = argToList(args.get('to'))
+        cc = argToList(args.get('cc'))
+        bcc = argToList(args.get('bcc'))
+        if not (rcpt_to := to + cc + bcc):
+            raise DemistoException('You must have at least one recipient')
+
+        if not (raw_message := args.get('raw_message')):
+            # Build an email message
+            msg = MessageBuilder()
+            msg.set_from(mail_from)
+            msg.set_to(to)
+            msg.set_cc(cc)
+            msg.set_bcc(bcc)
+            msg.set_subject(args.get('subject'))
+            msg.set_body(args.get('body'))
+            msg.set_html_body(args.get('htmlBody'))
+            msg.set_additional_headers(argToList(args.get('additionalHeader')))
+            msg.set_template_params(args.get('templateParams'))
+
+            # Attachment files
+            for aid, name, cid in zip_longest(
+                    argToList(args.get('attachIDs')),
+                    argToList(args.get('attachNames')),
+                    argToList(args.get('attachCIDs'))):
+                if aid:
+                    msg.add_attachment_file_by_entry_id(aid, name, cid)
+            for aid, name, cid in zip_longest(
+                    argToList(args.get('attach_ids')),
+                    argToList(args.get('attach_names')),
+                    argToList(args.get('attach_cids'))):
+                if aid:
+                    msg.add_attachment_file_by_entry_id(aid, name, cid)
+
+            # Transient files
+            t_names = args.get('transientFile', [])
+            t_names = t_names if isinstance(t_names, (list, tuple)) else t_names.split(',')
+            t_contents = args.get('transientFileContent', [])
+            t_contents = t_contents if isinstance(t_contents, (list, tuple)) else t_contents.split(',')
+            t_cids = args.get('transientFileCID', [])
+            t_cids = t_cids if isinstance(t_cids, (list, tuple)) else t_cids.split(',')
+            for name, data, cid in zip_longest(t_names, t_contents, t_cids):
+                if not name or not data:
+                    break
+                msg.add_attachment_file_by_data(name, data, cid)
+            raw_message = msg.build()
+
+        # Send an email message
+        smtp_host, smtp_port = detect_smtp_ip_port()
+        smtp_creds = params.get('credentialsSMTP') or {}
+        smtp_user = smtp_creds.get('identifier') or ''
+        smtp_pass = smtp_creds.get('password') or ''
+
+        smtp = SMTPClient(host=smtp_host,
+                          port=smtp_port,
+                          fqdn=params.get('fqdnEHLO'),
+                          username=smtp_user,
+                          password=smtp_pass,
+                          ssl_mode=None)
+        smtp.send_mail(mail_from, rcpt_to, raw_message)
+        smtp.quit()
+
+        return 'An email has been sent', {}, {}
 
 
     def run_server(server: BaseServer, is_test=False):
@@ -543,7 +988,8 @@ script:
             'tsrc-get-service-info': get_servcie_info_command,
             'tsrc-get-gateways': get_gateways_command,
             'tsrc-get-default-admin-password': get_default_admin_password_command,
-            'tsrc-restart': restart_command
+            'tsrc-restart': restart_command,
+            'send-mail': send_mail_command,
         }
 
         try:
@@ -594,6 +1040,83 @@ script:
       description: True if the IP is Default gateway
       type: boolean
     description: Get gateway addresses of the instance running
+  - name: send-mail
+    arguments:
+    - name: from
+      description: The email address from which to reply.
+    - name: to
+      default: true
+      description: A comma-separated list of email addresses for the 'to' field.
+      isArray: true
+    - name: cc
+      description: A comma-separated list of email addresses for the 'cc' field.
+      isArray: true
+    - name: bcc
+      description: A comma-separated list of email addresses for the 'bcc' field.
+      isArray: true
+    - name: subject
+      description: Subject for the email to be sent
+    - name: body
+      description: The contents (body) of the email to be sent in plain text
+    - name: htmlBody
+      description: The contents (body) of the email to be sent in HTML format
+    - name: replyTo
+      description: Address that should be used to reply to the message
+    - name: attachIDs
+      description: A comma-separated list of IDs of war room entries that contain
+        the files that should be attached to the email
+      isArray: true
+    - name: attachNames
+      description: A comma-separated list to rename file-names of corresponding attachments
+        IDs. (e.g. rename first two files - attachNames=file_name1,file_name2. rename
+        first and third file - attachNames=file_name1,,file_name3)
+      isArray: true
+    - name: attachCIDs
+      description: A comma-separated list of CIDs to embed attachments inside the
+        email itself
+      isArray: true
+    - name: attach_ids
+      description: A comma-separated list of IDs of war room entries that contain
+        the files that should be attached to the email
+      isArray: true
+    - name: attach_names
+      description: A comma-separated list to rename file-names of corresponding attachments
+        IDs. (e.g. rename first two files - attachNames=file_name1,file_name2. rename
+        first and third file - attachNames=file_name1,,file_name3)
+      isArray: true
+    - name: attach_cids
+      description: A comma-separated list of CIDs to embed attachments inside the
+        email itself
+      isArray: true
+    - name: transientFile
+      description: Desired name for attached file. Multiple files are supported as
+        comma-separated list. (e.g. transientFile="t1.txt,temp.txt,t3.txt" transientFileContent="test
+        2,temporary file content,third file content" transientFileCID="t1.txt@xxx.yyy,t2.txt@xxx.zzz")
+      isArray: true
+    - name: transientFileContent
+      description: Content for attached file. Multiple files are supported as comma-separated
+        list. (e.g. transientFile="t1.txt,temp.txt,t3.txt" transientFileContent="test
+        2,temporary file content,third file content" transientFileCID="t1.txt@xxx.yyy,t2.txt@xxx.zzz")
+      isArray: true
+    - name: transientFileCID
+      description: CID for attached file if we want it inline. Multiple files are
+        supported as comma-separated list. (e.g. transientFile="t1.txt,temp.txt,t3.txt"
+        transientFileContent="test 2,temporary file content,third file content" transientFileCID="t1.txt@xxx.yyy,t2.txt@xxx.zzz")
+      isArray: true
+    - name: templateParams
+      description: 'Replace {varname} variables with values from this argument. Expected
+        values are in the form of a JSON document like {"varname": {"value": "some
+        value", "key": "context key"}}. Each var name can either be provided with
+        the value or a context key to retrieve the value from. Note that only context
+        data is accessible for this argument, while incident fields are not.'
+    - name: additionalHeader
+      description: 'A CSV list of additional headers in the format: headerName=headerValue.
+        For example: "headerName1=headerValue1,headerName2=headerValue2".'
+      isArray: true
+    - name: raw_message
+      description: Raw email message to send. If provided, all other arguments, but
+        to, cc and bcc, will be ignored.
+    description: Send an email
   dockerimage: spearmint/xsoar-tsrain:2.9.16.1411
   runonce: false
   longRunning: true
