@@ -92,15 +92,6 @@ configuration:
   defaultvalue: Cortex XSOAR <noreply@demisto.com>
   type: 0
   required: false
-- display: Fully Qualified Domain Name (FQDN) - used in EHLO
-  name: fqdnEHLO
-  type: 0
-  required: false
-- display: SMTP username
-  displaypassword: SMTP password
-  name: credentialsSMTP
-  type: 9
-  required: false
 script:
   script: |-
     import os
@@ -466,34 +457,16 @@ script:
 
         def __init__(self,
                      port: int,
-                     fqdn: Optional[str],
-                     username: Optional[str],
-                     password: Optional[str],
-                     ssl_mode: Optional[str],
                      host: Optional[str] = None) -> None:
             """ Initialize a SMTP client instance
 
             :param port: The port number of the server
-            :param fqdn: The FQDN for the SMTP hello
-            :param username: The user name to login
-            :param password: The password of the user
-            :param ssl_mode: SSL or STARTTLS
             :param host: The SMTP server host name
             """
-            fqdn = (fqdn or '').strip() or None
             hosts = [host] if host else SMTPClient.__get_smtp_server_ips()
             for host in hosts:
                 try:
-                    if not ssl_mode:
-                        self.__sess = smtplib.SMTP(host, port, local_hostname=fqdn)
-                    elif ssl_mode in ('SSL', 'STARTTLS'):
-                        self.__sess = smtplib.SMTP_SSL(host, port, local_hostname=fqdn)
-                        if ssl_mode == 'STARTTLS':
-                            self.__sess.starttls()
-                    else:
-                        raise DemistoException(f'Unknown ssl_mode: {ssl_mode}')
-                    if username:
-                        self.__sess.login(username, password or '')
+                    self.__sess = smtplib.SMTP(host, port)
                 except Exception:
                     continue
                 break
@@ -900,14 +873,7 @@ script:
             msg[name] = value
 
         # Send an email message
-        smtp_creds = params.get('credentialsSMTP') or {}
-        smtp_user = smtp_creds.get('identifier') or ''
-        smtp_pass = smtp_creds.get('password') or ''
-        smtp = SMTPClient(port=SMTP_PORT,
-                          fqdn=params.get('fqdnEHLO'),
-                          username=smtp_user,
-                          password=smtp_pass,
-                          ssl_mode=None)
+        smtp = SMTPClient(port=SMTP_PORT)
         smtp.send_message(msg, mail_from, rcpt_to)
         smtp.quit()
 
@@ -976,14 +942,7 @@ script:
             msg = builder.build()
 
         # Send an email message
-        smtp_creds = params.get('credentialsSMTP') or {}
-        smtp_user = smtp_creds.get('identifier') or ''
-        smtp_pass = smtp_creds.get('password') or ''
-        smtp = SMTPClient(port=SMTP_PORT,
-                          fqdn=params.get('fqdnEHLO'),
-                          username=smtp_user,
-                          password=smtp_pass,
-                          ssl_mode=None)
+        smtp = SMTPClient(port=SMTP_PORT)
         smtp.send_message(msg, mail_from, rcpt_to)
         smtp.quit()
 
