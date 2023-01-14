@@ -120,6 +120,8 @@ script:
     import mimetypes
     import email.message
     import email.encoders
+    import email.utils
+    import email.parser
     from email.mime.text import MIMEText
     from email.mime.audio import MIMEAudio
     from email.mime.base import MIMEBase
@@ -334,6 +336,20 @@ script:
                                           serialization.NoEncryption()))
 
 
+    def extract_email_addresses(fields: List[str]) -> List[str]:
+        """
+        Extract email addresses from email fields
+
+        :param names: A list of email header fields
+        :return: A list of email address.
+        """
+        addrs = []
+        for a in email.utils.getaddresses(fields):
+            if len(a) >= 1 and a[1]:
+                addrs.append(a[1])
+        return addrs
+
+
     class PortForwardingHandler(BaseRequestHandler):
         """
         Port Forwarding for the services
@@ -436,49 +452,65 @@ script:
 
 
     class SMTPClient:
+        @staticmethod
+        def __get_smtp_server_ips() -> List[str]:
+            """
+            Get list of SMTP server IPs to attempt to connect
+
+            :return: A list of SMTP server IPs.
+            """
+            ips = ['127.0.0.1']
+            if addrs := (demisto.getIntegrationContext() or {}).get('ServerAddresses'):
+                ips += [a['Host'] for a in json.loads(addrs) if 'Host' in a]
+            return ips + [gw['IP'] for gw in get_gateway_interfaces() if 'IP' in gw]
+
         def __init__(self,
-                     host: str,
                      port: int,
                      fqdn: Optional[str],
                      username: Optional[str],
                      password: Optional[str],
-                     ssl_mode: Optional[str]) -> None:
+                     ssl_mode: Optional[str],
+                     host: Optional[str] = None) -> None:
             """ Initialize a SMTP client instance
 
-            :param host: The SMTP server host name
             :param port: The port number of the server
             :param fqdn: The FQDN for the SMTP hello
             :param username: The user name to login
             :param password: The password of the user
             :param ssl_mode: SSL or STARTTLS
+            :param host: The SMTP server host name
             """
-            self.__host = host
-            self.__port = port
-            self.__ssl_mode = ssl_mode
-
             fqdn = (fqdn or '').strip() or None
-
-            if not ssl_mode:
-                self.__sess = smtplib.SMTP(host, port, local_hostname=fqdn)
-            elif ssl_mode in ('SSL', 'STARTTLS'):
-                self.__sess = smtplib.SMTP_SSL(host, port, local_hostname=fqdn)
-                self.__sess.ehlo()
-                if ssl_mode == 'STARTTLS':
-                    self.__sess.starttls()
+            hosts = [host] if host else SMTPClient.__get_smtp_server_ips()
+            for host in hosts:
+                try:
+                    if not ssl_mode:
+                        self.__sess = smtplib.SMTP(host, port, local_hostname=fqdn)
+                    elif ssl_mode in ('SSL', 'STARTTLS'):
+                        self.__sess = smtplib.SMTP_SSL(host, port, local_hostname=fqdn)
+                        if ssl_mode == 'STARTTLS':
+                            self.__sess.starttls()
+                    else:
+                        raise DemistoException(f'Unknown ssl_mode: {ssl_mode}')
+                    if username:
+                        self.__sess.login(username, password or '')
+                except Exception:
+                    continue
+                break
             else:
-                raise DemistoException(f'Unknown ssl_mode: {ssl_mode}')
+                raise DemistoException('Unable to connect to any SMTP server addresses.')
 
-            if username:
-                self.__sess.login(username, password or '')
-
-        def send_mail(self, mail_from: str, rcpt_to: List[str], msg: str) -> None:
+        def send_message(self, msg: Union[str, email.message.Message], from_addr: str, to_addrs: List[str]) -> None:
             """ Send an email message
 
-            :param mail_from: The sender address
-            :param rcpt_to: List of recipient addresses
             :param msg: An email message
+            :param from_addr: The sender address
+            :param to_addrs: List of recipient addresses
             """
-            self.__sess.sendmail(mail_from, rcpt_to, msg)
+            if isinstance(msg, email.message.Message):
+                self.__sess.send_message(msg, from_addr=from_addr, to_addrs=to_addrs)
+            else:
+                self.__sess.sendmail(from_addr, to_addrs, msg)
 
         def quit(self) -> None:
             self.__sess.quit()
@@ -686,7 +718,7 @@ script:
                 content_id=content_id or '')
             self.__attachments.append(attachment)
 
-        def build(self) -> str:
+        def build(self) -> email.message.Message:
             def _new_header(s) -> Optional[email.header.Header]:
                 return email.header.Header(' '.join(s.splitlines()), 'utf-8') if s else None
 
@@ -756,7 +788,7 @@ script:
                 name, value = h.split('=', 1)
                 msg[name] = _new_header(value)
 
-            return msg.as_string()
+            return msg
 
 
     ''' COMMAND FUNCTIONS '''
@@ -831,53 +863,90 @@ script:
         return 'The services have been restarted.', {}, {}
 
 
+    def send_eml_command(args, params):
+        """
+        Send an email message
+        """
+        entry_id = args.get('entry_id')
+        eml_file = demisto.getFilePath(entry_id)
+        with open(eml_file['path'], 'r') as f:
+            msg = email.parser.Parser().parse(f)
+
+        senders = extract_email_addresses([args.get('sender') or params.get('senderAddress') or ''])
+        if not senders or not senders[0]:
+            senders = extract_email_addresses(msg.get_all('Sender', []) + msg.get_all('From', []))  # type: ignore
+            if not senders or not senders[0]:
+                raise DemistoException('You must have an sender address')
+        mail_from = senders[0]
+
+        if not (rcpt_to := extract_email_addresses(argToList(args.get('recipients')))):
+            recipients: List[Any] = msg.get_all('To', []) + msg.get_all('Cc', []) + msg.get_all('Bcc', [])
+            if not (rcpt_to := extract_email_addresses(recipients)):
+                raise DemistoException('You must have at least one recipient')
+        rcpt_to = list(set(rcpt_to))
+
+        del msg['Bcc']
+        del msg['Resent-Bcc']
+        del msg['Date']
+        msg['Date'] = email.utils.formatdate(time.mktime(datetime.now().timetuple()), usegmt=True)
+
+        header = args.get('header') or {}
+        if isinstance(header, str):
+            header = json.loads(header)
+        if not isinstance(header, dict):
+            raise DemistoException('header must be dict, or str in JSON dict')
+
+        for name, value in header.items():
+            msg[name] = value
+
+        # Send an email message
+        smtp_creds = params.get('credentialsSMTP') or {}
+        smtp_user = smtp_creds.get('identifier') or ''
+        smtp_pass = smtp_creds.get('password') or ''
+        smtp = SMTPClient(port=SMTP_PORT,
+                          fqdn=params.get('fqdnEHLO'),
+                          username=smtp_user,
+                          password=smtp_pass,
+                          ssl_mode=None)
+        smtp.send_message(msg, mail_from, rcpt_to)
+        smtp.quit()
+
+        return 'An email has been sent', {}, {}
+
+
     def send_mail_command(args, params):
         """
         Send an email message
         """
-        def detect_smtp_ip_port() -> Tuple[str, int]:
-            """ Detect the IP:port of the SMTP server
-
-            :return: The IP and port number.
-            """
-            ips = ['127.0.0.1']
-            if addrs := (demisto.getIntegrationContext() or {}).get('ServerAddresses'):
-                ips.extend([a['Host'] for a in json.loads(addrs) if 'Host' in a])
-            ips.extend([gw['IP'] for gw in get_gateway_interfaces() if 'IP' in gw])
-            for ip in ips:
-                try:
-                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                        s.settimeout(1)
-                        s.connect((ip, SMTP_PORT))
-                        return ip, SMTP_PORT
-                except Exception:
-                    pass
-            raise DemistoException('Unable to get any SMTP server addresses.')
-
         if not argToBoolean(params.get('enableSendMailCommand', 'false')):
             return 'send-mail command is disabled', {}, {}
 
-        if not (mail_from := args.get('from') or params.get('senderAddress')):
+        sender = args.get('from') or params.get('senderAddress') or ''
+        if not (senders := extract_email_addresses([sender])) or not senders[0]:
             raise DemistoException('You must have an sender address')
+        mail_from = senders[0]
 
         to = argToList(args.get('to'))
         cc = argToList(args.get('cc'))
         bcc = argToList(args.get('bcc'))
-        if not (rcpt_to := to + cc + bcc):
+        if not (rcpt_to := extract_email_addresses(to + cc + bcc)):
             raise DemistoException('You must have at least one recipient')
+        rcpt_to = list(set(rcpt_to))
 
-        if not (raw_message := args.get('raw_message')):
+        if raw_message := args.get('raw_message'):
+            msg: Union[str, email.message.Message] = raw_message
+        else:
             # Build an email message
-            msg = MessageBuilder()
-            msg.set_from(mail_from)
-            msg.set_to(to)
-            msg.set_cc(cc)
-            msg.set_bcc(bcc)
-            msg.set_subject(args.get('subject'))
-            msg.set_body(args.get('body'))
-            msg.set_html_body(args.get('htmlBody'))
-            msg.set_additional_headers(argToList(args.get('additionalHeader')))
-            msg.set_template_params(args.get('templateParams'))
+            builder = MessageBuilder()
+            builder.set_from(sender)
+            builder.set_to(to)
+            builder.set_cc(cc)
+            builder.set_bcc(bcc)
+            builder.set_subject(args.get('subject'))
+            builder.set_body(args.get('body'))
+            builder.set_html_body(args.get('htmlBody'))
+            builder.set_additional_headers(argToList(args.get('additionalHeader')))
+            builder.set_template_params(args.get('templateParams'))
 
             # Attachment files
             for aid, name, cid in zip_longest(
@@ -885,13 +954,13 @@ script:
                     argToList(args.get('attachNames')),
                     argToList(args.get('attachCIDs'))):
                 if aid:
-                    msg.add_attachment_file_by_entry_id(aid, name, cid)
+                    builder.add_attachment_file_by_entry_id(aid, name, cid)
             for aid, name, cid in zip_longest(
                     argToList(args.get('attach_ids')),
                     argToList(args.get('attach_names')),
                     argToList(args.get('attach_cids'))):
                 if aid:
-                    msg.add_attachment_file_by_entry_id(aid, name, cid)
+                    builder.add_attachment_file_by_entry_id(aid, name, cid)
 
             # Transient files
             t_names = args.get('transientFile', [])
@@ -903,22 +972,19 @@ script:
             for name, data, cid in zip_longest(t_names, t_contents, t_cids):
                 if not name or not data:
                     break
-                msg.add_attachment_file_by_data(name, data, cid)
-            raw_message = msg.build()
+                builder.add_attachment_file_by_data(name, data, cid)
+            msg = builder.build()
 
         # Send an email message
-        smtp_host, smtp_port = detect_smtp_ip_port()
         smtp_creds = params.get('credentialsSMTP') or {}
         smtp_user = smtp_creds.get('identifier') or ''
         smtp_pass = smtp_creds.get('password') or ''
-
-        smtp = SMTPClient(host=smtp_host,
-                          port=smtp_port,
+        smtp = SMTPClient(port=SMTP_PORT,
                           fqdn=params.get('fqdnEHLO'),
                           username=smtp_user,
                           password=smtp_pass,
                           ssl_mode=None)
-        smtp.send_mail(mail_from, rcpt_to, raw_message)
+        smtp.send_message(msg, mail_from, rcpt_to)
         smtp.quit()
 
         return 'An email has been sent', {}, {}
@@ -989,6 +1055,7 @@ script:
             'tsrc-get-gateways': get_gateways_command,
             'tsrc-get-default-admin-password': get_default_admin_password_command,
             'tsrc-restart': restart_command,
+            'tsrc-send-eml': send_eml_command,
             'send-mail': send_mail_command,
         }
 
@@ -1040,6 +1107,18 @@ script:
       description: True if the IP is Default gateway
       type: boolean
     description: Get gateway addresses of the instance running
+  - name: tsrc-send-eml
+    arguments:
+    - name: entry_id
+      required: true
+      description: An entry ID of .eml file for an email to be sent
+    - name: sender
+      description: An email address of sender
+    - name: recipients
+      description: A comma-separated list of email address of recipients
+    - name: header
+      description: Header fields that overrides the header of .eml (in JSON dictionary)
+    description: Send an email of .eml file
   - name: send-mail
     arguments:
     - name: from
