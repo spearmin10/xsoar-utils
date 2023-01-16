@@ -877,7 +877,7 @@ script:
         smtp.send_message(msg, mail_from, rcpt_to)
         smtp.quit()
 
-        return 'An email has been sent', {}, {}
+        return 'An email has been sent successfully', {}, {}
 
 
     def send_mail_command(args, params):
@@ -946,7 +946,7 @@ script:
         smtp.send_message(msg, mail_from, rcpt_to)
         smtp.quit()
 
-        return 'An email has been sent', {}, {}
+        return 'An email has been sent successfully', {}, {}
 
 
     def run_server(server: BaseServer, is_test=False):
