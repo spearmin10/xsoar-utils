@@ -65,15 +65,63 @@ script:
     from socketserver import ThreadingTCPServer
     from socketserver import BaseServer
     from multiprocessing import Process
-    from typing import List, Dict, Any, Pattern
+    from typing import List, Dict, Any, Pattern, Tuple
 
     SPLUNK_MGMT_PORT = 189
     REVERSE_PROXY_SPLUNK_HTTP_PORT = 80
 
     DEFAULT_SOCKET_TIMEOUT = 30
+    DEFAULT_NGFW_SYSLOG_PORT = 515
+    DEFAULT_SQUID_SYSLOG_PORT = 516
     INTEGRATION_NAME = 'Splunk Server'
 
-    SYSLOG_PORT_MAPPINGS: Dict[Optional[Pattern], int] = {}
+
+    class Settings:
+        @staticmethod
+        def make_port_mapping(port_mapping_str: str) -> Dict[Optional[Pattern], int]:
+            """
+            Make port mappings
+
+            :param port_mapping_str: The port mmapping parameters
+            :return: Port mappings
+            """
+            port_map = json.loads(port_mapping_str)
+            if isinstance(port_map, (int, str)):
+                return {None: int(port_map)}
+            elif isinstance(port_map, dict):
+                return {
+                    re.compile(pattern): int(port) for pattern, port in port_map.items()
+                }
+            raise ValueError('Invalid a syslog port mapping')
+
+        def __init__(self, params: Dict[str, Any]):
+            host_port, _, docker_port = (params.get('longRunningPort') or '').partition(':')
+            self.__host_port = int(host_port or docker_port or 0)
+            self.__docker_port = int(docker_port or host_port or 0)
+            self.__admin_password = params.get('adminPassword') or ''
+            self.__port_mapping_str = params.get('syslogPortMapping') or '514'
+            self.__port_mapping: Dict[Optional[Pattern], int] = None  # type: ignore
+
+        @property
+        def admin_password(self) -> str:
+            return self.__admin_password
+
+        @property
+        def host_port(self) -> int:
+            return self.__host_port
+
+        @property
+        def docker_port(self) -> int:
+            return self.__docker_port
+
+        @property
+        def port_mapping(self) -> Dict[Optional[Pattern], int]:
+            if self.__port_mapping is None:
+                self.__port_mapping = Settings.make_port_mapping(self.__port_mapping_str)
+            return self.__port_mapping
+
+
+    SETTINGS = Settings(demisto.params())
 
 
     def update_context(params: Dict[str, Any]) -> Dict[str, Any]:
@@ -120,7 +168,7 @@ script:
         else:
             restart = is_restart_required(params)
             os.environ['SPLUNK_ROOT_ENDPOINT'] = '/instance/execute/' + instance_name
-            os.environ['SPLUNK_ADMIN_PASSWORD'] = demisto.params()['adminPassword']
+            os.environ['SPLUNK_ADMIN_PASSWORD'] = SETTINGS.admin_password
             ret = subprocess.call(['restart.sh' if restart else 'start.sh'])
             demisto.debug('A {}start command has been requested: {}'.format('re' if restart else '', ret))
 
@@ -166,23 +214,6 @@ script:
         return alist
 
 
-    def make_port_mappings(params: Dict[str, Any]) -> Dict[Optional[Pattern], int]:
-        """
-        Make port mappings
-
-        :param params: The integration parameters
-        :return: Port mappings
-        """
-        port_map = json.loads(params.get('syslogPortMapping') or '514')
-        if isinstance(port_map, (int, str)):
-            return {None: int(port_map)}
-        elif isinstance(port_map, dict):
-            return {
-                re.compile(pattern): int(port) for pattern, port in port_map.items()
-            }
-        raise ValueError('Invalid a syslog port mapping')
-
-
     class TcpPortForwardingHandler(BaseRequestHandler):
         """
         Port Forwarding for Splunk Management Port and Splunk Web UI
@@ -219,7 +250,7 @@ script:
             with self.request.makefile('rb') as cs:
                 for line_bin in cs:
                     line_str = line_bin.decode('utf-8', errors='ignore')
-                    for pattern, port in SYSLOG_PORT_MAPPINGS.items():
+                    for pattern, port in SETTINGS.port_mapping.items():
                         if pattern is None or pattern.match(line_str):
                             # Send a syslog message
                             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as rs:
@@ -248,7 +279,7 @@ script:
                 if payload_size != 0:
                     payload_bin = cs.recv(payload_size)
                     payload_str = payload_bin.decode('utf-8', errors='ignore')
-                    for pattern, port in SYSLOG_PORT_MAPPINGS.items():
+                    for pattern, port in SETTINGS.port_mapping.items():
                         if pattern is None or pattern.match(payload_str):
                             # Send a syslog message
                             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as rs:
@@ -349,26 +380,44 @@ script:
         :return: None
         """
         try:
-            longRunningPort = int(params['longRunningPort'])
-            if longRunningPort < 0:
-                raise ValueError(f'Invalid long running port: {longRunningPort}')
-            if longRunningPort < 1024:
-                raise ValueError(f'Listen ports less than 1024 are reserved for system: {longRunningPort}')
+            host_port = SETTINGS.host_port
+            docker_port = SETTINGS.docker_port
+            if host_port < 1024:
+                raise ValueError(f'Listen ports less than 1024 are reserved for system: {host_port}')
 
             if not is_test:
                 start_services(params)
                 update_context(params)
 
             # Run the server
-            global SYSLOG_PORT_MAPPINGS
-            SYSLOG_PORT_MAPPINGS = make_port_mappings(params)
-
-            with ThreadingTCPServer(('', longRunningPort), TcpPortForwardingHandler) as server:
+            with ThreadingTCPServer(('', docker_port), TcpPortForwardingHandler) as server:
                 run_server(server, is_test)
 
         except Exception as e:
             demisto.error(f'An error occurred in long running loop: {str(e)}')
             raise ValueError(str(e))
+
+
+    def detect_service_ip_port(settings: Settings) -> Tuple[str, int]:
+        """ Detect the IP:port of the local server
+
+        :param settings: The instance settings.
+        :return: The IP and port number.
+        """
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.settimeout(1)
+                server_addr = '127.0.0.1'
+                server_port = settings.docker_port
+                s.connect((server_addr, server_port))
+        except Exception:
+            if not (ifs := get_gateway_interfaces()):
+                raise DemistoException('Unable to get any server addresses.')
+
+            server_addr = ifs[0]['IP']
+            server_port = settings.host_port
+
+        return server_addr, server_port
 
 
     ''' COMMANDS '''
@@ -391,16 +440,10 @@ script:
             raise ValueError(f"The instance name must not include any special/control charactors except for '_', '-', '.' and '~': {instance_name}")
 
         # Verify the port mappings
-        make_port_mappings(params)
+        SETTINGS.port_mapping
 
         # Check the server health
-        _, _, tbl = get_gateways_command(None, None)
-        if not tbl:
-            raise RuntimeError('The gateway address was not found.')
-
-        ip = tbl[0]['IP']
-        port = int(params['longRunningPort'])
-
+        ip, port = detect_service_ip_port(SETTINGS)
         BaseClient(base_url=f'http://{ip}:{port}')._http_request(
             'GET',
             url_suffix='/',
@@ -416,18 +459,11 @@ script:
         """
         Get service information
         """
-        port = int(params['longRunningPort'])
-
-        # Get the gateway IP
-        ifs = get_gateway_interfaces()
-        if not ifs:
-            return 'No gateway addresses', {}, []
-
-        gw_ip = ifs[0]['IP']
+        ip, port = detect_service_ip_port(SETTINGS)
 
         # Get the service information
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((gw_ip, port))
+            s.connect((ip, port))
 
             # Send a request
             s.send(json.dumps({
@@ -470,6 +506,38 @@ script:
             return hr, {}, []
 
 
+    def send_syslog(args, params):
+        """
+        Send a syslog message
+        """
+        _, _, sinfo = get_service_info_command(args, params)
+
+        # Syslog port
+        syslog_port = args.get('port')
+        if syslog_port == 'ngfw':
+            syslog_port = DEFAULT_NGFW_SYSLOG_PORT
+        elif syslog_port == 'squid':
+            syslog_port = DEFAULT_SQUID_SYSLOG_PORT
+        else:
+            syslog_port = int(syslog_port)
+
+        # Syslog body
+        syslog_body = args.get('message') or ''
+
+        # Syslog message
+        utcnow = datetime.utcnow()
+        syslog_timestamp = utcnow.strftime('%Y-%m-%dT%H:%M:%S+00:00')
+        syslog_message = f'<134>1 {syslog_timestamp} - - - - - {syslog_body}'
+
+        # Send a syslog message
+        svc_ip = sinfo['IP']
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as rs:
+            rs.sendto(syslog_message.encode('utf-8', errors='ignore'), (svc_ip, syslog_port))
+
+        hr = 'Message sent to Syslog successfully.'
+        return hr, {}, []
+
+
     def main():
         """
         Main
@@ -482,7 +550,8 @@ script:
             'test-module': test_module,
             'splunkd-test': test_command,
             'splunkd-get-service-info': get_service_info_command,
-            'splunkd-get-gateways': get_gateways_command
+            'splunkd-get-gateways': get_gateways_command,
+            'splunkd-send-syslog': send_syslog
         }
         try:
             if command == 'long-running-execution':
@@ -523,6 +592,19 @@ script:
     - contextPath: Splunkd.Service.Name
       description: The instance name of the service
     description: Get the service information
+  - name: splunkd-send-syslog
+    arguments:
+    - name: port
+      required: true
+      auto: PREDEFINED
+      predefined:
+      - ngfw
+      - squid
+      description: The port number or application name
+    - name: message
+      required: true
+      description: The syslog message (no headers)
+    description: Send a syslog message
   dockerimage: spearmint/xsoar-splunk:2.12.17.0131
   runonce: true
   longRunning: true
