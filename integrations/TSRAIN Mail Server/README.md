@@ -9,7 +9,7 @@ Installing
 
 1. Upload TSRAIN_mail_server.yml onto your integration screen on your XSOAR.
 
-2. Make sure that `TSRAIN mail server` is shown on the list of your integrations.
+2. Make sure that `TSRAIN Mail Server` is shown on the list of your integrations.
 
 
 How to configure instances
