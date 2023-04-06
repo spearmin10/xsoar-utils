@@ -1,0 +1,1169 @@
+commonfields:
+  id: TSRAIN Mail Server Compact
+  version: -1
+vcShouldKeepItemLegacyProdMachine: false
+name: TSRAIN Mail Server Compact
+display: TSRAIN Mail Server Compact
+category: Utilities
+image: data:image/png;base64,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
+description: Air-gapped email server working on an integration instance.
+detaileddescription: |-
+  ### How to configure an instance.
+
+  #### 0.  Go to ABOUT > Troubleshooting > Server Configuration
+    Set  instance.execute.external = true
+
+  #### 1. Create an instance
+  Add instance with the parameters below:
+    - Instance Name: tsrain
+    - Listen Port: 8118
+
+  You can access the webmail UI at
+    - https://xsoar-server/instance/execute/tsrain/
+    - http://xsoar-server:8118/
+      ```
+        username: any email address (e.g. test@test.lan)
+        password: Password123$
+      ```
+
+  Admin UI
+    - https://xsoar-server/instance/execute/tsrain/?admin
+    - http://xsoar-server:8118/?admin
+      ```
+         username: admin
+         password: <Run !tsrc-get-default-admin-password>
+      ```
+
+  #### 2. Get the gateway address of the docker bridge network
+  Run !tsrc-get-gateways in CLI, and memorize the gateway IP for 3 and 4
+
+  #### 3. (Optional) Configure 'Mail Sender (New)' to connect to the server.
+  Add an instance with the parameters below:
+    - Mail server hostname or IP address: <gateway IP>
+    - SMTP Port: 8118
+    - Sender address: any email address
+
+  #### 4. (Optional) Configure 'Mail Listener v2' to connect to the server.
+  Add an instance with the parameters below:
+    - Mail server hostname or IP address: <gateway IP>
+     - IMAP Port: 8118
+     - Username: your email address
+     - Password: Password123$
+     - Incoming mail folder: INBOX
+     - Use TLS for connection: Yes
+     - Trust any certificate (not secure): Yes
+
+  ### NOTE:
+   - Emails are stored in memory. All the emails are gone whenever restarting the docker container.
+configuration:
+- advanced: true
+  display: Long Running Instance
+  name: longRunning
+  defaultvalue: "true"
+  type: 8
+  required: false
+- display: Listen Port
+  name: longRunningPort
+  defaultvalue: "8118"
+  type: 0
+  required: true
+  additionalinfo: The port which is shared with Rainloop Web UI, SMTP and IMAP4
+- display: Incident type
+  name: incidentType
+  type: 13
+  required: false
+- display: User's mailbox password
+  name: mailboxPassword
+  defaultvalue: Password123$
+  type: 4
+  required: false
+  additionalinfo: The password is applied for all the users, default password is 'Password123$'
+- advanced: true
+  display: Default 'admin' password
+  name: deafultAdminPassword
+  type: 4
+  required: false
+  additionalinfo: The password is randomly generated by default
+- display: Enable send-mail command
+  name: enableSendMailCommand
+  defaultvalue: "false"
+  type: 8
+  required: false
+- advanced: true
+  display: Default sender address
+  name: senderAddress
+  defaultvalue: Cortex XSOAR <noreply@demisto.com>
+  type: 0
+  required: false
+script:
+  script: |-
+    import os
+    import time
+    import socket
+    import select
+    import string
+    import random
+    import base64
+    import re
+    import ssl
+    import subprocess
+    import traceback
+    import ipaddress
+    import netifaces
+    import smtplib
+    import mimetypes
+    import email.message
+    import email.encoders
+    import email.utils
+    import email.parser
+    from email.mime.text import MIMEText
+    from email.mime.audio import MIMEAudio
+    from email.mime.base import MIMEBase
+    from email.mime.image import MIMEImage
+    from email.mime.multipart import MIMEMultipart
+    from socketserver import BaseServer, BaseRequestHandler, ThreadingTCPServer
+    from multiprocessing import Process
+    from itertools import zip_longest
+    from typing import Tuple, List, Dict, Any
+
+
+    SMTP_PORT = 10025
+    POP3_PORT = 10110
+    IMAP4_PORT = 10143
+    RAINLOOP_PORT = 10080
+
+    DEFAULT_SOCKET_TIMEOUT = 30
+    DEFAULT_PUBLIC_KEY_SIZE = 2048
+    DEFAULT_MAILBOX_PASSWORD = 'Password123$'
+    INTEGRATION_NAME = 'XSOAR tsrain mail server compact'
+
+
+    def update_context(params: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Store the integration parameters to the integration context.
+
+        :param params: The integration parameters
+        :return: The integration context updated.
+        """
+        x = demisto.getIntegrationContext() or {}
+        for k in ('deafultAdminPassword', 'mailboxPassword'):
+            if k in params:
+                x[k] = params.get(k, '')
+
+        if not params.get('deafultAdminPassword') and not x.get('deafultAdminPasswordGenerated'):
+            # Generate password randomly when the default passwod is not specified
+            x['deafultAdminPasswordGenerated'] =\
+                ''.join([random.choice(string.ascii_letters + string.digits + '$#!.@+/=_') for i in range(32)])
+
+        demisto.setIntegrationContext(x)
+        return x
+
+
+    def get_default_admin_password(params: Dict[str, Any]) -> str:
+        """
+        Retrieve default admin password
+
+        :param params: The integration parameters
+        :return: The default admin password.
+        """
+        x = update_context({'deafultAdminPassword': params.get('deafultAdminPassword')})
+        return x.get('deafultAdminPassword', '') or x.get('deafultAdminPasswordGenerated', '')
+
+
+    def is_restart_required(params: Dict[str, Any]) -> bool:
+        """
+        Check if the service restart is required
+
+        :param params: The integration parameters
+        :return: True - restart is required.
+        """
+        if x := demisto.getIntegrationContext():
+            for k in ('deafultAdminPassword', 'mailboxPassword'):
+                if x.get(k, '') != params.get(k, ''):
+                    return True
+        return False
+
+
+    def start_services(params: Dict[str, Any], restart: bool = False) -> None:
+        """
+        Start services
+
+        :param params: The integration parameters
+        :param restart: True if it re-starts the service.
+        """
+        os.environ['SMTP_PORT'] = str(SMTP_PORT)
+        os.environ['POP3_PORT'] = str(POP3_PORT)
+        os.environ['IMAP4_PORT'] = str(IMAP4_PORT)
+        os.environ['RAINLOOP_PORT'] = str(RAINLOOP_PORT)
+        os.environ['MAILBOX_PASSWORD'] = params.get('mailboxPassword') or DEFAULT_MAILBOX_PASSWORD
+        os.environ['RAINLOOP_DEFAULT_ADMIN_PASSWORD'] = get_default_admin_password(params)
+        ret = subprocess.call(['restart.sh' if restart else 'start.sh'])
+        demisto.debug('A {}start command has been requested: {}'.format('re' if restart else '', ret))
+
+
+    def get_gateway_interfaces() -> List[Dict[str, str]]:
+        """
+        Get the gateway interfaces
+
+        :return: List of interfaces (keys: 'IP', 'Interface', 'Default')
+        """
+        return [{
+            'IP': a[0] if len(a) > 0 else None,
+            'Interface': a[1] if len(a) > 1 else None,
+            'Default': a[2] if len(a) > 2 else None
+        } for k, v in netifaces.gateways().items() if k != 'default' for a in v]
+
+
+    def get_local_addresses() -> List[dict]:
+        """
+        Get local addresses
+
+        :return: List of local address object {'addr', 'netmask', 'broadcast'}
+        """
+        alist = []
+        for ifname in netifaces.interfaces():
+            ifinfo = netifaces.ifaddresses(ifname)
+            for ininfo in ifinfo.values():
+                for ainfo in ininfo:
+                    if ainfo.get('addr') and ainfo.get('netmask'):
+                        try:
+                            addr = ipaddress.ip_address(ainfo['addr'])
+                            mask = ipaddress.ip_network(ainfo['netmask'], strict=False)
+                            exploded = mask.broadcast_address.exploded
+                            if addr.version == 4:
+                                bcast = ipaddress.IPv4Address(int(addr) | (0xffffffff ^ int(ipaddress.IPv4Address(exploded))))
+                                alist.append({
+                                    'addr': addr,
+                                    'netmask': mask,
+                                    'broadcast': bcast
+                                })
+                        except ValueError:
+                            pass
+        return alist
+
+
+    def save_server_address(ips: Optional[List[str]], port: Optional[int]) -> None:
+        """
+        Save the server addresses to the integration context
+
+        :param ips: The list of IP addresses of the server
+        :param port: The port number
+        """
+        if port is None:
+            ips = None
+        elif not ips:
+            ips = [a['addr'].exploded for a in get_local_addresses() if not a['addr'].is_loopback]
+
+        x = demisto.getIntegrationContext() or {}
+        if ips is None:
+            x.pop('ServerAddresses', None)
+        else:
+            x['ServerAddresses'] = json.dumps([{
+                'Host': ip,
+                'Port': port
+            } for ip in ips])
+        demisto.setIntegrationContext(x)
+
+
+    def create_ssl_server_context() -> ssl.SSLContext:
+        """
+        Create a SSL server context
+
+        :return: a SSL server context
+        """
+        cert_file = '/dev/shm/tsc.cer.pem'
+        key_file = '/dev/shm/tsc.key.pem'
+        cert, key = gen_self_signed_server_cert(DEFAULT_PUBLIC_KEY_SIZE)
+        with open(cert_file, 'wb') as f:
+            f.write(cert)
+        with open(key_file, 'wb') as f:
+            f.write(key)
+
+        ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        ssl_ctx.load_cert_chain(certfile=cert_file, keyfile=key_file)
+        return ssl_ctx
+
+
+    def gen_self_signed_server_cert(key_size: int) -> Tuple[bytes, bytes]:
+        """
+        Generate a self signed server certificate
+
+        :param key_size: The length of a public key to be generated.
+        :return: A certificate and private key pair in PEM
+        """
+        from cryptography import x509
+        from cryptography.hazmat.backends import default_backend
+        from cryptography.hazmat.primitives import hashes
+        from cryptography.hazmat.primitives.asymmetric import rsa
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.x509.oid import NameOID
+
+        valid_from = datetime.now()
+        valid_until = valid_from + timedelta(1 * 365, 0, 0)
+
+        hostname = socket.gethostname()
+        private_key = rsa.generate_private_key(public_exponent=65537, key_size=key_size, backend=default_backend())
+        public_key = private_key.public_key()
+
+        builder = x509.CertificateBuilder()
+        builder = builder.subject_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, hostname)]))
+        builder = builder.issuer_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, hostname)]))
+        builder = builder.not_valid_before(valid_from)
+        builder = builder.not_valid_after(valid_until)
+        builder = builder.serial_number(x509.random_serial_number())
+        builder = builder.public_key(public_key)
+        builder = builder.add_extension(
+            x509.SubjectAlternativeName([
+                x509.DNSName(hostname),
+                x509.DNSName('localhost')
+            ]),
+            critical=False)
+        builder = builder.add_extension(x509.BasicConstraints(ca=False, path_length=None), critical=True)
+
+        certificate = builder.sign(
+            private_key=private_key, algorithm=hashes.SHA256(),
+            backend=default_backend())
+
+        return (certificate.public_bytes(serialization.Encoding.PEM),
+                private_key.private_bytes(serialization.Encoding.PEM,
+                                          serialization.PrivateFormat.PKCS8,
+                                          serialization.NoEncryption()))
+
+
+    def extract_email_addresses(fields: List[str]) -> List[str]:
+        """
+        Extract email addresses from email fields
+
+        :param names: A list of email header fields
+        :return: A list of email address.
+        """
+        addrs = []
+        for a in email.utils.getaddresses(fields):
+            if len(a) >= 1 and a[1]:
+                addrs.append(a[1])
+        return addrs
+
+
+    class PortForwardingHandler(BaseRequestHandler):
+        """
+        Port Forwarding for the services
+        """
+        ssl_server_context = create_ssl_server_context()
+
+        def __init__(self, request, client_address, server) -> None:
+            BaseRequestHandler.__init__(self, request, client_address, server)
+
+        def forward_tcp_tcp(self, port: int) -> None:
+            """
+            Port Forwarding: tcp-tcp:port
+            """
+            cs = self.request
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rs:
+                    rs.connect(('127.0.0.1', port))
+                    while True:
+                        r, w, x = select.select([cs, rs], [], [])
+                        if cs in r:
+                            payload = cs.recv(1024)
+                            if len(payload) == 0:
+                                break
+                            rs.send(payload)
+                        if rs in r:
+                            payload = rs.recv(1024)
+                            if len(payload) == 0:
+                                break
+                            cs.send(payload)
+            except Exception:
+                demisto.debug(traceback.format_exc())
+            finally:
+                cs.close()
+
+        def forward_ssl_tcp(self, port: int) -> None:
+            """
+            Port Forwarding: ssl-tcp:port
+            """
+            try:
+                with PortForwardingHandler.ssl_server_context.wrap_socket(self.request, server_side=True) as cs:
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rs:
+                        rs.connect(('127.0.0.1', port))
+                        while True:
+                            r, _, _ = select.select([cs, rs], [], [])
+                            if rs in r:
+                                payload = rs.recv(1024)
+                                if len(payload) == 0:
+                                    break
+
+                                cs.setblocking(True)
+                                cs.send(payload)
+
+                            if cs in r:
+                                cs.setblocking(False)
+                                try:
+                                    payload = cs.recv(1024)
+                                except ssl.SSLError as e:
+                                    if e.errno != ssl.SSL_ERROR_WANT_READ:
+                                        raise
+                                    continue
+
+                                if not payload:
+                                    break
+
+                                rs.send(payload)
+
+                                data_left = cs.pending()
+                                while data_left:
+                                    rs.send(cs.recv(data_left))
+                                    data_left = cs.pending()
+
+            except Exception:
+                demisto.debug(traceback.format_exc())
+            finally:
+                self.request.close()
+
+        def handle(self) -> None:
+            r, _, _ = select.select([self.request], [], [], 1)
+            if self.request in r:
+                h = self.request.recv(3, socket.MSG_PEEK)
+                if h[:1] == b'\x16':
+                    # TLS
+                    self.forward_ssl_tcp(IMAP4_PORT)
+                elif h[:1] == b'E':
+                    # EHLO
+                    self.forward_tcp_tcp(SMTP_PORT)
+                elif h[:1] == b'H':
+                    if h == b'HEL':
+                        # HELO
+                        self.forward_tcp_tcp(SMTP_PORT)
+                    else:
+                        # HEAD or default
+                        self.forward_tcp_tcp(RAINLOOP_PORT)
+                else:
+                    self.forward_tcp_tcp(RAINLOOP_PORT)
+            else:
+                # Client is waiting for SMTP greeting
+                self.forward_tcp_tcp(SMTP_PORT)
+            self.request.close()
+
+
+    class SMTPClient:
+        @staticmethod
+        def __get_smtp_server_ips() -> List[str]:
+            """
+            Get list of SMTP server IPs to attempt to connect
+
+            :return: A list of SMTP server IPs.
+            """
+            ips = ['127.0.0.1']
+            if addrs := (demisto.getIntegrationContext() or {}).get('ServerAddresses'):
+                ips += [a['Host'] for a in json.loads(addrs) if 'Host' in a]
+            return ips + [gw['IP'] for gw in get_gateway_interfaces() if 'IP' in gw]
+
+        def __init__(self,
+                     port: int,
+                     host: Optional[str] = None) -> None:
+            """ Initialize a SMTP client instance
+
+            :param port: The port number of the server
+            :param host: The SMTP server host name
+            """
+            hosts = [host] if host else SMTPClient.__get_smtp_server_ips()
+            for host in hosts:
+                try:
+                    self.__sess = smtplib.SMTP(host, port)
+                except Exception:
+                    continue
+                break
+            else:
+                raise DemistoException('Unable to connect to any SMTP server addresses.')
+
+        def send_message(self, msg: Union[str, email.message.Message], from_addr: str, to_addrs: List[str]) -> None:
+            """ Send an email message
+
+            :param msg: An email message
+            :param from_addr: The sender address
+            :param to_addrs: List of recipient addresses
+            """
+            if isinstance(msg, email.message.Message):
+                self.__sess.send_message(msg, from_addr=from_addr, to_addrs=to_addrs)
+            else:
+                self.__sess.sendmail(from_addr, to_addrs, msg)
+
+        def quit(self) -> None:
+            self.__sess.quit()
+
+
+    class MessageBuilder:
+        @staticmethod
+        def __guess_file_type(filename: str) -> Tuple[str, str]:
+            """
+            Return the maintype and subtype guessed based on the extension
+            """
+            ctype, encoding = mimetypes.guess_type(filename)
+            if ctype is None or encoding is not None:
+                # No guess could be made, or the file is encoded (compressed), so
+                # use a generic bag-of-bits type.
+                ctype = 'application/octet-stream'
+            main_type, _, sub_type = ctype.partition('/')
+            return main_type, sub_type
+
+        @staticmethod
+        def __build_attachment_message(file_name: str,
+                                       file_data: Union[str, bytes],
+                                       main_type: str,
+                                       sub_type: str,
+                                       content_id: Optional[str]) -> MIMEBase:
+            """ Create an attachment email entity
+
+            :param file_name: The file name
+            :param file_data: The data of the file
+            :param main_type: The primary content type
+            :param sub_type: The content sub type
+            :param content_id: The content ID to set to Content-ID
+            :return An attachment email entity created.
+            """
+            if main_type == 'text':
+                # UTF-8 is a pretty safe bet
+                if isinstance(file_data, bytes):
+                    file_data = file_data.decode('utf-8', errors='ignore')
+                attachment: MIMEBase = MIMEText(file_data, sub_type, 'utf-8')
+            elif main_type == 'image':
+                attachment = MIMEImage(file_data, sub_type)
+            elif main_type == 'audio':
+                attachment = MIMEAudio(file_data, sub_type)
+            elif main_type == 'message':
+                attachment = MIMEBase(main_type, sub_type)
+                attachment.set_payload(file_data)
+            else:
+                attachment = MIMEBase(main_type, sub_type)
+                attachment.set_payload(file_data)
+                # Encode the payload using Base64
+                email.encoders.encode_base64(attachment)
+
+            # Set the filename parameter
+            if content_id:
+                attachment.add_header('Content-Disposition', 'inline', filename=file_name)
+                attachment.add_header('Content-ID', f'<{content_id}>')
+            else:
+                attachment.add_header('Content-Disposition', 'attachment', filename=file_name)
+            return attachment
+
+        @staticmethod
+        def __build_html_messages(html: str) -> Tuple[str, List[MIMEBase]]:
+            """ Extract all data-url content from within the html and return as separate attachments
+
+                Due to security implications, we support only images here
+                We might not have Beautiful Soup so just do regex search
+
+            :param html: The HTML text
+            :return An html text and images.
+            """
+            def _random_word(length):
+                """
+                Generate a random string of given length
+                """
+                letters = string.ascii_lowercase
+                return ''.join(random.choice(letters) for i in range(length))
+
+            attachments = []
+            clean_body = ''
+            last_index = 0
+            for i, m in enumerate(
+                    re.finditer(r'<img.+?src=\"(data:(image\/.+?);base64,([a-zA-Z0-9+/=\r\n]+?))\"', html, re.I)):
+                main_type, sub_type = m.group(2).split('/', 1)
+                file_name = f'image{i}.{sub_type}'
+                content_id = f'{file_name}{_random_word(8)}.{_random_word(8)}'
+
+                attachment = MessageBuilder.__build_attachment_message(
+                    file_name=file_name,
+                    file_data=base64.b64decode(m.group(3)),
+                    main_type=main_type,
+                    sub_type=sub_type,
+                    content_id=content_id
+                )
+                attachments.append(attachment)
+
+                clean_body += html[last_index:m.start(1)] + 'cid:' + content_id
+                last_index = m.end() - 1
+            clean_body += html[last_index:]
+            return clean_body, attachments
+
+        def __init__(self) -> None:
+            self.__from: Optional[str] = None
+            self.__to: List[str] = []
+            self.__cc: List[str] = []
+            self.__bcc: List[str] = []
+            self.__reply_to: Optional[str] = None
+            self.__body: Optional[str] = None
+            self.__html_body: Optional[str] = None
+            self.__subject: Optional[str] = None
+            self.__headers: List[str] = []
+            self.__attachments: List[MIMEBase] = []
+            self.__template_params: Dict[str, str] = {}
+
+        def set_from(self, address: Optional[str]) -> None:
+            self.__from = address
+
+        def set_to(self, addresses: Optional[List[str]]) -> None:
+            self.__to = addresses or list()
+
+        def set_cc(self, addresses: Optional[List[str]]) -> None:
+            self.__cc = addresses or list()
+
+        def set_bcc(self, addresses: Optional[List[str]]) -> None:
+            self.__bcc = addresses or list()
+
+        def set_reply_to(self, address: Optional[str]) -> None:
+            self.__reply_to = address
+
+        def set_subject(self, subject: Optional[str]) -> None:
+            self.__subject = subject
+
+        def set_body(self, body: Optional[str]) -> None:
+            self.__body = body
+
+        def set_html_body(self, html_body: Optional[str]) -> None:
+            self.__html_body = html_body
+
+        def set_additional_headers(self, headers: Optional[List[str]]) -> None:
+            self.__headers = headers or list()
+
+        def set_template_params(self, template: Optional[Union[str, Dict[str, Dict[str, str]]]]) -> None:
+            """ Set template parameters
+
+            :param template: The template parameters
+            """
+            self.__template_params = {}
+            if not template:
+                return
+
+            if isinstance(template, dict):
+                params = template
+            else:
+                try:
+                    params = json.loads(template)
+                except json.decoder.JSONDecodeError as e:
+                    raise DemistoException(f'Unable to parse templateParams: {str(e)}')
+
+            context = demisto.context()
+            for k, ent in params.items():
+                if value := ent.get('value'):
+                    self.__template_params[k] = value
+                elif key := ent.get('key'):
+                    self.__template_params[k] = demisto.dt(context, key)
+
+        def add_attachment_file_by_entry_id(self, entity_id: str, file_name: Optional[str], content_id: Optional[str]):
+            """ Add an attachment file by an entry ID
+
+            :param entry_id: The entry ID of the file
+            :param file_name: The file name
+            :param content_id: The content ID to set to Content-ID
+            """
+            try:
+                file_res = demisto.getFilePath(entity_id)
+                file_path = file_res['path']
+                file_name = file_name or file_res['name']
+
+                main_type, sub_type = MessageBuilder.__guess_file_type(file_name)
+                with open(file_path, 'r' if main_type == 'text' else 'rb') as f:
+                    file_data = f.read()
+
+                attachment = MessageBuilder.__build_attachment_message(
+                    file_name=file_name,
+                    file_data=file_data,
+                    main_type=main_type,
+                    sub_type=sub_type,
+                    content_id=content_id or '')
+                self.__attachments.append(attachment)
+            except Exception as e:
+                demisto.error(f'Invalid entry {entity_id} with exception: {str(e)}')
+                raise DemistoException(f'Entry {entity_id} is not valid or is not a file entry')
+
+        def add_attachment_file_by_data(self, file_name: str, file_data: Union[str, bytes], content_id: Optional[str]):
+            """ Add an attachment file by a payload
+
+            :param file_name: The file name
+            :param file_data: The payload of the file
+            :param content_id: The content ID to set to Content-ID
+            """
+            main_type, sub_type = MessageBuilder.__guess_file_type(file_name)
+            attachment = MessageBuilder.__build_attachment_message(
+                file_name=file_name,
+                file_data=file_data,
+                main_type=main_type,
+                sub_type=sub_type,
+                content_id=content_id or '')
+            self.__attachments.append(attachment)
+
+        def build(self) -> email.message.Message:
+            def _new_header(s) -> Optional[email.header.Header]:
+                return email.header.Header(' '.join(s.splitlines()), 'utf-8') if s else None
+
+            # Basic validation - we allow pretty much everything but you have to have at least a recipient
+            # We allow messages without subject and also without body
+            if not self.__to and not self.__cc and not self.__bcc:
+                raise DemistoException('You must have at least one recipient')
+
+            if not self.__from:
+                raise DemistoException('You must have an sender address')
+
+            attachments = list(self.__attachments)
+            body = self.__body or ''
+            html_body = self.__html_body or ''
+            if self.__template_params:
+                body = body.format(**self.__template_params)
+                html_body = html_body.format(**self.__template_params)
+
+            # Let's see what type of message we are talking about
+            if not html_body:
+                # This is a simple text message - we cannot have CIDs here
+                if len(attachments) > 0:
+                    # This is multipart - default is mixed
+                    msg: MIMEBase = MIMEMultipart()
+                    msg.preamble = 'The message is only available on a MIME-aware mail reader.\n'
+                    msg.attach(MIMEText(body, 'plain', 'utf-8'))
+                    for attachment in attachments:
+                        del attachment['Content-ID']
+                        msg.attach(attachment)
+                else:
+                    # Just text, how boring
+                    msg = MIMEText(body, 'plain', 'utf-8')
+            else:
+                html_body, html_attachments = MessageBuilder.__build_html_messages(html_body)
+                attachments.extend(html_attachments)
+                if len(attachments) > 0:
+                    msg = MIMEMultipart()
+                    msg.preamble = 'The message is only available on a MIME-aware mail reader.\n'
+                    if body:
+                        alt = MIMEMultipart('alternative')
+                        alt.attach(MIMEText(body, 'plain', 'utf-8'))
+                        alt.attach(MIMEText(html_body, 'html', 'utf-8'))
+                        msg.attach(alt)
+                    else:
+                        msg.attach(MIMEText(html_body, 'html', 'utf-8'))
+                    for attachment in attachments:
+                        msg.attach(attachment)
+                else:
+                    if body:
+                        msg = MIMEMultipart('alternative')
+                        msg.preamble = 'The message is only available on a MIME-aware mail reader.\n'
+                        msg.attach(MIMEText(body, 'plain', 'utf-8'))
+                        msg.attach(MIMEText(html_body, 'html', 'utf-8'))
+                    else:
+                        msg = MIMEText(html_body, 'html', 'utf-8')
+
+            # Add the relevant headers to the most outer message
+            msg['Subject'] = _new_header(self.__subject or '')
+            msg['From'] = _new_header(self.__from)
+            if self.__reply_to:
+                msg['Reply-To'] = _new_header(self.__reply_to)
+            if self.__to:
+                msg['To'] = _new_header(','.join(self.__to))
+            if self.__cc:
+                msg['CC'] = _new_header(','.join(self.__cc))
+            if self.__bcc:
+                msg['BCC'] = _new_header(','.join(self.__bcc))
+
+            for h in self.__headers:
+                name, value = h.split('=', 1)
+                msg[name] = _new_header(value)
+
+            return msg
+
+
+    ''' COMMAND FUNCTIONS '''
+
+
+    def test_module(args, params):
+        """
+        Validates:
+        """
+        run_long_running(params, is_test=True)
+        return 'ok', {}, {}
+
+
+    def get_servcie_info_command(args, params):
+        """
+        Get the service information
+        """
+        sinfo = []
+
+        x = demisto.getIntegrationContext() or {}
+        if addrs := x.get('ServerAddresses'):
+            # Service is running
+            sinfo = [{
+                'IP': a['Host'],
+                'Port': int(a['Port']),
+                'Instance': demisto.integrationInstance(),
+                'Status': 'Running'
+            } for a in json.loads(addrs)]
+        else:
+            # Service is not running
+            for ai in get_local_addresses():
+                ip = str(ai['addr'])
+                if ip not in ('127.0.0.1'):
+                    sinfo.append({
+                        'IP': ip,
+                        'Name': demisto.integrationInstance(),
+                        'Status': 'Not Running'
+                    })
+
+        if not sinfo:
+            return 'Unable to get the service information', {}, {}
+
+        hr = tblToMd('Service', sinfo)
+        return hr, {'TsrainCompact.Service': sinfo}, sinfo
+
+
+    def get_gateways_command(args, params):
+        """
+        Get gateway list
+        """
+        if ifs := get_gateway_interfaces():
+            hr = tblToMd('Gateways', ifs)
+            return hr, {'TsrainCompact.GW': ifs}, ifs
+        else:
+            hr = 'No gateway addresses'
+            return hr, {}, []
+
+
+    def get_default_admin_password_command(args, params):
+        """
+        Get default admin password
+        """
+        pwd = get_default_admin_password(params)
+        return f'admin password: {pwd}', {}, pwd
+
+
+    def restart_command(args, params):
+        """
+        Restart the core service
+        """
+        start_services(params, True)
+        return 'The services have been restarted.', {}, {}
+
+
+    def send_eml_command(args, params):
+        """
+        Send an email message
+        """
+        entry_id = args.get('entry_id')
+        eml_file = demisto.getFilePath(entry_id)
+        with open(eml_file['path'], 'r') as f:
+            msg = email.parser.Parser().parse(f)
+
+        senders = extract_email_addresses([args.get('sender') or params.get('senderAddress') or ''])
+        if not senders or not senders[0]:
+            senders = extract_email_addresses(msg.get_all('Sender', []) + msg.get_all('From', []))  # type: ignore
+            if not senders or not senders[0]:
+                raise DemistoException('You must have an sender address')
+        mail_from = senders[0]
+
+        if not (rcpt_to := extract_email_addresses(argToList(args.get('recipients')))):
+            recipients: List[Any] = msg.get_all('To', []) + msg.get_all('Cc', []) + msg.get_all('Bcc', [])
+            if not (rcpt_to := extract_email_addresses(recipients)):
+                raise DemistoException('You must have at least one recipient')
+        rcpt_to = list(set(rcpt_to))
+
+        del msg['Bcc']
+        del msg['Resent-Bcc']
+        del msg['Date']
+        msg['Date'] = email.utils.formatdate(time.mktime(datetime.now().timetuple()), usegmt=True)
+
+        header = args.get('header') or {}
+        if isinstance(header, str):
+            header = json.loads(header)
+        if not isinstance(header, dict):
+            raise DemistoException('header must be dict, or str in JSON dict')
+
+        for name, value in header.items():
+            msg[name] = value
+
+        # Send an email message
+        smtp = SMTPClient(port=SMTP_PORT)
+        smtp.send_message(msg, mail_from, rcpt_to)
+        smtp.quit()
+
+        return 'An email has been sent successfully', {}, {}
+
+
+    def send_mail_command(args, params):
+        """
+        Send an email message
+        """
+        if not argToBoolean(params.get('enableSendMailCommand', 'false')):
+            return 'send-mail command is disabled', {}, {}
+
+        sender = args.get('from') or params.get('senderAddress') or ''
+        if not (senders := extract_email_addresses([sender])) or not senders[0]:
+            raise DemistoException('You must have an sender address')
+        mail_from = senders[0]
+
+        to = argToList(args.get('to'))
+        cc = argToList(args.get('cc'))
+        bcc = argToList(args.get('bcc'))
+        if not (rcpt_to := extract_email_addresses(to + cc + bcc)):
+            raise DemistoException('You must have at least one recipient')
+        rcpt_to = list(set(rcpt_to))
+
+        if raw_message := args.get('raw_message'):
+            msg: Union[str, email.message.Message] = raw_message
+        else:
+            # Build an email message
+            builder = MessageBuilder()
+            builder.set_from(sender)
+            builder.set_to(to)
+            builder.set_cc(cc)
+            builder.set_bcc(bcc)
+            builder.set_subject(args.get('subject'))
+            builder.set_body(args.get('body'))
+            builder.set_html_body(args.get('htmlBody'))
+            builder.set_additional_headers(argToList(args.get('additionalHeader')))
+            builder.set_template_params(args.get('templateParams'))
+
+            # Attachment files
+            for aid, name, cid in zip_longest(
+                    argToList(args.get('attachIDs')),
+                    argToList(args.get('attachNames')),
+                    argToList(args.get('attachCIDs'))):
+                if aid:
+                    builder.add_attachment_file_by_entry_id(aid, name, cid)
+            for aid, name, cid in zip_longest(
+                    argToList(args.get('attach_ids')),
+                    argToList(args.get('attach_names')),
+                    argToList(args.get('attach_cids'))):
+                if aid:
+                    builder.add_attachment_file_by_entry_id(aid, name, cid)
+
+            # Transient files
+            t_names = args.get('transientFile', [])
+            t_names = t_names if isinstance(t_names, (list, tuple)) else t_names.split(',')
+            t_contents = args.get('transientFileContent', [])
+            t_contents = t_contents if isinstance(t_contents, (list, tuple)) else t_contents.split(',')
+            t_cids = args.get('transientFileCID', [])
+            t_cids = t_cids if isinstance(t_cids, (list, tuple)) else t_cids.split(',')
+            for name, data, cid in zip_longest(t_names, t_contents, t_cids):
+                if not name or not data:
+                    break
+                builder.add_attachment_file_by_data(name, data, cid)
+            msg = builder.build()
+
+        # Send an email message
+        smtp = SMTPClient(port=SMTP_PORT)
+        smtp.send_message(msg, mail_from, rcpt_to)
+        smtp.quit()
+
+        return 'An email has been sent successfully', {}, {}
+
+
+    def run_server(server: BaseServer, is_test=False):
+        """
+        Run the server
+
+        :param server: The server instance
+        :param is_test: Indicates whether it's test-module run or regular run
+        :return: None
+        """
+        if is_test:
+            svproc = Process(target=server.serve_forever)
+            svproc.start()
+            time.sleep(5)
+            svproc.terminate()
+        else:
+            socket.setdefaulttimeout(DEFAULT_SOCKET_TIMEOUT)
+            server.serve_forever()
+
+
+    def run_long_running(params: Dict[str, Any], is_test=False):
+        """
+        Start the long running server
+
+        :param params: Demisto params
+        :param is_test: Indicates whether it's test-module run or regular run
+        :return: None
+        """
+        try:
+            port_mapping = params.get('longRunningPort', '')
+            host_port, _, docker_port = port_mapping.partition(':')
+            listen_port = int(docker_port or host_port)
+            if listen_port < 0:
+                raise ValueError(f'Invalid long running port: {listen_port}')
+            if listen_port < 1024 or listen_port in (SMTP_PORT, POP3_PORT, IMAP4_PORT, RAINLOOP_PORT):
+                raise ValueError(f'Listen ports less than 1024, {SMTP_PORT}, {POP3_PORT}, {IMAP4_PORT}'
+                                 f' and {RAINLOOP_PORT} are reserved for system: {listen_port}')
+
+            if not is_test:
+                start_services(params, is_restart_required(params))
+                update_context(params)
+
+            # Run the server
+            with ThreadingTCPServer(('', listen_port), PortForwardingHandler) as server:
+                save_server_address(None, listen_port)
+                run_server(server, is_test)
+        except Exception as e:
+            demisto.error(f'An error occurred in long running loop: {str(e)}')
+            raise ValueError(str(e))
+        finally:
+            save_server_address(None, None)
+
+
+    def main():
+        """
+        Main
+        """
+        params = demisto.params()
+
+        command = demisto.command()
+        demisto.debug('Command being called is {}'.format(command))
+        commands = {
+            'test-module': test_module,
+            'tsrc-get-service-info': get_servcie_info_command,
+            'tsrc-get-gateways': get_gateways_command,
+            'tsrc-get-default-admin-password': get_default_admin_password_command,
+            'tsrc-restart': restart_command,
+            'tsrc-send-eml': send_eml_command,
+            'send-mail': send_mail_command,
+        }
+
+        try:
+            if command == 'long-running-execution':
+                run_long_running(params)
+            else:
+                readable_output, outputs, raw_response = commands[command](demisto.args(), params)
+                return_outputs(readable_output, outputs, raw_response)
+        except Exception as e:
+            err_msg = f'Error in {INTEGRATION_NAME} Integration [{e}]'
+            return_error(err_msg)
+
+
+    if __name__ in ['__main__', '__builtin__', 'builtins']:
+        main()
+  type: python
+  commands:
+  - name: tsrc-get-service-info
+    arguments: []
+    outputs:
+    - contextPath: TsrainCompact.Service.IP
+      description: The IP address on which the service is running
+      type: string
+    - contextPath: TsrainCompact.Service.Name
+      description: The instance name of the service
+      type: string
+    - contextPath: TsrainCompact.Service.Port
+      description: The port number on which the service is running
+    - contextPath: TsrainCompact.Service.Status
+      description: The service status
+    description: Get the service information
+  - name: tsrc-get-default-admin-password
+    arguments: []
+    description: Print default 'admin' password
+  - name: tsrc-restart
+    arguments: []
+    description: Restart the services
+  - name: tsrc-get-gateways
+    arguments: []
+    outputs:
+    - contextPath: TsrainCompact.GW.IP
+      description: The IP address of the gateway
+      type: string
+    - contextPath: TsrainCompact.GW.Interface
+      description: The interface name
+      type: string
+    - contextPath: TsrainCompact.GW.Default
+      description: True if the IP is Default gateway
+      type: boolean
+    description: Get gateway addresses of the instance running
+  - name: tsrc-send-eml
+    arguments:
+    - name: entry_id
+      required: true
+      description: An entry ID of .eml file for an email to be sent
+    - name: sender
+      description: An email address of sender
+    - name: recipients
+      description: A comma-separated list of email address of recipients
+    - name: header
+      description: Header fields that overrides the header of .eml (in JSON dictionary)
+    description: Send an email of .eml file
+  - name: send-mail
+    arguments:
+    - name: from
+      description: The email address from which to reply.
+    - name: to
+      default: true
+      description: A comma-separated list of email addresses for the 'to' field.
+      isArray: true
+    - name: cc
+      description: A comma-separated list of email addresses for the 'cc' field.
+      isArray: true
+    - name: bcc
+      description: A comma-separated list of email addresses for the 'bcc' field.
+      isArray: true
+    - name: subject
+      description: Subject for the email to be sent
+    - name: body
+      description: The contents (body) of the email to be sent in plain text
+    - name: htmlBody
+      description: The contents (body) of the email to be sent in HTML format
+    - name: replyTo
+      description: Address that should be used to reply to the message
+    - name: attachIDs
+      description: A comma-separated list of IDs of war room entries that contain
+        the files that should be attached to the email
+      isArray: true
+    - name: attachNames
+      description: A comma-separated list to rename file-names of corresponding attachments
+        IDs. (e.g. rename first two files - attachNames=file_name1,file_name2. rename
+        first and third file - attachNames=file_name1,,file_name3)
+      isArray: true
+    - name: attachCIDs
+      description: A comma-separated list of CIDs to embed attachments inside the
+        email itself
+      isArray: true
+    - name: attach_ids
+      description: A comma-separated list of IDs of war room entries that contain
+        the files that should be attached to the email
+      isArray: true
+    - name: attach_names
+      description: A comma-separated list to rename file-names of corresponding attachments
+        IDs. (e.g. rename first two files - attachNames=file_name1,file_name2. rename
+        first and third file - attachNames=file_name1,,file_name3)
+      isArray: true
+    - name: attach_cids
+      description: A comma-separated list of CIDs to embed attachments inside the
+        email itself
+      isArray: true
+    - name: transientFile
+      description: Desired name for attached file. Multiple files are supported as
+        comma-separated list. (e.g. transientFile="t1.txt,temp.txt,t3.txt" transientFileContent="test
+        2,temporary file content,third file content" transientFileCID="t1.txt@xxx.yyy,t2.txt@xxx.zzz")
+      isArray: true
+    - name: transientFileContent
+      description: Content for attached file. Multiple files are supported as comma-separated
+        list. (e.g. transientFile="t1.txt,temp.txt,t3.txt" transientFileContent="test
+        2,temporary file content,third file content" transientFileCID="t1.txt@xxx.yyy,t2.txt@xxx.zzz")
+      isArray: true
+    - name: transientFileCID
+      description: CID for attached file if we want it inline. Multiple files are
+        supported as comma-separated list. (e.g. transientFile="t1.txt,temp.txt,t3.txt"
+        transientFileContent="test 2,temporary file content,third file content" transientFileCID="t1.txt@xxx.yyy,t2.txt@xxx.zzz")
+      isArray: true
+    - name: templateParams
+      description: 'Replace {varname} variables with values from this argument. Expected
+        values are in the form of a JSON document like {"varname": {"value": "some
+        value", "key": "context key"}}. Each var name can either be provided with
+        the value or a context key to retrieve the value from. Note that only context
+        data is accessible for this argument, while incident fields are not.'
+    - name: additionalHeader
+      description: 'A CSV list of additional headers in the format: headerName=headerValue.
+        For example: "headerName1=headerValue1,headerName2=headerValue2".'
+      isArray: true
+    - name: raw_message
+      description: Raw email message to send. If provided, all other arguments, but
+        to, cc and bcc, will be ignored.
+    description: Send an email
+  dockerimage: spearmint/xsoar-tsrain:3.4.4.2312
+  runonce: false
+  longRunning: true
+  longRunningPort: true
+  subtype: python3
+sourcemoduleid: ExportIndicators
