@@ -186,6 +186,13 @@ script:
             self.__client_p12_base64 = params.get('clientPKCS12Base64') or ''
             self.__client_p12_password = params.get('clientPKCS12Password') or ''
 
+        def __get_body_from_pem(self, pem: str, label: str) -> Optional[str]:
+            label = re.escape(label)
+            pattern = f'^-----BEGIN {label}-----$(.*?)^-----END {label}-----$'
+            if m := re.search(pattern, pem, re.DOTALL | re.MULTILINE):
+                return m[1]
+            return None
+
         @property
         def host_port(self) -> int:
             return self.__host_port
@@ -230,6 +237,8 @@ script:
 
         @property
         def client_pkcs12_base64(self) -> str:
+            if body := self.__get_body_from_pem(self.__client_p12_base64, 'PKCS12'):
+                return body
             return self.__client_p12_base64
 
         @property
