@@ -179,7 +179,7 @@ script:
             self.__host_port = int(host_port or docker_port or 0)
             self.__docker_port = int(docker_port or host_port or 0)
             self.__local_mailbox_password = params.get('localMailboxPassword') or LOCAL_DEFAULT_MAILBOX_PASSWORD
-            self.__local_default_admin_password = params.get('localDeafultAdminPassword')
+            self.__local_default_admin_password = params.get('localDefaultAdminPassword')
             self.__insecure = argToBoolean(params.get('insecure', 'false'))
             self.__enable_send_mail = argToBoolean(params.get('enableSendMailCommand', 'false'))
             self.__sender_email_address = params.get('senderAddress') or ''
@@ -384,10 +384,10 @@ script:
             x = demisto.getIntegrationContext() or {}
             x['localMailboxPassword'] = SETTINGS.local_mailbox_password
             if SETTINGS.local_default_admin_password:
-                x['localDeafultAdminPassword'] = SETTINGS.local_default_admin_password
-            elif not x.get('localDeafultAdminPasswordGenerated'):
+                x['localDefaultAdminPassword'] = SETTINGS.local_default_admin_password
+            elif not x.get('localDefaultAdminPasswordGenerated'):
                 # Generate password randomly when the default passwod is not specified
-                x['localDeafultAdminPasswordGenerated'] =\
+                x['localDefaultAdminPasswordGenerated'] =\
                     ''.join([random.choice(string.ascii_letters + string.digits + '$#!.@+/=_') for i in range(32)])
 
             demisto.setIntegrationContext(x)
@@ -400,7 +400,7 @@ script:
             :return: The default admin password.
             """
             x = self.update_context()
-            return x.get('localDeafultAdminPassword', '') or x.get('localDeafultAdminPasswordGenerated', '')
+            return x.get('localDefaultAdminPassword', '') or x.get('localDefaultAdminPasswordGenerated', '')
 
         def is_restart_required(self) -> bool:
             """
@@ -410,7 +410,7 @@ script:
             """
             if x := demisto.getIntegrationContext():
                 if x.get('localMailboxPassword') != SETTINGS.local_mailbox_password or\
-                   x.get('localDeafultAdminPassword') != SETTINGS.local_default_admin_password:
+                   x.get('localDefaultAdminPassword') != SETTINGS.local_default_admin_password:
                     return True
             return False
 
