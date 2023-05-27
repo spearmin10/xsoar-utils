@@ -20,7 +20,7 @@ Add instance with the parameters below:
   - Port: 636
   - Where to read LDIF: URL
   - LDIF URL: <An URL your LDIF file located at>
-              Sample LDIF file: https://github.com/spearmin10/xsoar-utils/raw/main/integrations/admock/admock.zip
+              Sample LDIF file: https://github.com/spearmin10/xsoar-utils/raw/main/integrations/admock/admock-ldif.zip
   - Run as LDAPS server: Yes
 
 Keep the default value in other parameters.
