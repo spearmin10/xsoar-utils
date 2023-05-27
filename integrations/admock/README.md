@@ -20,7 +20,7 @@ Add instance with the parameters below:
   - Port: 636
   - Where to read LDIF: URL
   - LDIF URL: <An URL your LDIF file located at>
-              Sample LDIF file: https://github.com/spearmin10/test/blob/master/admock-ldif.zip?raw=true (Temporary)
+              Sample LDIF file: https://github.com/spearmin10/xsoar-utils/raw/main/integrations/admock/admock.zip
   - Run as LDAPS server: Yes
 
 Keep the default value in other parameters.
@@ -38,9 +38,9 @@ in CLI, in order to get the gateway IP on which the admock is running.
 Add instance with the parameters below:
   - Server IP: The gateway IP of your XSOAR server
   - Port: 636
-  - Credentials: Any DN (e.g. CN=user,DC=CORP,DC=CORTEX,DC=COM)
+  - Credentials: Any DN (e.g. CN=user,DC=CORP,DC=CORTEX,DC=LAN)
   - Password: Any password
-  - Base DN: Your Base DN (e.g. DC=CORP,DC=CORTEX,DC=COM)
+  - Base DN: Your Base DN (e.g. DC=CORP,DC=CORTEX,DC=LAN)
   - Secure Connection: SSL
   - Trust any certificate (not secure): Yes
 
@@ -53,7 +53,7 @@ Add the instance with the parameters below:
   - Port: 636
   - Credentials: Any username (e.g. Administrator)
   - Password: Any password
-  - Base DN: Your Base DN (e.g. DC=CORP,DC=CORTEX,DC=COM)
+  - Base DN: Your Base DN (e.g. DC=CORP,DC=CORTEX,DC=LAN)
   - Security Type: ssl
   - Do not validate server certificate (insecure): Yes
 
