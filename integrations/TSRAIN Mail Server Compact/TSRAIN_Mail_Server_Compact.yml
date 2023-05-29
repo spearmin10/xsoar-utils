@@ -179,7 +179,7 @@ script:
             self.__host_port = int(host_port or docker_port or 0)
             self.__docker_port = int(docker_port or host_port or 0)
             self.__local_mailbox_password = params.get('localMailboxPassword') or LOCAL_DEFAULT_MAILBOX_PASSWORD
-            self.__local_default_admin_password = params.get('localDefaultAdminPassword')
+            self.__local_default_admin_password = params.get('localDeafultAdminPassword')
             self.__insecure = argToBoolean(params.get('insecure', 'false'))
             self.__enable_send_mail = argToBoolean(params.get('enableSendMailCommand', 'false'))
             self.__sender_email_address = params.get('senderAddress') or ''
@@ -384,10 +384,10 @@ script:
             x = demisto.getIntegrationContext() or {}
             x['localMailboxPassword'] = SETTINGS.local_mailbox_password
             if SETTINGS.local_default_admin_password:
-                x['localDefaultAdminPassword'] = SETTINGS.local_default_admin_password
-            elif not x.get('localDefaultAdminPasswordGenerated'):
+                x['localDeafultAdminPassword'] = SETTINGS.local_default_admin_password
+            elif not x.get('localDeafultAdminPasswordGenerated'):
                 # Generate password randomly when the default passwod is not specified
-                x['localDefaultAdminPasswordGenerated'] =\
+                x['localDeafultAdminPasswordGenerated'] =\
                     ''.join([random.choice(string.ascii_letters + string.digits + '$#!.@+/=_') for i in range(32)])
 
             demisto.setIntegrationContext(x)
@@ -400,7 +400,7 @@ script:
             :return: The default admin password.
             """
             x = self.update_context()
-            return x.get('localDefaultAdminPassword', '') or x.get('localDefaultAdminPasswordGenerated', '')
+            return x.get('localDeafultAdminPassword', '') or x.get('localDeafultAdminPasswordGenerated', '')
 
         def is_restart_required(self) -> bool:
             """
@@ -410,7 +410,7 @@ script:
             """
             if x := demisto.getIntegrationContext():
                 if x.get('localMailboxPassword') != SETTINGS.local_mailbox_password or\
-                   x.get('localDefaultAdminPassword') != SETTINGS.local_default_admin_password:
+                   x.get('localDeafultAdminPassword') != SETTINGS.local_default_admin_password:
                     return True
             return False
 
@@ -1187,14 +1187,24 @@ script:
             msg: Union[str, email.message.Message] = raw_message
         else:
             # Build an email message
+            body = args.get('body')
+            body_html = args.get('htmlBody')
+            body_type = args.get('body_type') or 'text'
+            if body_type == 'HTML':
+                if not body_html:
+                    body_html = body
+                    body = None
+            elif body_type != 'text':
+                raise DemistoException(f'Invalid body_type: {body_type}')
+
             builder = MessageBuilder()
             builder.set_from(sender)
             builder.set_to(to)
             builder.set_cc(cc)
             builder.set_bcc(bcc)
             builder.set_subject(args.get('subject'))
-            builder.set_body(args.get('body'))
-            builder.set_html_body(args.get('htmlBody'))
+            builder.set_body(body)
+            builder.set_html_body(body_html)
             builder.set_additional_headers(argToList(args.get('additionalHeader')))
             builder.set_template_params(args.get('templateParams'))
 
@@ -1399,6 +1409,12 @@ script:
       description: Subject for the email to be sent
     - name: body
       description: The contents (body) of the email to be sent in plain text
+    - name: body_type
+      auto: PREDEFINED
+      predefined:
+      - text
+      - HTML
+      description: 'The body type of the email. Can be: "text", or "HTML".'
     - name: htmlBody
       description: The contents (body) of the email to be sent in HTML format
     - name: replyTo
@@ -1458,7 +1474,7 @@ script:
       description: Raw email message to send. If provided, all other arguments, but
         to, cc and bcc, will be ignored.
     description: Send an email
-  dockerimage: spearmint/xsoar-tsrain:3.5.5.0117
+  dockerimage: spearmint/xsoar-tsrain:3.4.4.2312
   runonce: false
   longRunning: true
   longRunningPort: true
