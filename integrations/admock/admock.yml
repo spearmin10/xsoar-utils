@@ -16,7 +16,7 @@ detaileddescription: |-
      - Long running instance: Yes
      - Port: 636
      - Where to read LDIF: URL
-     - LDIF URL: An URL your LDIF file located at
+     - LDIF URL: An URL your LDIF file located
      - Run as LDAPS server: Yes
      - Trust any certificate (not secure): Yes
      Keep the default value in other parameters
@@ -30,9 +30,9 @@ detaileddescription: |-
     Add the instance with the parameters below:
      - Server IP: The gateway IP of XSOAR server (In the step 2.)
      - Port: 636
-     - Credentials: Any DN (e.g. CN=test,DC=COM)
+     - Credentials: Any DN (e.g. CN=test,DC=LAN)
      - Password: Any password
-     - Base DN: Your Base DN (e.g. DC=CORP,DC=CORTEX,DC=COM)
+     - Base DN: Your Base DN (e.g. DC=CORP,DC=CORTEX,DC=LAN)
      - Secure Connection: SSL
      - Trust any certificate (not secure): Yes
      Keep the default value in other parameters
@@ -43,7 +43,7 @@ detaileddescription: |-
      - Port: 636
      - Credentials: Any username (e.g. Administrator)
      - Password: Any password
-     - Base DN: Your Base DN (e.g. DC=CORP,DC=CORTEX,DC=COM)
+     - Base DN: Your Base DN (e.g. DC=CORP,DC=CORTEX,DC=LAN)
      - Security Type: ssl
      - Do not validate server certificate (insecure): Yes
      Keep the default value in other parameters
