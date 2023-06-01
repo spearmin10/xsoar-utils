@@ -1147,7 +1147,7 @@ script:
         del msg['Date']
         msg['Date'] = email.utils.formatdate(time.mktime(datetime.now().timetuple()), usegmt=True)
 
-        header = args.get('header') or {}
+        header = args.get('add_headers') or {}
         if isinstance(header, str):
             header = json.loads(header)
         if not isinstance(header, dict):
@@ -1155,6 +1155,19 @@ script:
 
         for name, value in header.items():
             msg[name] = value
+
+        header = args.get('replace_headers') or {}
+        if isinstance(header, str):
+            header = json.loads(header)
+        if not isinstance(header, dict):
+            raise DemistoException('header must be dict, or str in JSON dict')
+
+        for name, value in header.items():
+            del msg[name]
+            msg[name] = value
+
+        for name in argToList(args.get('remove_headers') or []):
+            del msg[name]
 
         # Send an email message
         smtp = SMTPClient(get_port_fowarder_addresses())
@@ -1388,8 +1401,12 @@ script:
       description: An email address of sender
     - name: recipients
       description: A comma-separated list of email address of recipients
-    - name: header
-      description: Header fields that overrides the header of .eml (in JSON dictionary)
+    - name: replace_headers
+      description: The header fields that overrides the header of .eml (in JSON dictionary)
+    - name: add_headers
+      description: The header fields to add to the header of .eml (in JSON dictionary)
+    - name: remove_headers
+      description: The list of header names to remove from the eml
     description: Send an email of .eml file
   - name: send-mail
     arguments:
