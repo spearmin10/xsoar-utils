@@ -148,11 +148,13 @@ script:
   script: |
     import io
     import os
+    import sys
     import time
     import ipaddress
     import netifaces
     import zipfile
     import base64
+    import threading
     from ldaptor import interfaces, delta
     from ldaptor.protocols.pureldap import BERInteger, BERSequence, BEROctetString, LDAPMessage, LDAPFilter_or, LDAPFilter_and, LDAPFilter_extensibleMatch, LDAPFilter_equalityMatch, LDAPFilter_present, LDAPSearchResultEntry, LDAPSearchResultDone, LDAPBindResponse, LDAP_SCOPE_baseObject, LDAPPasswordModifyRequest
     from ldaptor.protocols.pureber import berDecodeMultiple
@@ -471,7 +473,7 @@ script:
                     if ldif:
                         break
                     demisto.debug('Waiting for LDIF data available')
-                    time.sleep(5)
+                    time.sleep(5.0)
                 if not ldif:
                     raise RuntimeError('No LDIF in the integration context')
             else:
@@ -603,22 +605,21 @@ script:
             d = inmemory.fromLDIFFile(io.BytesIO(load_ldif(params, is_test, True)))
 
             with open(os.devnull, 'w') as devnull:
-                def write_log(event):
+                def __write_log(event):
                     demisto.debug(textFromEventDict(event))
 
-                def fatalError(reason, rets):
+                def __fatalError(reason, rets):
                     rets['error'] = reason
                     reactor.stop()
 
-                def stop():
+                def __stop():
                     reactor.stop()
 
-                def start(db, params):
+                def __start(db, params):
                     server = MockLDAPServer
                     server.debug = True
                     server.enable_auth = params.get('enableAuth', False)
-                    server.enable_password_check = params.get(
-                        'enablePasswordCheck', False)
+                    server.enable_password_check = params.get('enablePasswordCheck', False)
 
                     factory = LDAPServerFactory(db)
                     factory.protocol = server
@@ -634,29 +635,43 @@ script:
                         pem = pem.replace('-- ', '--\n').replace(' --', '\n--')
                         certificate = ssl.PrivateCertificate.loadPEM(pem)
                         reactor.listenSSL(port, factory, certificate.options())
-                        return defer.Deferred()
                     else:
                         reactor.listenTCP(port, factory)
 
-                tlog.addObserver(write_log)
+                    def __health_checker(port):
+                        while True:
+                            time.sleep(5.0)
+                            with socket.socket() as s:
+                                try:
+                                    s.connect(('', port))
+                                except Exception as e:
+                                    reactor.callFromThread(reactor.stop)
+                                    demisto.debug(f'The LDAP service is down.')
+                                    return
+
+                    thr = threading.Thread(target=__health_checker, args=(port,), daemon=False)
+                    thr.start()
+                    return defer.Deferred()
+
+                tlog.addObserver(__write_log)
                 tlog.startLogging(devnull, setStdout=False)
 
                 components.registerAdapter(lambda x: x.root,
                                            LDAPServerFactory,
                                            interfaces.IConnectedLDAPEntry)
 
-                d.addCallback(start, params)
+                d.addCallback(__start, params)
                 if is_test:
                     rets: dict = {}
-                    d.addErrback(fatalError, rets)
-                    reactor.callLater(5, stop)
+                    d.addErrback(__fatalError, rets)
+                    reactor.callLater(5, __stop)
                     reactor.run()
-                    e = rets.get('error')
-                    if e:
+                    if e := rets.get('error'):
                         raise e
                 else:
                     d.addErrback(tlog.err)
                     reactor.run()
+                    demisto.debug(f'The LDAP service has stopped.')
 
         except Exception as e:
             demisto.error(f'An error occurred in long running loop: {str(e)}')
