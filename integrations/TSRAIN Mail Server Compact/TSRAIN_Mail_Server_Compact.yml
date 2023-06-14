@@ -1315,6 +1315,7 @@ script:
                 # Run the server
                 PortForwardingHandler.ssl_server_context = local.create_ssl_server_context()
 
+                ThreadingTCPServer.allow_reuse_address = True
                 with ThreadingTCPServer(('', listen_port), PortForwardingHandler) as server:
                     save_port_fowarder_address(None, listen_port)
                     run_server(server, is_test)
