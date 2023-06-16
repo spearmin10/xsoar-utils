@@ -49,6 +49,11 @@ configuration:
   type: 12
   required: false
   additionalinfo: Send by UDP syslog from messages coming in the listening port
+- display: Behind Reverse Proxy
+  name: behindProxy
+  defaultvalue: "true"
+  type: 8
+  required: false
 script:
   script: |
     import os
@@ -67,18 +72,21 @@ script:
     from multiprocessing import Process
     from typing import List, Dict, Any, Pattern, Tuple
 
-    SPLUNK_MGMT_PORT = 189
-    REVERSE_PROXY_SPLUNK_HTTP_PORT = 80
+    SPLUNK_MGMT_PORT = 1189
+    SPLUNK_HTTP_PORT = 1100
+    REVERSE_PROXY_SPLUNK_HTTP_PORT = 1080
 
     DEFAULT_SOCKET_TIMEOUT = 30
-    DEFAULT_NGFW_SYSLOG_PORT = 515
-    DEFAULT_SQUID_SYSLOG_PORT = 516
+    DEFAULT_NGFW_SYSLOG_PORT = 1515
+    DEFAULT_SQUID_SYSLOG_PORT = 1516
     INTEGRATION_NAME = 'Splunk Server'
 
 
     class Settings:
         @staticmethod
-        def make_port_mapping(port_mapping_str: str) -> Dict[Optional[Pattern], int]:
+        def make_port_mapping(
+            port_mapping_str: str
+        ) -> Dict[Optional[Pattern], int]:
             """
             Make port mappings
 
@@ -94,37 +102,57 @@ script:
                 }
             raise ValueError('Invalid a syslog port mapping')
 
-        def __init__(self, params: Dict[str, Any]):
+        def __init__(
+            self,
+            params: Dict[str, Any]
+        ) -> None:
             host_port, _, docker_port = (params.get('longRunningPort') or '').partition(':')
             self.__host_port = int(host_port or docker_port or 0)
             self.__docker_port = int(docker_port or host_port or 0)
             self.__admin_password = params.get('adminPassword') or ''
             self.__port_mapping_str = params.get('syslogPortMapping') or '514'
             self.__port_mapping: Dict[Optional[Pattern], int] = None  # type: ignore
+            self.__behind_proxy = argToBoolean(params.get('behindProxy', 'true'))
 
         @property
-        def admin_password(self) -> str:
+        def admin_password(
+            self
+        ) -> str:
             return self.__admin_password
 
         @property
-        def host_port(self) -> int:
+        def host_port(
+            self
+        ) -> int:
             return self.__host_port
 
         @property
-        def docker_port(self) -> int:
+        def docker_port(
+            self
+        ) -> int:
             return self.__docker_port
 
         @property
-        def port_mapping(self) -> Dict[Optional[Pattern], int]:
+        def port_mapping(
+            self
+        ) -> Dict[Optional[Pattern], int]:
             if self.__port_mapping is None:
                 self.__port_mapping = Settings.make_port_mapping(self.__port_mapping_str)
             return self.__port_mapping
+
+        @property
+        def behind_proxy(
+            self
+        ) -> bool:
+            return self.__behind_proxy
 
 
     SETTINGS = Settings(demisto.params())
 
 
-    def update_context(params: Dict[str, Any]) -> Dict[str, Any]:
+    def update_context(
+        params: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
         Store the integration parameters to the integration context.
 
@@ -142,7 +170,9 @@ script:
         return x
 
 
-    def is_restart_required(params: Dict[str, Any]) -> bool:
+    def is_restart_required(
+        params: Dict[str, Any]
+    ) -> bool:
         """
         Check if the service restart is required
 
@@ -156,7 +186,9 @@ script:
         return x.get('instanceName') != demisto.integrationInstance()
 
 
-    def start_services(params: Dict[str, Any]):
+    def start_services(
+        params: Dict[str, Any]
+    ) -> None:
         """
         Start services
 
@@ -167,13 +199,20 @@ script:
             demisto.debug(f'The instance name must not include any special/control charactors: {instance_name}')
         else:
             restart = is_restart_required(params)
-            os.environ['SPLUNK_ROOT_ENDPOINT'] = '/instance/execute/' + instance_name
+            if SETTINGS.behind_proxy:
+                os.environ['SPLUNK_ROOT_ENDPOINT'] = '/instance/execute/' + instance_name
+                os.environ['SPLUNK_TOOLS_PROXY_ON'] = 'True'
+            else:
+                os.environ['SPLUNK_ROOT_ENDPOINT'] = '/'
+                os.environ['SPLUNK_TOOLS_PROXY_ON'] = 'False'
+
             os.environ['SPLUNK_ADMIN_PASSWORD'] = SETTINGS.admin_password
             ret = subprocess.call(['restart.sh' if restart else 'start.sh'])
             demisto.debug('A {}start command has been requested: {}'.format('re' if restart else '', ret))
 
 
-    def get_gateway_interfaces() -> List[Dict[str, str]]:
+    def get_gateway_interfaces(
+    ) -> List[Dict[str, str]]:
         """
         Get the gateway interfaces
 
@@ -186,7 +225,8 @@ script:
         } for k, v in netifaces.gateways().items() if k != 'default' for a in v]
 
 
-    def get_local_addresses() -> List[dict]:
+    def get_local_addresses(
+    ) -> List[dict]:
         """
         Get local addresses
 
@@ -218,14 +258,17 @@ script:
         """
         Port Forwarding for Splunk Management Port and Splunk Web UI
         """
-        def forward_tcp(self, port: int):
+        def forward_tcp(
+            self,
+            port: int
+        ) -> None:
             """
             TCP forwarding
             """
             cs = self.request
             try:
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rs:
-                    rs.connect(('127.0.0.1', port))
+                    rs.connect(('', port))
                     while True:
                         r, w, x = select.select([cs, rs], [], [])
                         if cs in r:
@@ -243,7 +286,9 @@ script:
             finally:
                 cs.close()
 
-        def forward_syslog(self):
+        def forward_syslog(
+            self
+        ) -> None:
             """
             Syslog fowarding
             """
@@ -254,12 +299,14 @@ script:
                         if pattern is None or pattern.match(line_str):
                             # Send a syslog message
                             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as rs:
-                                rs.sendto(line_bin, ('127.0.0.1', port))
+                                rs.sendto(line_bin, ('', port))
                                 break
                     else:
                         demisto.debug(f'No pattern match for {line_str}')
 
-        def forward_syslog_with_size(self):
+        def forward_syslog_with_size(
+            self
+        ) -> None:
             """
             Syslog fowarding
             """
@@ -283,12 +330,14 @@ script:
                         if pattern is None or pattern.match(payload_str):
                             # Send a syslog message
                             with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as rs:
-                                rs.sendto(payload_bin, ('127.0.0.1', port))
+                                rs.sendto(payload_bin, ('', port))
                                 break
                     else:
                         demisto.debug(f'No pattern match for {payload_str}')
 
-        def handle_command(self):
+        def handle_command(
+            self
+        ) -> None:
             """
             Handle a command
             """
@@ -318,7 +367,9 @@ script:
                     self.request.send(payload.encode())
                     self.request.close()
 
-        def make_cmd_service_info(self) -> Dict[str, Any]:
+        def make_cmd_service_info(
+            self
+        ) -> Dict[str, Any]:
             """
             Make a response to a service-info command
 
@@ -339,7 +390,9 @@ script:
                 'message': 'Unable to get service addresses'
             }
 
-        def handle(self):
+        def handle(
+            self
+        ) -> None:
             c1 = self.request.recv(1, socket.MSG_PEEK)
             if c1 == b'\x16':
                 self.forward_tcp(SPLUNK_MGMT_PORT)
@@ -350,10 +403,16 @@ script:
             elif c1 in (b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9'):
                 self.forward_syslog_with_size()
             else:
-                self.forward_tcp(REVERSE_PROXY_SPLUNK_HTTP_PORT)
+                if SETTINGS.behind_proxy:
+                    self.forward_tcp(REVERSE_PROXY_SPLUNK_HTTP_PORT)
+                else:
+                    self.forward_tcp(SPLUNK_HTTP_PORT)
 
 
-    def run_server(server: BaseServer, is_test=False):
+    def run_server(
+        server: BaseServer,
+        is_test=False
+    ) -> None:
         """
         Run the server
 
@@ -371,7 +430,10 @@ script:
             server.serve_forever()
 
 
-    def run_long_running(params: Dict[str, Any], is_test=False):
+    def run_long_running(
+        params: Dict[str, Any],
+        is_test=False
+    ) -> None:
         """
         Start the long running server
 
@@ -382,8 +444,8 @@ script:
         try:
             host_port = SETTINGS.host_port
             docker_port = SETTINGS.docker_port
-            if host_port < 1024:
-                raise ValueError(f'Listen ports less than 1024 are reserved for system: {host_port}')
+            if host_port < 2000:
+                raise ValueError(f'Listen ports less than 2000 are reserved for system: {host_port}')
 
             if not is_test:
                 start_services(params)
@@ -398,7 +460,9 @@ script:
             raise ValueError(str(e))
 
 
-    def detect_service_ip_port(settings: Settings) -> Tuple[str, int]:
+    def detect_service_ip_port(
+        settings: Settings
+    ) -> Tuple[str, int]:
         """ Detect the IP:port of the local server
 
         :param settings: The instance settings.
@@ -423,14 +487,20 @@ script:
     ''' COMMANDS '''
 
 
-    def test_module(args, params):
+    def test_module(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> str:
         """
         Validates:
         """
         raise RuntimeError('Please test with `splunkd-test` command.')
 
 
-    def test_command(args, params):
+    def test_command(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
         """
         Validates:
         """
@@ -455,7 +525,10 @@ script:
         return 'ok', {}, {}
 
 
-    def get_service_info_command(args, params):
+    def get_service_info_command(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
         """
         Get service information
         """
@@ -493,7 +566,10 @@ script:
         return hr, ec, sinfo
 
 
-    def get_gateways_command(args, params):
+    def get_gateways_command(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
         """
         Get list of gateways
         """
@@ -506,7 +582,10 @@ script:
             return hr, {}, []
 
 
-    def send_syslog(args, params):
+    def send_syslog(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
         """
         Send a syslog message
         """
@@ -538,11 +617,12 @@ script:
         return hr, {}, []
 
 
-    def main():
+    def main(
+    ) -> None:
         """
         Main
         """
-        params = demisto.params()
+        params = assign_params(**demisto.params())
 
         command = demisto.command()
         demisto.debug('Command being called is {}'.format(command))
@@ -605,7 +685,7 @@ script:
       required: true
       description: The syslog message (no headers)
     description: Send a syslog message
-  dockerimage: spearmint/xsoar-splunk:2.12.17.0131
+  dockerimage: spearmint/xsoar-splunk:3.6.17.0419
   runonce: true
   longRunning: true
   longRunningPort: true
