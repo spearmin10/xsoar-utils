@@ -172,7 +172,10 @@ script:
 
 
     class Settings:
-        def __init__(self, params: Dict[str, Any]):
+        def __init__(
+            self,
+            params: Dict[str, Any]
+        ) -> None:
             self.__params = params
 
             host_port, _, docker_port = (params.get('longRunningPort') or '').partition(':')
@@ -186,7 +189,11 @@ script:
             self.__client_p12_base64 = params.get('clientPKCS12Base64') or ''
             self.__client_p12_password = params.get('clientPKCS12Password') or ''
 
-        def __get_body_from_pem(self, pem: str, label: str) -> Optional[str]:
+        def __get_body_from_pem(
+            self,
+            pem: str,
+            label: str
+        ) -> str | None:
             label = re.escape(label)
             pattern = f'^-----BEGIN {label}-----$(.*?)^-----END {label}-----$'
             if m := re.search(pattern, pem, re.DOTALL | re.MULTILINE):
@@ -194,19 +201,27 @@ script:
             return None
 
         @property
-        def host_port(self) -> int:
+        def host_port(
+            self
+        ) -> int:
             return self.__host_port
 
         @property
-        def docker_port(self) -> int:
+        def docker_port(
+            self
+        ) -> int:
             return self.__docker_port
 
         @property
-        def is_remote_mode(self) -> bool:
+        def is_remote_mode(
+            self
+        ) -> bool:
             return True if self.__params.get('remoteTsrainAddress') else False
 
         @property
-        def remote_address(self) -> Tuple[str, int]:
+        def remote_address(
+            self
+        ) -> Tuple[str, int]:
             if not (remote_addr := self.__params.get('remoteTsrainAddress')):
                 raise DemistoException("It's working in the local tsrain mode.")
 
@@ -216,40 +231,55 @@ script:
             return remote_host, int(remote_port)
 
         @property
-        def local_mailbox_password(self) -> str:
+        def local_mailbox_password(
+            self
+        ) -> str:
             return self.__local_mailbox_password
 
         @property
-        def local_default_admin_password(self) -> Optional[str]:
+        def local_default_admin_password(
+            self
+        ) -> str | None:
             return self.__local_default_admin_password
 
         @property
-        def insecure(self) -> bool:
+        def insecure(
+            self
+        ) -> bool:
             return self.__insecure
 
         @property
-        def is_send_mail_enabled(self) -> bool:
+        def is_send_mail_enabled(
+            self
+        ) -> bool:
             return self.__enable_send_mail
 
         @property
-        def sender_email_address(self) -> str:
+        def sender_email_address(
+            self
+        ) -> str:
             return self.__sender_email_address
 
         @property
-        def client_pkcs12_base64(self) -> str:
+        def client_pkcs12_base64(
+            self
+        ) -> str:
             if body := self.__get_body_from_pem(self.__client_p12_base64, 'PKCS12'):
                 return body
             return self.__client_p12_base64
 
         @property
-        def client_pkcs12_password(self) -> str:
+        def client_pkcs12_password(
+            self
+        ) -> str:
             return self.__client_p12_password
 
 
     SETTINGS = Settings(demisto.params())
 
 
-    def get_gateway_interfaces() -> List[Dict[str, str]]:
+    def get_gateway_interfaces(
+    ) -> List[Dict[str, str]]:
         """
         Get the gateway interfaces
 
@@ -262,7 +292,8 @@ script:
         } for k, v in netifaces.gateways().items() if k != 'default' for a in v]
 
 
-    def get_local_addresses() -> List[dict]:
+    def get_local_addresses(
+    ) -> List[dict]:
         """
         Get local addresses
 
@@ -290,7 +321,10 @@ script:
         return alist
 
 
-    def save_port_fowarder_address(ips: Optional[List[str]], port: Optional[int]) -> None:
+    def save_port_fowarder_address(
+        ips: List[str] | None,
+        port: int | None
+    ) -> None:
         """
         Save the port forwarder addresses to the integration context
 
@@ -313,7 +347,8 @@ script:
         demisto.setIntegrationContext(x)
 
 
-    def get_port_fowarder_addresses() -> List[Tuple[str, int]]:
+    def get_port_fowarder_addresses(
+    ) -> List[Tuple[str, int]]:
         """
         Get port forwarder addresses to connect from the internal mail client
 
@@ -334,10 +369,16 @@ script:
 
 
     class Local:
-        def __init__(self, params: Dict[str, Any]):
+        def __init__(
+            self,
+            params: Dict[str, Any]
+        ) -> None:
             self.__params = params
 
-        def __gen_self_signed_server_cert(self, key_size: int) -> Tuple[bytes, bytes]:
+        def __gen_self_signed_server_cert(
+            self,
+            key_size: int
+        ) -> Tuple[bytes, bytes]:
             """
             Generate a self signed server certificate
 
@@ -375,7 +416,9 @@ script:
                                               serialization.PrivateFormat.PKCS8,
                                               serialization.NoEncryption()))
 
-        def update_context(self) -> Dict[str, Any]:
+        def update_context(
+            self
+        ) -> Dict[str, Any]:
             """
             Store the integration parameters to the integration context.
 
@@ -393,7 +436,9 @@ script:
             demisto.setIntegrationContext(x)
             return x
 
-        def get_default_admin_password(self) -> str:
+        def get_default_admin_password(
+            self
+        ) -> str:
             """
             Retrieve default admin password
 
@@ -402,7 +447,9 @@ script:
             x = self.update_context()
             return x.get('localDeafultAdminPassword', '') or x.get('localDeafultAdminPasswordGenerated', '')
 
-        def is_restart_required(self) -> bool:
+        def is_restart_required(
+            self
+        ) -> bool:
             """
             Check if the service restart is required
 
@@ -414,7 +461,10 @@ script:
                     return True
             return False
 
-        def start_services(self, restart: bool = False) -> None:
+        def start_services(
+            self,
+            restart: bool = False
+        ) -> None:
             """
             Start services
 
@@ -429,7 +479,9 @@ script:
             ret = subprocess.call(['restart.sh' if restart else 'start.sh'])
             demisto.debug('A {}start command has been requested: {}'.format('re' if restart else '', ret))
 
-        def create_ssl_server_context(self) -> ssl.SSLContext:
+        def create_ssl_server_context(
+            self
+        ) -> ssl.SSLContext:
             """
             Create a SSL server context
 
@@ -454,11 +506,16 @@ script:
 
 
     class Remote:
-        def __init__(self, params: Dict[str, Any]):
+        def __init__(
+            self,
+            params: Dict[str, Any]
+        ) -> None:
             self.__params = params
-            self.__ssl_client_context: Optional[ssl.SSLContext] = None
+            self.__ssl_client_context: ssl.SSLContext | None = None
 
-        def __create_ssl_client_context(self) -> ssl.SSLContext:
+        def __create_ssl_client_context(
+            self
+        ) -> ssl.SSLContext:
             """
             Create a SSL client context
 
@@ -500,7 +557,9 @@ script:
                                                     keyfile=client_private_key_file.name)
             return ssl_ctx
 
-        def get_ssl_client_context(self) -> ssl.SSLContext:
+        def get_ssl_client_context(
+            self
+        ) -> ssl.SSLContext:
             """
             Get a SSL client context
 
@@ -510,7 +569,9 @@ script:
                 self.__ssl_client_context = self.__create_ssl_client_context()
             return self.__ssl_client_context
 
-        def test_server(self) -> None:
+        def test_server(
+            self
+        ) -> None:
             """
             Test to connect to the remote TSRAIN server
             """
@@ -531,7 +592,9 @@ script:
                             raise DemistoException(f'Received a invalid response - {resp_str}')
 
 
-    def extract_email_addresses(fields: List[str]) -> List[str]:
+    def extract_email_addresses(
+        fields: List[str]
+    ) -> List[str]:
         """
         Extract email addresses from email fields
 
@@ -554,11 +617,20 @@ script:
         ssl_client_context: ssl.SSLContext = None  # type: ignore
         ssl_server_context: ssl.SSLContext = None  # type: ignore
 
-        def __init__(self, request, client_address, server) -> None:
+        def __init__(
+            self,
+            request,
+            client_address,
+            server
+        ) -> None:
             BaseRequestHandler.__init__(self, request, client_address, server)
 
-        def __forward_tcp_ssl(self, remote_host: str, remote_port: int,
-                              preceding_payload: Optional[bytes] = None) -> None:
+        def __forward_tcp_ssl(
+            self,
+            remote_host: str,
+            remote_port: int,
+            preceding_payload: bytes | None = None
+        ) -> None:
             """
             Port Forwarding: tcp-ssl:port
             """
@@ -605,7 +677,11 @@ script:
             finally:
                 self.request.close()
 
-        def __forward_tcp_tcp(self, remote_host: str, remote_port: int) -> None:
+        def __forward_tcp_tcp(
+            self,
+            remote_host: str,
+            remote_port: int
+        ) -> None:
             """
             Port Forwarding: tcp-tcp:port
             """
@@ -630,7 +706,11 @@ script:
             finally:
                 cs.close()
 
-        def __forward_ssl_tcp(self, remote_host: str, remote_port: int) -> None:
+        def __forward_ssl_tcp(
+            self,
+            remote_host: str,
+            remote_port: int
+        ) -> None:
             """
             Port Forwarding: ssl-tcp:port
             """
@@ -672,7 +752,9 @@ script:
             finally:
                 self.request.close()
 
-        def handle(self) -> None:
+        def handle(
+            self
+        ) -> None:
             if PortForwardingHandler.remote_host is None:
                 remote_host = '127.0.0.1'
 
@@ -740,7 +822,10 @@ script:
 
 
     class SMTPClient:
-        def __init__(self, addrs: List[Tuple[str, int]]) -> None:
+        def __init__(
+            self,
+            addrs: List[Tuple[str, int]]
+        ) -> None:
             """ Initialize a SMTP client instance
 
             :param addrs: The list of SMTP server addresses to try to connect
@@ -754,7 +839,12 @@ script:
             else:
                 raise DemistoException('Unable to connect to any SMTP server addresses.')
 
-        def send_message(self, msg: Union[str, email.message.Message], from_addr: str, to_addrs: List[str]) -> None:
+        def send_message(
+            self,
+            msg: Union[str, email.message.Message],
+            from_addr: str,
+            to_addrs: List[str]
+        ) -> None:
             """ Send an email message
 
             :param msg: An email message
@@ -772,7 +862,9 @@ script:
 
     class MessageBuilder:
         @staticmethod
-        def __guess_file_type(filename: str) -> Tuple[str, str]:
+        def __guess_file_type(
+            filename: str
+        ) -> Tuple[str, str]:
             """
             Return the maintype and subtype guessed based on the extension
             """
@@ -785,11 +877,13 @@ script:
             return main_type, sub_type
 
         @staticmethod
-        def __build_attachment_message(file_name: str,
-                                       file_data: Union[str, bytes],
-                                       main_type: str,
-                                       sub_type: str,
-                                       content_id: Optional[str]) -> MIMEBase:
+        def __build_attachment_message(
+            file_name: str,
+            file_data: Union[str, bytes],
+            main_type: str,
+            sub_type: str,
+            content_id: str | None
+        ) -> MIMEBase:
             """ Create an attachment email entity
 
             :param file_name: The file name
@@ -826,7 +920,9 @@ script:
             return attachment
 
         @staticmethod
-        def __build_html_messages(html: str) -> Tuple[str, List[MIMEBase]]:
+        def __build_html_messages(
+            html: str
+        ) -> Tuple[str, List[MIMEBase]]:
             """ Extract all data-url content from within the html and return as separate attachments
 
                 Due to security implications, we support only images here
@@ -865,7 +961,9 @@ script:
             clean_body += html[last_index:]
             return clean_body, attachments
 
-        def __init__(self) -> None:
+        def __init__(
+            self
+        ) -> None:
             self.__from: Optional[str] = None
             self.__to: List[str] = []
             self.__cc: List[str] = []
@@ -878,34 +976,64 @@ script:
             self.__attachments: List[MIMEBase] = []
             self.__template_params: Dict[str, str] = {}
 
-        def set_from(self, address: Optional[str]) -> None:
+        def set_from(
+            self,
+            address: str | None
+        ) -> None:
             self.__from = address
 
-        def set_to(self, addresses: Optional[List[str]]) -> None:
+        def set_to(
+            self,
+            addresses: List[str] | None
+        ) -> None:
             self.__to = addresses or list()
 
-        def set_cc(self, addresses: Optional[List[str]]) -> None:
+        def set_cc(
+            self,
+            addresses: List[str] | None
+        ) -> None:
             self.__cc = addresses or list()
 
-        def set_bcc(self, addresses: Optional[List[str]]) -> None:
+        def set_bcc(
+            self,
+            addresses: List[str] | None
+        ) -> None:
             self.__bcc = addresses or list()
 
-        def set_reply_to(self, address: Optional[str]) -> None:
+        def set_reply_to(
+            self,
+            address: str | None
+        ) -> None:
             self.__reply_to = address
 
-        def set_subject(self, subject: Optional[str]) -> None:
+        def set_subject(
+            self,
+            subject: str | None
+        ) -> None:
             self.__subject = subject
 
-        def set_body(self, body: Optional[str]) -> None:
+        def set_body(
+            self,
+            body: str | None
+        ) -> None:
             self.__body = body
 
-        def set_html_body(self, html_body: Optional[str]) -> None:
+        def set_html_body(
+            self,
+            html_body: str | None
+        ) -> None:
             self.__html_body = html_body
 
-        def set_additional_headers(self, headers: Optional[List[str]]) -> None:
+        def set_additional_headers(
+            self,
+            headers: List[str] | None
+        ) -> None:
             self.__headers = headers or list()
 
-        def set_template_params(self, template: Optional[Union[str, Dict[str, Dict[str, str]]]]) -> None:
+        def set_template_params(
+            self,
+            template: Union[str, Dict[str, Dict[str, str]]] | None
+        ) -> None:
             """ Set template parameters
 
             :param template: The template parameters
@@ -929,7 +1057,12 @@ script:
                 elif key := ent.get('key'):
                     self.__template_params[k] = demisto.dt(context, key)
 
-        def add_attachment_file_by_entry_id(self, entity_id: str, file_name: Optional[str], content_id: Optional[str]):
+        def add_attachment_file_by_entry_id(
+            self,
+            entity_id: str,
+            file_name: str | None,
+            content_id: str | None
+        ) -> None:
             """ Add an attachment file by an entry ID
 
             :param entry_id: The entry ID of the file
@@ -956,7 +1089,12 @@ script:
                 demisto.error(f'Invalid entry {entity_id} with exception: {str(e)}')
                 raise DemistoException(f'Entry {entity_id} is not valid or is not a file entry')
 
-        def add_attachment_file_by_data(self, file_name: str, file_data: Union[str, bytes], content_id: Optional[str]):
+        def add_attachment_file_by_data(
+            self,
+            file_name: str,
+            file_data: Union[str, bytes],
+            content_id: str | None
+        ) -> None:
             """ Add an attachment file by a payload
 
             :param file_name: The file name
@@ -972,7 +1110,9 @@ script:
                 content_id=content_id or '')
             self.__attachments.append(attachment)
 
-        def build(self) -> email.message.Message:
+        def build(
+            self
+        ) -> email.message.Message:
             def _new_header(s) -> Optional[email.header.Header]:
                 return email.header.Header(' '.join(s.splitlines()), 'utf-8') if s else None
 
@@ -1051,7 +1191,10 @@ script:
     ''' COMMAND FUNCTIONS '''
 
 
-    def test_module(args, params):
+    def test_module(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
         """
         Validates:
         """
@@ -1059,7 +1202,10 @@ script:
         return 'ok', {}, {}
 
 
-    def get_servcie_info_command(args, params):
+    def get_servcie_info_command(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
         """
         Get the service information
         """
@@ -1092,7 +1238,10 @@ script:
         return hr, {'TsrainCompact.Service': sinfo}, sinfo
 
 
-    def get_gateways_command(args, params):
+    def get_gateways_command(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
         """
         Get gateway list
         """
@@ -1104,7 +1253,10 @@ script:
             return hr, {}, []
 
 
-    def get_default_admin_password_command(args, params):
+    def get_default_admin_password_command(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
         """
         Get default admin password
         """
@@ -1112,7 +1264,10 @@ script:
         return f'admin password: {pwd}', {}, pwd
 
 
-    def restart_command(args, params):
+    def restart_command(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
         """
         Restart the core service
         """
@@ -1120,7 +1275,10 @@ script:
         return 'The services have been restarted.', {}, {}
 
 
-    def send_eml_command(args, params):
+    def send_eml_command(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
         """
         Send an email message
         """
@@ -1177,7 +1335,10 @@ script:
         return 'An email has been sent successfully', {}, {}
 
 
-    def send_mail_command(args, params):
+    def send_mail_command(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
         """
         Send an email message
         """
@@ -1256,7 +1417,10 @@ script:
         return 'An email has been sent successfully', {}, {}
 
 
-    def run_server(server: BaseServer, is_test=False):
+    def run_server(
+        server: BaseServer,
+        is_test=False
+    ) -> None:
         """
         Run the server
 
@@ -1274,7 +1438,10 @@ script:
             server.serve_forever()
 
 
-    def run_long_running(params: Dict[str, Any], is_test=False):
+    def run_long_running(
+        params: Dict[str, Any],
+        is_test=False
+    ) -> None:
         """
         Start the long running server
 
@@ -1331,7 +1498,7 @@ script:
         """
         Main
         """
-        params = demisto.params()
+        params = assign_params(**demisto.params())
 
         command = demisto.command()
         demisto.debug('Command being called is {}'.format(command))
@@ -1349,7 +1516,8 @@ script:
             if command == 'long-running-execution':
                 run_long_running(params)
             else:
-                readable_output, outputs, raw_response = commands[command](demisto.args(), params)
+                args = assign_params(**demisto.args())
+                readable_output, outputs, raw_response = commands[command](args, params)
                 return_outputs(readable_output, outputs, raw_response)
         except Exception as e:
             err_msg = f'Error in {INTEGRATION_NAME} Integration [{e}]'
@@ -1492,7 +1660,7 @@ script:
       description: Raw email message to send. If provided, all other arguments, but
         to, cc and bcc, will be ignored.
     description: Send an email
-  dockerimage: spearmint/xsoar-tsrain:3.4.4.2312
+  dockerimage: spearmint/xsoar-tsrain:3.6.20.2109
   runonce: false
   longRunning: true
   longRunningPort: true
