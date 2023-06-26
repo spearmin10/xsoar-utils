@@ -66,7 +66,7 @@ configuration:
   name: longRunningPort
   defaultvalue: "8118"
   type: 0
-  required: true
+  required: false
   additionalinfo: The port which is shared with Rainloop Web UI, SMTP and IMAP4
 - display: Incident type
   name: incidentType
@@ -121,7 +121,7 @@ configuration:
   type: 0
   required: false
 script:
-  script: |-
+  script: |
     import os
     import time
     import socket
@@ -137,6 +137,7 @@ script:
     import netifaces
     import smtplib
     import mimetypes
+    import threading
     import email.message
     import email.encoders
     import email.utils
@@ -176,6 +177,7 @@ script:
             self,
             params: Dict[str, Any]
         ) -> None:
+            params = assign_params(**params)
             self.__params = params
 
             host_port, _, docker_port = (params.get('longRunningPort') or '').partition(':')
@@ -274,14 +276,19 @@ script:
         ) -> str:
             return self.__client_p12_password
 
+        @property
+        def get_params(
+            self
+        ) -> Dict[str, Any]:
+            return self.__params
+
 
     SETTINGS = Settings(demisto.params())
 
 
     def get_gateway_interfaces(
     ) -> List[Dict[str, str]]:
-        """
-        Get the gateway interfaces
+        """ Get the gateway interfaces
 
         :return: List of interfaces (keys: 'IP', 'Interface', 'Default')
         """
@@ -294,8 +301,7 @@ script:
 
     def get_local_addresses(
     ) -> List[dict]:
-        """
-        Get local addresses
+        """ Get local addresses
 
         :return: List of local address object {'addr', 'netmask', 'broadcast'}
         """
@@ -325,8 +331,7 @@ script:
         ips: List[str] | None,
         port: int | None
     ) -> None:
-        """
-        Save the port forwarder addresses to the integration context
+        """ Save the port forwarder addresses to the integration context
 
         :param ips: The list of IP addresses of the port forwarder
         :param port: The port number
@@ -349,8 +354,7 @@ script:
 
     def get_port_fowarder_addresses(
     ) -> List[Tuple[str, int]]:
-        """
-        Get port forwarder addresses to connect from the internal mail client
+        """ Get port forwarder addresses to connect from the internal mail client
 
         :return: The list of host names and ports
         """
@@ -368,235 +372,10 @@ script:
         return list(set(addrs))
 
 
-    class Local:
-        def __init__(
-            self,
-            params: Dict[str, Any]
-        ) -> None:
-            self.__params = params
-
-        def __gen_self_signed_server_cert(
-            self,
-            key_size: int
-        ) -> Tuple[bytes, bytes]:
-            """
-            Generate a self signed server certificate
-
-            :param key_size: The length of a public key to be generated.
-            :return: A certificate and private key pair in PEM
-            """
-            valid_from = datetime.now()
-            valid_until = valid_from + timedelta(1 * 365, 0, 0)
-
-            hostname = socket.gethostname()
-            private_key = rsa.generate_private_key(public_exponent=65537, key_size=key_size, backend=default_backend())
-            public_key = private_key.public_key()
-
-            builder = x509.CertificateBuilder()
-            builder = builder.subject_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, hostname)]))
-            builder = builder.issuer_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, hostname)]))
-            builder = builder.not_valid_before(valid_from)
-            builder = builder.not_valid_after(valid_until)
-            builder = builder.serial_number(x509.random_serial_number())
-            builder = builder.public_key(public_key)
-            builder = builder.add_extension(
-                x509.SubjectAlternativeName([
-                    x509.DNSName(hostname),
-                    x509.DNSName('localhost')
-                ]),
-                critical=False)
-            builder = builder.add_extension(x509.BasicConstraints(ca=False, path_length=None), critical=True)
-
-            certificate = builder.sign(
-                private_key=private_key, algorithm=hashes.SHA256(),
-                backend=default_backend())
-
-            return (certificate.public_bytes(serialization.Encoding.PEM),
-                    private_key.private_bytes(serialization.Encoding.PEM,
-                                              serialization.PrivateFormat.PKCS8,
-                                              serialization.NoEncryption()))
-
-        def update_context(
-            self
-        ) -> Dict[str, Any]:
-            """
-            Store the integration parameters to the integration context.
-
-            :return: The integration context updated.
-            """
-            x = demisto.getIntegrationContext() or {}
-            x['localMailboxPassword'] = SETTINGS.local_mailbox_password
-            if SETTINGS.local_default_admin_password:
-                x['localDeafultAdminPassword'] = SETTINGS.local_default_admin_password
-            elif not x.get('localDeafultAdminPasswordGenerated'):
-                # Generate password randomly when the default passwod is not specified
-                x['localDeafultAdminPasswordGenerated'] =\
-                    ''.join([random.choice(string.ascii_letters + string.digits + '$#!.@+/=_') for i in range(32)])
-
-            demisto.setIntegrationContext(x)
-            return x
-
-        def get_default_admin_password(
-            self
-        ) -> str:
-            """
-            Retrieve default admin password
-
-            :return: The default admin password.
-            """
-            x = self.update_context()
-            return x.get('localDeafultAdminPassword', '') or x.get('localDeafultAdminPasswordGenerated', '')
-
-        def is_restart_required(
-            self
-        ) -> bool:
-            """
-            Check if the service restart is required
-
-            :return: True - restart is required.
-            """
-            if x := demisto.getIntegrationContext():
-                if x.get('localMailboxPassword') != SETTINGS.local_mailbox_password or\
-                   x.get('localDeafultAdminPassword') != SETTINGS.local_default_admin_password:
-                    return True
-            return False
-
-        def start_services(
-            self,
-            restart: bool = False
-        ) -> None:
-            """
-            Start services
-
-            :param restart: True if it re-starts the service.
-            """
-            os.environ['SMTP_PORT'] = str(LOCAL_SMTP_PORT)
-            os.environ['POP3_PORT'] = str(LOCAL_POP3_PORT)
-            os.environ['IMAP4_PORT'] = str(LOCAL_IMAP4_PORT)
-            os.environ['RAINLOOP_PORT'] = str(LOCAL_RAINLOOP_PORT)
-            os.environ['MAILBOX_PASSWORD'] = SETTINGS.local_mailbox_password
-            os.environ['RAINLOOP_DEFAULT_ADMIN_PASSWORD'] = self.get_default_admin_password()
-            ret = subprocess.call(['restart.sh' if restart else 'start.sh'])
-            demisto.debug('A {}start command has been requested: {}'.format('re' if restart else '', ret))
-
-        def create_ssl_server_context(
-            self
-        ) -> ssl.SSLContext:
-            """
-            Create a SSL server context
-
-            :return: a SSL server context
-            """
-            client_certificate_pem, client_private_key_pem = self.__gen_self_signed_server_cert(DEFAULT_PUBLIC_KEY_SIZE)
-
-            with NamedTemporaryFile(mode='wb') as client_private_key_file:
-                client_private_key_file.write(client_private_key_pem)
-                client_private_key_file.flush()
-                os.fsync(client_private_key_file.fileno())
-
-                with NamedTemporaryFile(mode='wb') as client_certificate_file:
-                    client_certificate_file.write(client_certificate_pem)
-                    client_certificate_file.flush()
-                    os.fsync(client_certificate_file.fileno())
-
-                    ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-                    ssl_ctx.load_cert_chain(certfile=client_certificate_file.name,
-                                            keyfile=client_private_key_file.name)
-                    return ssl_ctx
-
-
-    class Remote:
-        def __init__(
-            self,
-            params: Dict[str, Any]
-        ) -> None:
-            self.__params = params
-            self.__ssl_client_context: ssl.SSLContext | None = None
-
-        def __create_ssl_client_context(
-            self
-        ) -> ssl.SSLContext:
-            """
-            Create a SSL client context
-
-            :param params: The instance parameters
-            :return: a SSL client context
-            """
-            ssl_ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
-            ssl_ctx.load_default_certs()
-            ssl_ctx.check_hostname = False
-            if SETTINGS.insecure:
-                ssl_ctx.verify_mode = ssl.CERT_NONE
-            else:
-                ssl_ctx.verify_mode = ssl.CERT_REQUIRED
-
-            if SETTINGS.client_pkcs12_base64:
-                # Load the client certificate and private key
-                client_private_key, client_certificate, additional_certs = pkcs12.load_key_and_certificates(
-                    base64.b64decode(SETTINGS.client_pkcs12_base64.encode()),
-                    SETTINGS.client_pkcs12_password.encode('utf-8'), backend=default_backend())
-                if client_private_key and client_certificate:
-                    client_private_key_pem = client_private_key.private_bytes(
-                        encoding=serialization.Encoding.PEM,
-                        format=serialization.PrivateFormat.TraditionalOpenSSL,
-                        encryption_algorithm=serialization.NoEncryption())
-                    client_certificate_pem = client_certificate.public_bytes(
-                        encoding=serialization.Encoding.PEM)
-
-                    with NamedTemporaryFile(mode='wb') as client_private_key_file:
-                        client_private_key_file.write(client_private_key_pem)
-                        client_private_key_file.flush()
-                        os.fsync(client_private_key_file.fileno())
-
-                        with NamedTemporaryFile(mode='wb') as client_certificate_file:
-                            client_certificate_file.write(client_certificate_pem)
-                            client_certificate_file.flush()
-                            os.fsync(client_certificate_file.fileno())
-
-                            ssl_ctx.load_cert_chain(certfile=client_certificate_file.name,
-                                                    keyfile=client_private_key_file.name)
-            return ssl_ctx
-
-        def get_ssl_client_context(
-            self
-        ) -> ssl.SSLContext:
-            """
-            Get a SSL client context
-
-            :return: a SSL client context
-            """
-            if self.__ssl_client_context is None:
-                self.__ssl_client_context = self.__create_ssl_client_context()
-            return self.__ssl_client_context
-
-        def test_server(
-            self
-        ) -> None:
-            """
-            Test to connect to the remote TSRAIN server
-            """
-            remote_host, remote_port = SETTINGS.remote_address
-            ssl_client_context = self.get_ssl_client_context()
-
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rlow_socket:
-                with ssl_client_context.wrap_socket(rlow_socket, server_hostname=remote_host) as rs:
-                    rs.connect((remote_host, remote_port))
-                    rs.send(b'EHLO localhost\r\n')
-                    resp_bin = rs.recv(1024)
-                    resp_str = resp_bin.decode(errors='ignore')
-                    if not resp_str.startswith('2'):
-                        if resp_str.startswith('HTTP'):
-                            raise DemistoException(f'Received a invalid response - {resp_str},'
-                                                   ' you might have specified the webmail UI port.')
-                        else:
-                            raise DemistoException(f'Received a invalid response - {resp_str}')
-
-
     def extract_email_addresses(
         fields: List[str]
     ) -> List[str]:
-        """
-        Extract email addresses from email fields
+        """ Extract email addresses from email fields
 
         :param names: A list of email header fields
         :return: A list of email address.
@@ -608,21 +387,60 @@ script:
         return addrs
 
 
-    class PortForwardingHandler(BaseRequestHandler):
-        """
-        Port Forwarding for the services
-        """
-        remote_host: str = None  # type: ignore
-        remote_port: int = None  # type: ignore
-        ssl_client_context: ssl.SSLContext = None  # type: ignore
-        ssl_server_context: ssl.SSLContext = None  # type: ignore
+    class PortForwardingSettings:
+        def __init__(
+            self,
+            remote_addr: Tuple[str, int] | None = None,
+            ssl_server_context: ssl.SSLContext | None = None,
+            ssl_client_context: ssl.SSLContext | None = None,
+        ) -> None:
+            if remote_addr is None:
+                self.__remote_host = None
+                self.__remote_port = None
+            else:
+                self.__remote_host, self.__remote_port = remote_addr
 
+            self.__ssl_server_context = ssl_server_context
+            self.__ssl_client_context = ssl_client_context
+
+        @property
+        def remote_host(
+            self
+        ) -> str | None:
+            return self.__remote_host
+
+        @property
+        def remote_port(
+            self
+        ) -> int | None:
+            return self.__remote_port
+
+        @property
+        def ssl_server_context(
+            self
+        ) -> ssl.SSLContext | None:
+            return self.__ssl_server_context
+
+        @property
+        def ssl_client_context(
+            self
+        ) -> ssl.SSLContext | None:
+            return self.__ssl_client_context
+
+
+    class PortForwardingHandler(BaseRequestHandler):
+        """ Port Forwarding for the services
+        """
         def __init__(
             self,
             request,
             client_address,
             server
         ) -> None:
+            self.__remote_host: str = None  # type: ignore
+            self.__remote_port: int = None  # type: ignore
+            self.__ssl_client_context: ssl.SSLContext = None  # type: ignore
+            self.__ssl_server_context: ssl.SSLContext = None  # type: ignore
             BaseRequestHandler.__init__(self, request, client_address, server)
 
         def __forward_tcp_ssl(
@@ -631,14 +449,13 @@ script:
             remote_port: int,
             preceding_payload: bytes | None = None
         ) -> None:
-            """
-            Port Forwarding: tcp-ssl:port
+            """  Port Forwarding: tcp-ssl:port
             """
             try:
                 cs = self.request
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rlow_socket:
-                    with PortForwardingHandler.ssl_client_context.wrap_socket(
-                            rlow_socket, server_hostname=remote_host) as rs:
+                    with self.__ssl_client_context.wrap_socket(
+                        rlow_socket, server_hostname=remote_host) as rs:
                         rs.connect((remote_host, remote_port))
 
                         if preceding_payload is not None:
@@ -682,8 +499,7 @@ script:
             remote_host: str,
             remote_port: int
         ) -> None:
-            """
-            Port Forwarding: tcp-tcp:port
+            """ Port Forwarding: tcp-tcp:port
             """
             cs = self.request
             try:
@@ -711,11 +527,10 @@ script:
             remote_host: str,
             remote_port: int
         ) -> None:
-            """
-            Port Forwarding: ssl-tcp:port
+            """ Port Forwarding: ssl-tcp:port
             """
             try:
-                with PortForwardingHandler.ssl_server_context.wrap_socket(self.request, server_side=True) as cs:
+                with self.__ssl_server_context.wrap_socket(self.request, server_side=True) as cs:
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rs:
                         rs.connect((remote_host, remote_port))
                         while True:
@@ -752,10 +567,18 @@ script:
             finally:
                 self.request.close()
 
+        def setup(
+            self
+        ) -> None:
+            self.__remote_host = self.server.settings.remote_host
+            self.__remote_port = self.server.settings.remote_port
+            self.__ssl_server_context = self.server.settings.ssl_server_context
+            self.__ssl_client_context = self.server.settings.ssl_client_context
+
         def handle(
             self
         ) -> None:
-            if PortForwardingHandler.remote_host is None:
+            if self.__remote_host is None:
                 remote_host = '127.0.0.1'
 
                 r, _, _ = select.select([self.request], [], [], 1)
@@ -789,36 +612,346 @@ script:
                     h = self.request.recv(3, socket.MSG_PEEK)
                     if h[:1] == b'\x16':
                         # TLS
-                        self.__forward_tcp_ssl(PortForwardingHandler.remote_host,
-                                               PortForwardingHandler.remote_port,
+                        self.__forward_tcp_ssl(self.__remote_host,
+                                               self.__remote_port,
                                                PROTOCOL_ID_IMAP4_SSL.to_bytes(1, 'big'))
                     elif h[:1] in (b'E', b'e'):
                         # EHLO
-                        self.__forward_tcp_ssl(PortForwardingHandler.remote_host,
-                                               PortForwardingHandler.remote_port,
+                        self.__forward_tcp_ssl(self.__remote_host,
+                                               self.__remote_port,
                                                PROTOCOL_ID_SMTP.to_bytes(1, 'big'))
                     elif h[:1] in (b'H', b'h'):
                         if h.decode(errors='ignore').upper() == 'HEL':
                             # HELO
-                            self.__forward_tcp_ssl(PortForwardingHandler.remote_host,
-                                                   PortForwardingHandler.remote_port,
+                            self.__forward_tcp_ssl(self.__remote_host,
+                                                   self.__remote_port,
                                                    PROTOCOL_ID_SMTP.to_bytes(1, 'big'))
                         else:
                             # HEAD or default
-                            self.__forward_tcp_ssl(PortForwardingHandler.remote_host,
-                                                   PortForwardingHandler.remote_port,
+                            self.__forward_tcp_ssl(self.__remote_host,
+                                                   self.__remote_port,
                                                    PROTOCOL_ID_RAINLOOP.to_bytes(1, 'big'))
                     else:
-                        self.__forward_tcp_ssl(PortForwardingHandler.remote_host,
-                                               PortForwardingHandler.remote_port,
+                        self.__forward_tcp_ssl(self.__remote_host,
+                                               self.__remote_port,
                                                PROTOCOL_ID_RAINLOOP.to_bytes(1, 'big'))
                 else:
                     # Client is waiting for SMTP greeting
-                    self.__forward_tcp_ssl(PortForwardingHandler.remote_host,
-                                           PortForwardingHandler.remote_port,
+                    self.__forward_tcp_ssl(self.__remote_host,
+                                           self.__remote_port,
                                            PROTOCOL_ID_SMTP.to_bytes(1, 'big'))
 
             self.request.close()
+
+
+    class Local:
+        def __init__(
+            self
+        ) -> None:
+            pass
+
+        def __gen_self_signed_server_cert(
+            self,
+            key_size: int
+        ) -> Tuple[bytes, bytes]:
+            """ Generate a self signed server certificate
+
+            :param key_size: The length of a public key to be generated.
+            :return: A certificate and private key pair in PEM
+            """
+            valid_from = datetime.now()
+            valid_until = valid_from + timedelta(1 * 365, 0, 0)
+
+            hostname = socket.gethostname()
+            private_key = rsa.generate_private_key(public_exponent=65537, key_size=key_size, backend=default_backend())
+            public_key = private_key.public_key()
+
+            builder = x509.CertificateBuilder()
+            builder = builder.subject_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, hostname)]))
+            builder = builder.issuer_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, hostname)]))
+            builder = builder.not_valid_before(valid_from)
+            builder = builder.not_valid_after(valid_until)
+            builder = builder.serial_number(x509.random_serial_number())
+            builder = builder.public_key(public_key)
+            builder = builder.add_extension(
+                x509.SubjectAlternativeName([
+                    x509.DNSName(hostname),
+                    x509.DNSName('localhost')
+                ]),
+                critical=False)
+            builder = builder.add_extension(x509.BasicConstraints(ca=False, path_length=None), critical=True)
+
+            certificate = builder.sign(
+                private_key=private_key, algorithm=hashes.SHA256(),
+                backend=default_backend())
+
+            return (certificate.public_bytes(serialization.Encoding.PEM),
+                    private_key.private_bytes(serialization.Encoding.PEM,
+                                              serialization.PrivateFormat.PKCS8,
+                                              serialization.NoEncryption()))
+
+        def __create_ssl_server_context(
+            self
+        ) -> ssl.SSLContext:
+            """ Create a SSL server context
+
+            :return: a SSL server context
+            """
+            client_certificate_pem, client_private_key_pem = self.__gen_self_signed_server_cert(DEFAULT_PUBLIC_KEY_SIZE)
+
+            with NamedTemporaryFile(mode='wb') as client_private_key_file:
+                client_private_key_file.write(client_private_key_pem)
+                client_private_key_file.flush()
+                os.fsync(client_private_key_file.fileno())
+
+                with NamedTemporaryFile(mode='wb') as client_certificate_file:
+                    client_certificate_file.write(client_certificate_pem)
+                    client_certificate_file.flush()
+                    os.fsync(client_certificate_file.fileno())
+
+                    ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+                    ssl_ctx.load_cert_chain(certfile=client_certificate_file.name,
+                                            keyfile=client_private_key_file.name)
+                    return ssl_ctx
+
+        def __update_context(
+            self
+        ) -> Dict[str, Any]:
+            """ Store the integration parameters to the integration context.
+
+            :return: The integration context updated.
+            """
+            x = demisto.getIntegrationContext() or {}
+            x['localMailboxPassword'] = SETTINGS.local_mailbox_password
+            if SETTINGS.local_default_admin_password:
+                x['localDeafultAdminPassword'] = SETTINGS.local_default_admin_password
+            elif not x.get('localDeafultAdminPasswordGenerated'):
+                # Generate password randomly when the default passwod is not specified
+                x['localDeafultAdminPasswordGenerated'] =\
+                    ''.join([random.choice(string.ascii_letters + string.digits + '$#!.@+/=_') for i in range(32)])
+
+            demisto.setIntegrationContext(x)
+            return x
+
+        def __is_restart_required(
+            self
+        ) -> bool:
+            """ Check if the service restart is required
+
+            :return: True - restart is required.
+            """
+            if x := demisto.getIntegrationContext():
+                if x.get('localMailboxPassword') != SETTINGS.local_mailbox_password or\
+                   x.get('localDeafultAdminPassword') != SETTINGS.local_default_admin_password:
+                    return True
+            return False
+
+        def get_default_admin_password(
+            self
+        ) -> str:
+            """ Retrieve default admin password
+
+            :return: The default admin password.
+            """
+            x = self.__update_context()
+            return x.get('localDeafultAdminPassword', '') or x.get('localDeafultAdminPasswordGenerated', '')
+
+        def start_services(
+            self,
+            restart: bool = False
+        ) -> None:
+            """ Start services
+
+            :param restart: True if it re-starts the service.
+            """
+            os.environ['SMTP_PORT'] = str(LOCAL_SMTP_PORT)
+            os.environ['POP3_PORT'] = str(LOCAL_POP3_PORT)
+            os.environ['IMAP4_PORT'] = str(LOCAL_IMAP4_PORT)
+            os.environ['RAINLOOP_PORT'] = str(LOCAL_RAINLOOP_PORT)
+            os.environ['MAILBOX_PASSWORD'] = SETTINGS.local_mailbox_password
+            os.environ['RAINLOOP_DEFAULT_ADMIN_PASSWORD'] = self.get_default_admin_password()
+            ret = subprocess.call(['restart.sh' if restart else 'start.sh'])
+            demisto.debug('A {}start command has been requested: {}'.format('re' if restart else '', ret))
+
+        def run_server(
+            self,
+            is_test: bool
+        ) -> None:
+            """ Run the long running server
+
+            :param is_test: Indicates whether it's test-module run or regular run
+            """
+            listen_port = SETTINGS.docker_port
+            if listen_port <= 0:
+                raise ValueError(f'Invalid long running port: {listen_port}')
+            if listen_port < 1024 or listen_port in (LOCAL_SMTP_PORT, LOCAL_POP3_PORT, LOCAL_IMAP4_PORT, LOCAL_RAINLOOP_PORT):
+                raise ValueError(f'Listen ports less than 1024, {LOCAL_SMTP_PORT},'
+                                 f' {LOCAL_POP3_PORT}, {LOCAL_IMAP4_PORT}'
+                                 f' and {LOCAL_RAINLOOP_PORT} are reserved for system: {listen_port}')
+            if not is_test:
+                self.start_services(self.__is_restart_required())
+                self.__update_context()
+
+            # Run the server
+            try:
+                ThreadingTCPServer.allow_reuse_address = True
+                with ThreadingTCPServer(('', listen_port), PortForwardingHandler) as server:
+                    server.timeout = DEFAULT_SOCKET_TIMEOUT
+                    server.settings = PortForwardingSettings(
+                        ssl_server_context=self.__create_ssl_server_context())
+
+                    save_port_fowarder_address(None, listen_port)
+
+                    if is_test:
+                        svproc = Process(target=server.serve_forever)
+                        svproc.start()
+                        time.sleep(5)
+                        svproc.terminate()
+                    else:
+                        server.serve_forever()
+            finally:
+                save_port_fowarder_address(None, None)
+
+        def send_mail(
+            self,
+            msg: Union[str, email.message.Message],
+            mail_from: str,
+            rcpt_to: List[str]
+        ) -> None:
+            """ Send an email message
+
+            :param msg: The email message to send
+            :param mail_from: The sender address
+            :param rcpt_to: The list of recipient addresses
+            """
+            smtp = SMTPClient(get_port_fowarder_addresses())
+            smtp.send_message(msg, mail_from, rcpt_to)
+            smtp.quit()
+
+
+    class Remote:
+        def __init__(
+            self
+        ) -> None:
+            self.__ssl_client_context: ssl.SSLContext | None = None
+
+        def __create_ssl_client_context(
+            self
+        ) -> ssl.SSLContext:
+            """ Create a SSL client context
+
+            :return: a SSL client context
+            """
+            ssl_ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+            ssl_ctx.load_default_certs()
+            ssl_ctx.check_hostname = False
+            if SETTINGS.insecure:
+                ssl_ctx.verify_mode = ssl.CERT_NONE
+            else:
+                ssl_ctx.verify_mode = ssl.CERT_REQUIRED
+
+            if SETTINGS.client_pkcs12_base64:
+                # Load the client certificate and private key
+                client_private_key, client_certificate, additional_certs = pkcs12.load_key_and_certificates(
+                    base64.b64decode(SETTINGS.client_pkcs12_base64.encode()),
+                    SETTINGS.client_pkcs12_password.encode('utf-8'), backend=default_backend())
+                if client_private_key and client_certificate:
+                    client_private_key_pem = client_private_key.private_bytes(
+                        encoding=serialization.Encoding.PEM,
+                        format=serialization.PrivateFormat.TraditionalOpenSSL,
+                        encryption_algorithm=serialization.NoEncryption())
+                    client_certificate_pem = client_certificate.public_bytes(
+                        encoding=serialization.Encoding.PEM)
+
+                    with NamedTemporaryFile(mode='wb') as client_private_key_file:
+                        client_private_key_file.write(client_private_key_pem)
+                        client_private_key_file.flush()
+                        os.fsync(client_private_key_file.fileno())
+
+                        with NamedTemporaryFile(mode='wb') as client_certificate_file:
+                            client_certificate_file.write(client_certificate_pem)
+                            client_certificate_file.flush()
+                            os.fsync(client_certificate_file.fileno())
+
+                            ssl_ctx.load_cert_chain(certfile=client_certificate_file.name,
+                                                    keyfile=client_private_key_file.name)
+            return ssl_ctx
+
+        def __get_ssl_client_context(
+            self
+        ) -> ssl.SSLContext:
+            """ Get a SSL client context
+
+            :return: a SSL client context
+            """
+            if self.__ssl_client_context is None:
+                self.__ssl_client_context = self.__create_ssl_client_context()
+            return self.__ssl_client_context
+
+        def test_server(
+            self
+        ) -> None:
+            """ Test to connect to the remote TSRAIN server
+            """
+            def __run_port_forwarder(
+                server: ThreadingTCPServer
+            ) -> None:
+                # Run a port forwarder
+                server.serve_forever()
+
+            with ThreadingTCPServer(('', 0), PortForwardingHandler) as server:
+                server.timeout = DEFAULT_SOCKET_TIMEOUT
+                server.settings = PortForwardingSettings(
+                    remote_addr=SETTINGS.remote_address,
+                    ssl_client_context=self.__get_ssl_client_context())
+
+                _, server_port = server.socket.getsockname()
+
+                thr = threading.Thread(target=__run_port_forwarder, args=(server,), daemon=False)
+                thr.start()
+
+                # Test SMTP connection
+                smtplib.SMTP('127.0.0.1', server_port, timeout=DEFAULT_SOCKET_TIMEOUT)
+
+                server.shutdown()
+                thr.join()
+
+        def send_mail(
+            self,
+            msg: Union[str, email.message.Message],
+            mail_from: str,
+            rcpt_to: List[str]
+        ) -> None:
+            """ Send an email message
+
+            :param msg: The email message to send
+            :param mail_from: The sender address
+            :param rcpt_to: The list of recipient addresses
+            """
+            def __run_port_forwarder(
+                server: ThreadingTCPServer
+            ) -> None:
+                # Run a port forwarder
+                server.serve_forever()
+
+            with ThreadingTCPServer(('', 0), PortForwardingHandler) as server:
+                server.timeout = DEFAULT_SOCKET_TIMEOUT
+                server.settings = PortForwardingSettings(
+                    remote_addr=SETTINGS.remote_address,
+                    ssl_client_context=self.__get_ssl_client_context())
+
+                server_addr, server_port = server.socket.getsockname()
+
+                thr = threading.Thread(target=__run_port_forwarder, args=(server,), daemon=False)
+                thr.start()
+
+                # Send an email message
+                smtp = SMTPClient([('127.0.0.1', server_port)])
+                smtp.send_message(msg, mail_from, rcpt_to)
+                smtp.quit()
+
+                server.shutdown()
+                thr.join()
 
 
     class SMTPClient:
@@ -837,7 +970,7 @@ script:
                     continue
                 break
             else:
-                raise DemistoException('Unable to connect to any SMTP server addresses.')
+                raise DemistoException(f'Unable to connect to any SMTP server addresses - {addrs}')
 
         def send_message(
             self,
@@ -1113,6 +1246,10 @@ script:
         def build(
             self
         ) -> email.message.Message:
+            """ Build an email message
+
+            :return: The email message.
+            """
             def _new_header(s) -> Optional[email.header.Header]:
                 return email.header.Header(' '.join(s.splitlines()), 'utf-8') if s else None
 
@@ -1192,22 +1329,22 @@ script:
 
 
     def test_module(
-        args: Dict[str, Any],
-        params: Dict[str, Any]
+        args: Dict[str, Any]
     ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
+        """ Validates server settings
+
+        :param args: The argument parameters
         """
-        Validates:
-        """
-        run_long_running(params, is_test=True)
+        run_long_running(is_test=True)
         return 'ok', {}, {}
 
 
     def get_servcie_info_command(
-        args: Dict[str, Any],
-        params: Dict[str, Any]
+        args: Dict[str, Any]
     ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
-        """
-        Get the service information
+        """ Get the service information
+
+        :param args: The argument parameters
         """
         sinfo = []
 
@@ -1239,11 +1376,11 @@ script:
 
 
     def get_gateways_command(
-        args: Dict[str, Any],
-        params: Dict[str, Any]
+        args: Dict[str, Any]
     ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
-        """
-        Get gateway list
+        """ Get gateway list
+
+        :param args: The argument parameters
         """
         if ifs := get_gateway_interfaces():
             hr = tblToMd('Gateways', ifs)
@@ -1254,33 +1391,33 @@ script:
 
 
     def get_default_admin_password_command(
-        args: Dict[str, Any],
-        params: Dict[str, Any]
+        args: Dict[str, Any]
     ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
+        """ Get default admin password
+
+        :param args: The argument parameters
         """
-        Get default admin password
-        """
-        pwd = Local(params).get_default_admin_password()
+        pwd = Local().get_default_admin_password()
         return f'admin password: {pwd}', {}, pwd
 
 
     def restart_command(
-        args: Dict[str, Any],
-        params: Dict[str, Any]
+        args: Dict[str, Any]
     ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
+        """ Restart the core service
+
+        :param args: The argument parameters
         """
-        Restart the core service
-        """
-        Local(params).start_services(True)
+        Local().start_services(True)
         return 'The services have been restarted.', {}, {}
 
 
     def send_eml_command(
-        args: Dict[str, Any],
-        params: Dict[str, Any]
+        args: Dict[str, Any]
     ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
-        """
-        Send an email message
+        """ Send an email message
+
+        :param args: The argument parameters
         """
         entry_id = args.get('entry_id')
         eml_file = demisto.getFilePath(entry_id)
@@ -1328,19 +1465,20 @@ script:
             del msg[name]
 
         # Send an email message
-        smtp = SMTPClient(get_port_fowarder_addresses())
-        smtp.send_message(msg, mail_from, rcpt_to)
-        smtp.quit()
+        if SETTINGS.is_remote_mode:
+            Remote().send_mail(msg, mail_from, rcpt_to)
+        else:
+            Local().send_mail(msg, mail_from, rcpt_to)
 
         return 'An email has been sent successfully', {}, {}
 
 
     def send_mail_command(
-        args: Dict[str, Any],
-        params: Dict[str, Any]
+        args: Dict[str, Any]
     ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
-        """
-        Send an email message
+        """ Send an email message
+
+        :param args: The argument parameters
         """
         if not SETTINGS.is_send_mail_enabled:
             return 'send-mail command is disabled', {}, {}
@@ -1410,96 +1548,40 @@ script:
             msg = builder.build()
 
         # Send an email message
-        smtp = SMTPClient(get_port_fowarder_addresses())
-        smtp.send_message(msg, mail_from, rcpt_to)
-        smtp.quit()
+        if SETTINGS.is_remote_mode:
+            Remote().send_mail(msg, mail_from, rcpt_to)
+        else:
+            Local().send_mail(msg, mail_from, rcpt_to)
 
         return 'An email has been sent successfully', {}, {}
 
 
-    def run_server(
-        server: BaseServer,
-        is_test=False
-    ) -> None:
-        """
-        Run the server
-
-        :param server: The server instance
-        :param is_test: Indicates whether it's test-module run or regular run
-        :return: None
-        """
-        if is_test:
-            svproc = Process(target=server.serve_forever)
-            svproc.start()
-            time.sleep(5)
-            svproc.terminate()
-        else:
-            socket.setdefaulttimeout(DEFAULT_SOCKET_TIMEOUT)
-            server.serve_forever()
-
-
     def run_long_running(
-        params: Dict[str, Any],
         is_test=False
     ) -> None:
-        """
-        Start the long running server
+        """ Start the long running server
 
-        :param params: Demisto params
         :param is_test: Indicates whether it's test-module run or regular run
-        :return: None
         """
         try:
-            listen_port = SETTINGS.docker_port
-            if listen_port < 0:
-                raise ValueError(f'Invalid long running port: {listen_port}')
-            if listen_port < 1024 or listen_port in (LOCAL_SMTP_PORT, LOCAL_POP3_PORT, LOCAL_IMAP4_PORT, LOCAL_RAINLOOP_PORT):
-                raise ValueError(f'Listen ports less than 1024, {LOCAL_SMTP_PORT},'
-                                 f' {LOCAL_POP3_PORT}, {LOCAL_IMAP4_PORT}'
-                                 f' and {LOCAL_RAINLOOP_PORT} are reserved for system: {listen_port}')
-
             if SETTINGS.is_remote_mode:
-                remote = Remote(params)
-
                 if is_test:
-                    remote.test_server()
+                    Remote().test_server()
                 else:
-                    remote_host, remote_port = SETTINGS.remote_address
-                    PortForwardingHandler.ssl_client_context = remote.get_ssl_client_context()
-                    PortForwardingHandler.remote_host = remote_host
-                    PortForwardingHandler.remote_port = remote_port
-
-                    with ThreadingTCPServer(('', listen_port), PortForwardingHandler) as server:
-                        save_port_fowarder_address(None, listen_port)
-                        run_server(server, is_test)
+                    save_port_fowarder_address(None, None)
+                    while True:
+                        time.sleep(3600)
             else:
-                local = Local(params)
-
-                if not is_test:
-                    local.start_services(local.is_restart_required())
-                    local.update_context()
-
-                # Run the server
-                PortForwardingHandler.ssl_server_context = local.create_ssl_server_context()
-
-                ThreadingTCPServer.allow_reuse_address = True
-                with ThreadingTCPServer(('', listen_port), PortForwardingHandler) as server:
-                    save_port_fowarder_address(None, listen_port)
-                    run_server(server, is_test)
-
+                local = Local()
+                local.run_server(is_test)
         except Exception as e:
             demisto.error(f'An error occurred in long running loop: {str(e)}')
-            raise ValueError(str(e))
-        finally:
-            save_port_fowarder_address(None, None)
+            raise DemistoException(str(e))
 
 
     def main():
+        """ Main
         """
-        Main
-        """
-        params = assign_params(**demisto.params())
-
         command = demisto.command()
         demisto.debug('Command being called is {}'.format(command))
         commands = {
@@ -1511,13 +1593,12 @@ script:
             'tsrc-send-eml': send_eml_command,
             'send-mail': send_mail_command,
         }
-
         try:
             if command == 'long-running-execution':
-                run_long_running(params)
+                run_long_running()
             else:
                 args = assign_params(**demisto.args())
-                readable_output, outputs, raw_response = commands[command](args, params)
+                readable_output, outputs, raw_response = commands[command](args)
                 return_outputs(readable_output, outputs, raw_response)
         except Exception as e:
             err_msg = f'Error in {INTEGRATION_NAME} Integration [{e}]'
