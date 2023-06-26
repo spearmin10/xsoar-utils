@@ -66,7 +66,7 @@ configuration:
   name: longRunningPort
   defaultvalue: "8118"
   type: 0
-  required: false
+  required: true
   additionalinfo: The port which is shared with Rainloop Web UI, SMTP and IMAP4
 - display: Incident type
   name: incidentType
@@ -781,19 +781,12 @@ script:
 
             :param is_test: Indicates whether it's test-module run or regular run
             """
-            listen_port = SETTINGS.docker_port
-            if listen_port <= 0:
-                raise ValueError(f'Invalid long running port: {listen_port}')
-            if listen_port < 1024 or listen_port in (LOCAL_SMTP_PORT, LOCAL_POP3_PORT, LOCAL_IMAP4_PORT, LOCAL_RAINLOOP_PORT):
-                raise ValueError(f'Listen ports less than 1024, {LOCAL_SMTP_PORT},'
-                                 f' {LOCAL_POP3_PORT}, {LOCAL_IMAP4_PORT}'
-                                 f' and {LOCAL_RAINLOOP_PORT} are reserved for system: {listen_port}')
-            if not is_test:
-                self.start_services(self.__is_restart_required())
-                self.__update_context()
-
-            # Run the server
             try:
+                if not is_test:
+                    self.start_services(self.__is_restart_required())
+                    self.__update_context()
+
+                listen_port = SETTINGS.docker_port
                 ThreadingTCPServer.allow_reuse_address = True
                 with ThreadingTCPServer(('', listen_port), PortForwardingHandler) as server:
                     server.timeout = DEFAULT_SOCKET_TIMEOUT
@@ -888,7 +881,7 @@ script:
                 self.__ssl_client_context = self.__create_ssl_client_context()
             return self.__ssl_client_context
 
-        def test_server(
+        def __test_server(
             self
         ) -> None:
             """ Test to connect to the remote TSRAIN server
@@ -915,6 +908,37 @@ script:
 
                 server.shutdown()
                 thr.join()
+
+        def run_server(
+            self,
+            is_test: bool
+        ) -> None:
+            """ Run the long running server
+
+            :param is_test: Indicates whether it's test-module run or regular run
+            """
+            try:
+                listen_port = SETTINGS.docker_port
+                ThreadingTCPServer.allow_reuse_address = True
+                with ThreadingTCPServer(('', listen_port), PortForwardingHandler) as server:
+                    server.timeout = DEFAULT_SOCKET_TIMEOUT
+                    server.settings = PortForwardingSettings(
+                        remote_addr=SETTINGS.remote_address,
+                        ssl_client_context=self.__get_ssl_client_context())
+
+                    save_port_fowarder_address(None, listen_port)
+
+                    if is_test:
+                        self.__test_server()
+
+                        svproc = Process(target=server.serve_forever)
+                        svproc.start()
+                        time.sleep(5)
+                        svproc.terminate()
+                    else:
+                        server.serve_forever()
+            finally:
+                save_port_fowarder_address(None, None)
 
         def send_mail(
             self,
@@ -1564,16 +1588,18 @@ script:
         :param is_test: Indicates whether it's test-module run or regular run
         """
         try:
+            listen_port = SETTINGS.docker_port
+            if listen_port <= 0:
+                raise ValueError(f'Invalid long running port: {listen_port}')
+            if listen_port < 1024 or listen_port in (LOCAL_SMTP_PORT, LOCAL_POP3_PORT, LOCAL_IMAP4_PORT, LOCAL_RAINLOOP_PORT):
+                raise ValueError(f'Listen ports less than 1024, {LOCAL_SMTP_PORT},'
+                                 f' {LOCAL_POP3_PORT}, {LOCAL_IMAP4_PORT}'
+                                 f' and {LOCAL_RAINLOOP_PORT} are reserved for system: {listen_port}')
+
             if SETTINGS.is_remote_mode:
-                if is_test:
-                    Remote().test_server()
-                else:
-                    save_port_fowarder_address(None, None)
-                    while True:
-                        time.sleep(3600)
+                Remote().run_server(is_test)
             else:
-                local = Local()
-                local.run_server(is_test)
+                Local().run_server(is_test)
         except Exception as e:
             demisto.error(f'An error occurred in long running loop: {str(e)}')
             raise DemistoException(str(e))
