@@ -92,16 +92,20 @@ configuration:
   required: false
   additionalinfo: Hostname and port number of the remote server. (e.g. tsrain.cortex-sv.net:444)
 - advanced: true
-  display: Client PKCS#12
-  name: clientPKCS12Base64
-  type: 4
+  display: Client Credential Type
+  name: clientCredentialType
+  type: 15
+  required: false
+  options:
+  - PKCS#12 PEM
+  - Cert + Private Key PEM
+- advanced: true
+  display: Protected or public client credential
+  displaypassword: Unprotected client credential or Key/Password to decrypt credential
+  name: clientCredential
+  type: 9
   required: false
   additionalinfo: PKCS#12 in base64 used for client authentication
-- advanced: true
-  display: Client PKCS#12 password
-  name: clientPKCS12Password
-  type: 4
-  required: false
 - advanced: true
   display: Trust any certificate (not secure)
   name: insecure
@@ -188,8 +192,50 @@ script:
             self.__insecure = argToBoolean(params.get('insecure', 'false'))
             self.__enable_send_mail = argToBoolean(params.get('enableSendMailCommand', 'false'))
             self.__sender_email_address = params.get('senderAddress') or ''
-            self.__client_p12_base64 = params.get('clientPKCS12Base64') or ''
-            self.__client_p12_password = params.get('clientPKCS12Password') or ''
+
+            self.__client_credential_data = None
+            self.__client_credential_key = None
+            self.__client_credential_type = params.get('clientCredentialType')
+            if self.__client_credential_type == 'PKCS#12 PEM':
+                cred_params = params.get('clientCredential') or {}
+                if pkcs12_pem := demisto.get(cred_params, 'credentials.sshkey'):
+                    self.__client_credential_data = pkcs12_pem
+                    self.__client_credential_key = demisto.get(cred_params, 'credentials.password') or ''
+                elif pkcs12_pem := cred_params.get('identifier'):
+                    self.__client_credential_data = self.__replace_spaces_in_credentials(pkcs12_pem)
+                    self.__client_credential_key = cred_params.get('password') or ''
+            elif self.__client_credential_type == 'Cert + Private Key PEM':
+                cred_params = params.get('clientCredential') or {}
+                if cert_key_pem := demisto.get(cred_params, 'credentials.sshkey'):
+                    self.__client_credential_data = self.__replace_spaces_in_credentials(cert_key_pem)
+                elif cert_pem := cred_params.get('identifier'):
+                    self.__client_credential_data = self.__replace_spaces_in_credentials(cert_pem)
+                    self.__client_credential_key = self.__replace_spaces_in_credentials(cred_params.get('password') or '')
+
+        def __replace_spaces_in_credentials(
+            self,
+            credentials: str | None
+        ) -> str | None:
+            """
+            This function is used in case of credential from type: 9 is in the wrong format
+            of one line with spaces instead of multiple lines.
+
+            :param credentials: the credentials to replace spaces in.
+            :return: the credential with spaces replaced with new lines if the credential is in the correct format,
+                     otherwise the credential will be returned as is.
+            """
+            if not credentials:
+                return credentials
+
+            return re.sub(
+                r'(?P<lseps>\s*)(?P<begin>-----BEGIN(.*?)-----)(?P<body>.*?)(?P<end>-----END(.*?)-----)(?P<tseps>\s*)',
+                lambda m: m.group('lseps').replace(' ', '\n')
+                + m.group('begin')
+                + m.group('body').replace(' ', '\n')
+                + m.group('end')
+                + m.group('tseps').replace(' ', '\n'),
+                credentials,
+                flags=re.DOTALL)
 
         def __get_body_from_pem(
             self,
@@ -263,24 +309,44 @@ script:
             return self.__sender_email_address
 
         @property
-        def client_pkcs12_base64(
-            self
-        ) -> str:
-            if body := self.__get_body_from_pem(self.__client_p12_base64, 'PKCS12'):
-                return body
-            return self.__client_p12_base64
-
-        @property
-        def client_pkcs12_password(
-            self
-        ) -> str:
-            return self.__client_p12_password
-
-        @property
         def get_params(
             self
         ) -> Dict[str, Any]:
             return self.__params
+
+        def get_client_credentials_pem(
+            self
+        ) -> str | None:
+            if self.__client_credential_type == 'PKCS#12 PEM':
+                if p12_base64 := self.__client_credential_data:
+                    p12_base64 = self.__get_body_from_pem(self.__client_credential_data, 'PKCS12')
+                if not p12_base64:
+                    raise DemistoException('Invalid Client PKCS#12 PEM')
+                p12_passwd = self.__client_credential_key or ''
+
+                pkey, cert, _ = pkcs12.load_key_and_certificates(
+                    base64.b64decode(p12_base64.encode()),
+                    p12_passwd.encode('utf-8'), backend=default_backend())
+                if not pkey:
+                    raise DemistoException('No private keys in Client PKCS#12')
+                if not cert:
+                    raise DemistoException('No certificates in Client PKCS#12')
+
+                pkey_pem = pkey.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.TraditionalOpenSSL,
+                    encryption_algorithm=serialization.NoEncryption())
+                cert_pem = cert.public_bytes(encoding=serialization.Encoding.PEM)
+                return (pkey_pem + b'\n' + cert_pem).decode()
+
+            elif self.__client_credential_type == 'Cert + Private Key PEM':
+                pem = self.__client_credential_data or ''
+                if self.__client_credential_key:
+                    pem += '\n'
+                    pem += self.__client_credential_key
+                return pem
+            else:
+                return None
 
 
     SETTINGS = Settings(demisto.params())
@@ -744,31 +810,13 @@ script:
             else:
                 ssl_ctx.verify_mode = ssl.CERT_REQUIRED
 
-            if self.__settings.client_pkcs12_base64:
-                # Load the client certificate and private key
-                client_private_key, client_certificate, additional_certs = pkcs12.load_key_and_certificates(
-                    base64.b64decode(self.__settings.client_pkcs12_base64.encode()),
-                    self.__settings.client_pkcs12_password.encode('utf-8'), backend=default_backend())
-                if client_private_key and client_certificate:
-                    client_private_key_pem = client_private_key.private_bytes(
-                        encoding=serialization.Encoding.PEM,
-                        format=serialization.PrivateFormat.TraditionalOpenSSL,
-                        encryption_algorithm=serialization.NoEncryption())
-                    client_certificate_pem = client_certificate.public_bytes(
-                        encoding=serialization.Encoding.PEM)
+            if client_creds_pem := self.__settings.get_client_credentials_pem():
+                with NamedTemporaryFile(mode='w') as pem_file:
+                    pem_file.write(client_creds_pem)
+                    pem_file.flush()
+                    pem_file.seek(0)
+                    ssl_ctx.load_cert_chain(certfile=pem_file.name, keyfile=None)
 
-                    with NamedTemporaryFile(mode='wb') as client_private_key_file:
-                        client_private_key_file.write(client_private_key_pem)
-                        client_private_key_file.flush()
-                        os.fsync(client_private_key_file.fileno())
-
-                        with NamedTemporaryFile(mode='wb') as client_certificate_file:
-                            client_certificate_file.write(client_certificate_pem)
-                            client_certificate_file.flush()
-                            os.fsync(client_certificate_file.fileno())
-
-                            ssl_ctx.load_cert_chain(certfile=client_certificate_file.name,
-                                                    keyfile=client_private_key_file.name)
             return ssl_ctx
 
         def __get_ssl_client_context(
