@@ -886,8 +886,20 @@ script:
             os.environ['RAINLOOP_PORT'] = str(LOCAL_RAINLOOP_PORT)
             os.environ['MAILBOX_PASSWORD'] = self.__settings.local_mailbox_password
             os.environ['RAINLOOP_DEFAULT_ADMIN_PASSWORD'] = self.get_default_admin_password()
-            ret = subprocess.call(['restart.sh' if restart else 'start.sh'])
-            demisto.debug('A {}start command has been requested: {}'.format('re' if restart else '', ret))
+            #ret = subprocess.call(['restart.sh' if restart else 'start.sh'])
+            #demisto.debug('A {}start command has been requested: {}'.format('re' if restart else '', ret))
+
+            def __start_service(restart):
+                ret = subprocess.run(
+                    ['restart.sh' if restart else 'start.sh'],
+                    capture_output=True)
+                demisto.debug('A {}start command has been requested: {}'.format('re' if restart else '', ret.returncode))
+
+            thr = threading.Thread(
+                target=__start_service,
+                args=(restart,),
+                daemon=False)
+            thr.start()
 
         def run_local_server(
             self
@@ -949,16 +961,16 @@ script:
                 with ThreadingTCPServer(('', listen_port), PortForwardingHandler) as server:
                     server.timeout = DEFAULT_SOCKET_TIMEOUT
                     server.settings = PortForwardingSettings()
-                    _, server_port = server.socket.getsockname()
+                    server_ip, server_port = server.socket.getsockname()
 
                     thr = threading.Thread(target=serve_forever, args=(server,), daemon=False)
                     thr.start()
                     try:
                         # Test SMTP connection
-                        with smtplib.SMTP('127.0.0.1', server_port, timeout=DEFAULT_SOCKET_TIMEOUT) as smtp:
+                        with smtplib.SMTP(server_ip, server_port, timeout=DEFAULT_SOCKET_TIMEOUT) as smtp:
                             smtp.quit()
                     except Exception:
-                        raise DemistoException(f'Unable to connect to the local server - 127.0.0.1:{server_port}')
+                        raise DemistoException(f'Unable to connect to the local server - {server_ip}:{server_port}')
                     finally:
                         server.shutdown()
                         thr.join()
@@ -1011,13 +1023,13 @@ script:
                         remote_addr=self.__settings.remote_address,
                         ssl_client_context=self.__get_ssl_client_context())
 
-                    server_addr, server_port = server.socket.getsockname()
+                    server_ip, server_port = server.socket.getsockname()
 
                     thr = threading.Thread(target=serve_forever, args=(server,), daemon=False)
                     thr.start()
 
                     # Send an email message
-                    smtp = SMTPClient([('127.0.0.1', server_port)])
+                    smtp = SMTPClient([(server_ip, server_port)])
                     smtp.send_message(msg, mail_from, rcpt_to)
                     smtp.quit()
 
