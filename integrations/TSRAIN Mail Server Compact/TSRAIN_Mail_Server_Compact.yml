@@ -165,6 +165,7 @@ script:
     from typing import Tuple, List, Dict, Any
 
 
+    LOCAL_SMTP_PORT_DEFAULT = 25
     LOCAL_SMTP_PORT = 10025
     LOCAL_POP3_PORT = 10110
     LOCAL_IMAP4_PORT = 10143
@@ -210,6 +211,9 @@ script:
                     self.__client_credential_data = self.__replace_spaces_in_credentials(cert_key_pem)
                 elif cert_pem := cred_params.get('identifier'):
                     self.__client_credential_data = self.__replace_spaces_in_credentials(cert_pem)
+                    self.__client_credential_key = self.__replace_spaces_in_credentials(cred_params.get('password') or '')
+                elif cert_pem := cred_params.get('password'):
+                    self.__client_credential_data = ''
                     self.__client_credential_key = self.__replace_spaces_in_credentials(cred_params.get('password') or '')
 
         def __replace_spaces_in_credentials(
@@ -340,10 +344,7 @@ script:
                 return (pkey_pem + b'\n' + cert_pem).decode()
 
             elif self.__client_credential_type == 'Cert + Private Key PEM':
-                pem = self.__client_credential_data or ''
-                if self.__client_credential_key:
-                    pem += '\n'
-                    pem += self.__client_credential_key
+                pem = '\n'.join([self.__client_credential_data or '', self.__client_credential_key or ''])
                 return pem
             else:
                 return None
@@ -469,6 +470,10 @@ script:
             remote_addr: Tuple[str, int] | None = None,
             ssl_server_context: ssl.SSLContext | None = None,
             ssl_client_context: ssl.SSLContext | None = None,
+            local_smtp_port: int = LOCAL_SMTP_PORT,
+            local_pop3_port: int = LOCAL_POP3_PORT,
+            local_imap4_port: int = LOCAL_IMAP4_PORT,
+            local_rainloop_port: int = LOCAL_RAINLOOP_PORT,
         ) -> None:
             if remote_addr is None:
                 self.__remote_host = None
@@ -478,6 +483,10 @@ script:
 
             self.__ssl_server_context = ssl_server_context
             self.__ssl_client_context = ssl_client_context
+            self.__local_smtp_port = local_smtp_port
+            self.__local_pop3_port = local_pop3_port
+            self.__local_imap4_port = local_imap4_port
+            self.__local_rainloop_port = local_rainloop_port
 
         @property
         def remote_host(
@@ -503,6 +512,30 @@ script:
         ) -> ssl.SSLContext | None:
             return self.__ssl_client_context
 
+        @property
+        def local_smtp_port(
+            self
+        ) -> int | None:
+            return self.__local_smtp_port
+
+        @property
+        def local_pop3_port(
+            self
+        ) -> int | None:
+            return self.__local_pop3_port
+
+        @property
+        def local_imap4_port(
+            self
+        ) -> int | None:
+            return self.__local_imap4_port
+
+        @property
+        def local_rainloop_port(
+            self
+        ) -> int | None:
+            return self.__local_rainloop_port
+
 
     class PortForwardingHandler(BaseRequestHandler):
         """ Port Forwarding for the services
@@ -517,6 +550,10 @@ script:
             self.__remote_port: int = None  # type: ignore
             self.__ssl_client_context: ssl.SSLContext = None  # type: ignore
             self.__ssl_server_context: ssl.SSLContext = None  # type: ignore
+            self.__local_smtp_port = LOCAL_SMTP_PORT
+            self.__local_pop3_port = LOCAL_POP3_PORT
+            self.__local_imap4_port = LOCAL_IMAP4_PORT
+            self.__local_rainloop_port = LOCAL_RAINLOOP_PORT
             BaseRequestHandler.__init__(self, request, client_address, server)
 
         def __forward_tcp_ssl(
@@ -653,6 +690,10 @@ script:
             self.__remote_port = self.server.settings.remote_port
             self.__ssl_server_context = self.server.settings.ssl_server_context
             self.__ssl_client_context = self.server.settings.ssl_client_context
+            self.__local_smtp_port = self.server.settings.local_smtp_port
+            self.__local_pop3_port = self.server.settings.local_pop3_port
+            self.__local_imap4_port = self.server.settings.local_imap4_port
+            self.__local_rainloop_port = self.server.settings.local_rainloop_port
 
         def handle(
             self
@@ -665,22 +706,22 @@ script:
                     h = self.request.recv(3, socket.MSG_PEEK)
                     if h[:1] == b'\x16':
                         # TLS
-                        self.__forward_ssl_tcp(remote_host, LOCAL_IMAP4_PORT)
+                        self.__forward_ssl_tcp(remote_host, self.__local_imap4_port)
                     elif h[:1] in (b'E', b'e'):
                         # EHLO
-                        self.__forward_tcp_tcp(remote_host, LOCAL_SMTP_PORT)
+                        self.__forward_tcp_tcp(remote_host, self.__local_smtp_port)
                     elif h[:1] in (b'H', b'h'):
                         if h.decode(errors='ignore').upper() == 'HEL':
                             # HELO
-                            self.__forward_tcp_tcp(remote_host, LOCAL_SMTP_PORT)
+                            self.__forward_tcp_tcp(remote_host, self.__local_smtp_port)
                         else:
                             # HEAD or default
-                            self.__forward_tcp_tcp(remote_host, LOCAL_RAINLOOP_PORT)
+                            self.__forward_tcp_tcp(remote_host, self.__local_rainloop_port)
                     else:
-                        self.__forward_tcp_tcp(remote_host, LOCAL_RAINLOOP_PORT)
+                        self.__forward_tcp_tcp(remote_host, self.__local_rainloop_port)
                 else:
                     # Client is waiting for SMTP greeting
-                    self.__forward_tcp_tcp(remote_host, LOCAL_SMTP_PORT)
+                    self.__forward_tcp_tcp(remote_host, self.__local_smtp_port)
             else:
                 PROTOCOL_ID_RAINLOOP = 0
                 PROTOCOL_ID_IMAP4_SSL = 2
@@ -960,7 +1001,7 @@ script:
                 ThreadingTCPServer.allow_reuse_address = True
                 with ThreadingTCPServer(('', listen_port), PortForwardingHandler) as server:
                     server.timeout = DEFAULT_SOCKET_TIMEOUT
-                    server.settings = PortForwardingSettings()
+                    server.settings = PortForwardingSettings(local_smtp_port=LOCAL_SMTP_PORT_DEFAULT)
                     server_ip, server_port = server.socket.getsockname()
 
                     thr = threading.Thread(target=serve_forever, args=(server,), daemon=False)
