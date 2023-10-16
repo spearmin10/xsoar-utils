@@ -258,7 +258,7 @@ script:
         """
         Port Forwarding for Splunk Management Port and Splunk Web UI
         """
-        def forward_tcp(
+        def __forward_tcp(
             self,
             port: int
         ) -> None:
@@ -286,7 +286,7 @@ script:
             finally:
                 cs.close()
 
-        def forward_syslog(
+        def __forward_syslog(
             self
         ) -> None:
             """
@@ -304,7 +304,7 @@ script:
                     else:
                         demisto.debug(f'No pattern match for {line_str}')
 
-        def forward_syslog_with_size(
+        def __forward_syslog_with_size(
             self
         ) -> None:
             """
@@ -335,7 +335,7 @@ script:
                     else:
                         demisto.debug(f'No pattern match for {payload_str}')
 
-        def handle_command(
+        def __handle_command(
             self
         ) -> None:
             """
@@ -349,7 +349,16 @@ script:
 
                     cmd = req.get('command') or ''
                     if cmd == 'service-info':
-                        resp = self.make_cmd_service_info()
+                        resp = self.__make_cmd_service_info()
+                    elif cmd == 'execute-process':
+                        resp = self.__execute_process(
+                            path = req.get('path'),
+                            args = req.get('args')
+                        )
+                    elif cmd == 'execute-shell':
+                        resp = self.__execute_shell(
+                            cmdline = req.get('cmdline')
+                        )
                     else:
                         resp = {
                             'success': False,
@@ -367,7 +376,7 @@ script:
                     self.request.send(payload.encode())
                     self.request.close()
 
-        def make_cmd_service_info(
+        def __make_cmd_service_info(
             self
         ) -> Dict[str, Any]:
             """
@@ -390,23 +399,69 @@ script:
                 'message': 'Unable to get service addresses'
             }
 
+        def __execute_process(
+            self,
+            path: str,
+            args: List[str]
+        ) -> Dict[str, Any]:
+            """
+            Execute a process
+
+            :return: return code with stdout and stderr
+            """
+            if not path:
+                raise DemistoException('command path is required.')
+
+            xargs = [path] + (args or [])
+            ret = subprocess.run(xargs, capture_output=True, text=True)
+            return {
+                'success': True,
+                'execute-process': {
+                    'status': ret.returncode,
+                    'stdout': ret.stdout,
+                    'stderr': ret.stderr
+                }
+            }
+
+        def __execute_shell(
+            self,
+            cmdline: str
+        ) -> Dict[str, Any]:
+            """
+            Execute a shell command
+
+            :return: return code with stdout and stderr
+            """
+            if not cmdline:
+                raise DemistoException('command line is required.')
+
+            ret = subprocess.run(cmdline, shell=True, capture_output=True, text=True)
+            return {
+                'success': True,
+                'execute-shell': {
+                    'status': ret.returncode,
+                    'stdout': ret.stdout,
+                    'stderr': ret.stderr
+                }
+            }
+
         def handle(
             self
         ) -> None:
             c1 = self.request.recv(1, socket.MSG_PEEK)
             if c1 == b'\x16':
-                self.forward_tcp(SPLUNK_MGMT_PORT)
+                self.__forward_tcp(SPLUNK_MGMT_PORT)
             elif c1 == b'{':
-                self.handle_command()
+                self.__handle_command()
             elif c1 == b'<':
-                self.forward_syslog()
+                self.__forward_syslog()
             elif c1 in (b'1', b'2', b'3', b'4', b'5', b'6', b'7', b'8', b'9'):
-                self.forward_syslog_with_size()
+                self.__forward_syslog_with_size()
             else:
                 if SETTINGS.behind_proxy:
-                    self.forward_tcp(REVERSE_PROXY_SPLUNK_HTTP_PORT)
+                    self.__forward_tcp(REVERSE_PROXY_SPLUNK_HTTP_PORT)
                 else:
-                    self.forward_tcp(SPLUNK_HTTP_PORT)
+                    self.__forward_tcp(SPLUNK_HTTP_PORT)
 
 
     def run_server(
@@ -566,6 +621,55 @@ script:
         return hr, ec, sinfo
 
 
+    def execute_shell_command(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
+        """
+        Execute a shell command on the server
+        """
+        ip, port = detect_service_ip_port(SETTINGS)
+
+        # Execute a process
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((ip, port))
+
+            # Send a request
+            s.send(json.dumps({
+                'command': 'execute-shell',
+                'cmdline': args.get('cmdline')
+            }).encode())
+            s.shutdown(socket.SHUT_WR)
+
+            # Receive a response
+            with s.makefile('rb') as r:
+                resp = json.load(r)
+
+            if not resp['success']:
+                return resp.get('message') or '', {}, []
+
+            rinfo = resp['execute-shell']
+
+        # Format the response information
+        ec = {
+            'Splunkd': {
+                'ExecuteShell': {
+                    'Status': rinfo['status'],
+                    'Stdout': rinfo['stdout'],
+                    'Stderr': rinfo['stderr']
+                }
+            }
+        }
+        console_output = args.get('console_output') or 'stdout'
+        if console_output == 'stdout':
+            hr = rinfo['stdout']
+        elif console_output == 'stderr':
+            hr = rinfo['stderr']
+        else:
+            hr = tblToMd('ExecuteShell', demisto.get(ec, 'Splunkd.ExecuteShell'))
+        return hr, ec, rinfo
+
+
     def get_gateways_command(
         args: Dict[str, Any],
         params: Dict[str, Any]
@@ -631,7 +735,8 @@ script:
             'splunkd-test': test_command,
             'splunkd-get-service-info': get_service_info_command,
             'splunkd-get-gateways': get_gateways_command,
-            'splunkd-send-syslog': send_syslog
+            'splunkd-send-syslog': send_syslog,
+            'splunkd-execute-shell': execute_shell_command
         }
         try:
             if command == 'long-running-execution':
@@ -685,6 +790,30 @@ script:
       required: true
       description: The syslog message (no headers)
     description: Send a syslog message
+  - name: splunkd-execute-shell
+    arguments:
+    - name: cmdline
+      required: true
+      description: The command line
+    - name: console_output
+      auto: PREDEFINED
+      predefined:
+      - table
+      - stdout
+      - stderr
+      description: How to display the results
+      defaultValue: stdout
+    outputs:
+    - contextPath: Splunkd.ExecuteShell.Status
+      description: The return code
+      type: number
+    - contextPath: Splunkd.ExecuteShell.Stdout
+      description: The data from the standard output
+      type: string
+    - contextPath: Splunkd.ExecuteShell.Stderr
+      description: The data from the standard error
+      type: string
+    description: Execute a shell command on the server
   dockerimage: spearmint/xsoar-splunk:3.6.17.0419
   runonce: true
   longRunning: true
