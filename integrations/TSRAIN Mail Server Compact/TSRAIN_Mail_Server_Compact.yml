@@ -1879,7 +1879,7 @@ script:
       description: Raw email message to send. If provided, all other arguments, but
         to, cc and bcc, will be ignored.
     description: Send an email
-  dockerimage: spearmint/xsoar-tsrain:3.10.19.1644
+  dockerimage: spearmint/xsoar-tsrain:3.10.19.1956
   runonce: false
   longRunning: true
   longRunningPort: true
