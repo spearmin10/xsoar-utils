@@ -165,7 +165,7 @@ script:
     from typing import Tuple, List, Dict, Any
 
 
-    LOCAL_SMTP_PORT_DEFAULT = 25
+    #LOCAL_SMTP_PORT_DEFAULT = 25
     LOCAL_SMTP_PORT = 10025
     LOCAL_POP3_PORT = 10110
     LOCAL_IMAP4_PORT = 10143
@@ -1001,7 +1001,7 @@ script:
                 ThreadingTCPServer.allow_reuse_address = True
                 with ThreadingTCPServer(('', listen_port), PortForwardingHandler) as server:
                     server.timeout = DEFAULT_SOCKET_TIMEOUT
-                    server.settings = PortForwardingSettings(local_smtp_port=LOCAL_SMTP_PORT_DEFAULT)
+                    server.settings = PortForwardingSettings()
                     server_ip, server_port = server.socket.getsockname()
 
                     thr = threading.Thread(target=serve_forever, args=(server,), daemon=False)
@@ -1879,7 +1879,7 @@ script:
       description: Raw email message to send. If provided, all other arguments, but
         to, cc and bcc, will be ignored.
     description: Send an email
-  dockerimage: spearmint/xsoar-tsrain:3.6.20.2109
+  dockerimage: spearmint/xsoar-tsrain:3.10.19.1644
   runonce: false
   longRunning: true
   longRunningPort: true
