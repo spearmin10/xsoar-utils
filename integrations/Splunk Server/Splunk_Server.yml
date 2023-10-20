@@ -45,7 +45,12 @@ configuration:
   additionalinfo: 'Default Password: Password123$'
 - display: Syslog Port Mapping
   name: syslogPortMapping
-  defaultvalue: "514"
+  defaultvalue: |-
+              {
+                ".*THREAT.*": "1515",
+                ".*splunk_recommended_squid.*": "1516",
+                ".*": "1514"
+              }
   type: 12
   required: false
   additionalinfo: Send by UDP syslog from messages coming in the listening port
