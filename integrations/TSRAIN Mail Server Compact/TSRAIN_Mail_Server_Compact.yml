@@ -146,6 +146,7 @@ script:
     import email.encoders
     import email.utils
     import email.parser
+    from enum import Enum
     from tempfile import NamedTemporaryFile
     from email.mime.text import MIMEText
     from email.mime.audio import MIMEAudio
@@ -162,7 +163,7 @@ script:
     from cryptography.hazmat.primitives.serialization import pkcs12
     from cryptography.hazmat.primitives import hashes
     from cryptography.hazmat.primitives.asymmetric import rsa
-    from typing import Tuple, List, Dict, Any
+    from typing import Tuple, List, Dict, Any, Iterator
 
 
     #LOCAL_SMTP_PORT_DEFAULT = 25
@@ -175,6 +176,150 @@ script:
     DEFAULT_PUBLIC_KEY_SIZE = 2048
     LOCAL_DEFAULT_MAILBOX_PASSWORD = 'Password123$'
     INTEGRATION_NAME = 'XSOAR TSRAIN Mail Server Compact'
+
+
+    class ClientCredentialType(Enum):
+        PKCS12_PEM = 'PKCS#12 PEM'
+        CERT_PRIVATE_KEY_PEM = 'Cert + Private Key PEM'
+
+
+    class PrivateCredential:
+        """ This class stores a private credential that is sensitive or should be protected such as password or private key.
+        """
+        def __init__(
+            self,
+            private_credential: str,
+            decryption_password: str | None = None
+        ) -> None:
+            """
+            :param private_credential: The private credential
+            :param decryption_password: The password to decrypt the private credential if it is encrypted
+            """
+            self.__private_credential = private_credential
+            self.__decryption_password = decryption_password
+
+        @property
+        def private_credential(
+            self
+        ) -> str:
+            return self.__private_credential
+
+        @property
+        def decryption_password(
+            self
+        ) -> str | None:
+            return self.__decryption_password
+
+
+    class Credential:
+        def __init__(
+            self,
+            private_credential: PrivateCredential,
+            public_credential: str | None = None
+        ) -> None:
+            """
+            :param private_credential: The private credential
+            :param public_credential: The public credential
+            """
+            self.__private_credential = private_credential
+            self.__public_credential = public_credential
+
+        @property
+        def private_credential(
+            self
+        ) -> PrivateCredential:
+            return self.__private_credential
+
+        @property
+        def public_credential(
+            self
+        ) -> str | None:
+            return self.__public_credential
+
+        def get_private_credential(
+            self,
+            pem_format: bool = False
+        ) -> PrivateCredential:
+            if pem_format:
+                pem = Credential.replace_spaces_in_credentials(self.__private_credential.private_credential)
+                if not pem.endswith('\n'):
+                    pem += '\n'
+
+                return PrivateCredential(
+                    private_credential=pem,
+                    decryption_password=self.__private_credential.decryption_password)
+            else:
+                return self.__private_credential
+
+        def get_public_credential(
+            self,
+            pem_format: bool = False
+        ) -> str | None:
+            if self.__public_credential and pem_format:
+                pem = Credential.replace_spaces_in_credentials(self.__public_credential)
+                return pem if pem.endswith('\n') else pem + '\n'
+            else:
+                return self.__public_credential
+
+        @staticmethod
+        def replace_spaces_in_credentials(
+            credentials: str | None
+        ) -> str | None:
+            """
+            This function is used in case of credential from type: 9 is in the wrong format
+            of one line with spaces instead of multiple lines.
+
+            :param credentials: the credentials to replace spaces in.
+            :return: the credential with spaces replaced with new lines if the credential is in the correct format,
+                     otherwise the credential will be returned as is.
+            """
+            if not credentials:
+                return credentials
+
+            def __pairwise(iterable):
+                x = iter(iterable)
+                return zip(x, x)
+
+            return re.sub(
+                r'(?P<lseps>\s*)(?P<begin>-----BEGIN(.*?)-----)(?P<begin_sep>\s)(?P<header>([^:]+:\s\S+\s?)*)(?P<body>.*?)(?P<end_sep>\s)(?P<end>-----END(.*?)-----)(?P<tseps>\s*)',
+                lambda m: m.group('lseps').replace(' ', '\n')
+                + m.group('begin')
+                + m.group('begin_sep').replace(' ', '\n')
+                + '\n'.join([' '.join(x) for x in __pairwise(m.group('header').split(' '))])
+                + ('\n' if m.group('header') else '')
+                + m.group('body').replace(' ', '\n')
+                + m.group('end_sep').replace(' ', '\n')
+                + m.group('end')
+                + m.group('tseps').replace(' ', '\n'),
+                credentials,
+                flags=re.DOTALL)
+
+        @staticmethod
+        def get_body_from_pem(
+            pem: str,
+            label: str
+        ) -> str | None:
+            label = re.escape(label)
+            pattern = f'^-----BEGIN {label}-----$(.*?)^-----END {label}-----$'
+            if m := re.search(pattern, pem, re.DOTALL | re.MULTILINE):
+                return m[1]
+            return None
+
+        @staticmethod
+        def enum_pem(
+            text: str
+        ) -> Iterator[Tuple[str, str]]:
+            """ Enumerate each PEM text containing in the text given
+
+            :param text: The text
+            :return: An iterator to enumerate label and pem text.
+            """
+            for m in re.finditer(
+                r'^-----BEGIN ([^-]+)-----$.*?^-----END ([^-]+)-----$\n',
+                text,
+                flags=re.DOTALL | re.MULTILINE):
+                if m[1] == m[2]:
+                    yield m[1], m[0]
 
 
     class Settings:
@@ -193,64 +338,57 @@ script:
             self.__insecure = argToBoolean(params.get('insecure', 'false'))
             self.__enable_send_mail = argToBoolean(params.get('enableSendMailCommand', 'false'))
             self.__sender_email_address = params.get('senderAddress') or ''
-
-            self.__client_credential_data = None
-            self.__client_credential_key = None
             self.__client_credential_type = params.get('clientCredentialType')
-            if self.__client_credential_type == 'PKCS#12 PEM':
-                cred_params = params.get('clientCredential') or {}
-                if pkcs12_pem := demisto.get(cred_params, 'credentials.sshkey'):
-                    self.__client_credential_data = pkcs12_pem
-                    self.__client_credential_key = demisto.get(cred_params, 'credentials.password') or ''
-                elif pkcs12_pem := cred_params.get('identifier'):
-                    self.__client_credential_data = self.__replace_spaces_in_credentials(pkcs12_pem)
-                    self.__client_credential_key = cred_params.get('password') or ''
-            elif self.__client_credential_type == 'Cert + Private Key PEM':
-                cred_params = params.get('clientCredential') or {}
-                if cert_key_pem := demisto.get(cred_params, 'credentials.sshkey'):
-                    self.__client_credential_data = self.__replace_spaces_in_credentials(cert_key_pem)
-                elif cert_pem := cred_params.get('identifier'):
-                    self.__client_credential_data = self.__replace_spaces_in_credentials(cert_pem)
-                    self.__client_credential_key = self.__replace_spaces_in_credentials(cred_params.get('password') or '')
-                elif cert_pem := cred_params.get('password'):
-                    self.__client_credential_data = ''
-                    self.__client_credential_key = self.__replace_spaces_in_credentials(cred_params.get('password') or '')
+            if self.__client_credential_type:
+                self.__client_credential = self.__get_credential(
+                    credentials=params.get('clientCredential') or {},
+                    private_credential_only=True
+                )
+            else:
+                self.__client_credential = None
 
-        def __replace_spaces_in_credentials(
+        def __get_credential(
             self,
-            credentials: str | None
-        ) -> str | None:
+            credentials: Dict[str, Any],
+            private_credential_only: bool = False
+        ) -> Credential | None:
+            """ Get public and private credential from the credentials
+
+            :param credentials: The credentials
+            :param private_credential_only: Set to True if the credentials only have private credentials, otherwise False.
+            :return The public and private credential.
             """
-            This function is used in case of credential from type: 9 is in the wrong format
-            of one line with spaces instead of multiple lines.
+            if credentials.get('credential'):
+                if ssh_key := demisto.get(credentials, 'credentials.sshkey'):
+                    ssh_key_pass = demisto.get(credentials, 'credentials.sshkeyPass') or \
+                                   demisto.get(credentials, 'credentials.password') or None
 
-            :param credentials: the credentials to replace spaces in.
-            :return: the credential with spaces replaced with new lines if the credential is in the correct format,
-                     otherwise the credential will be returned as is.
-            """
-            if not credentials:
-                return credentials
-
-            return re.sub(
-                r'(?P<lseps>\s*)(?P<begin>-----BEGIN(.*?)-----)(?P<body>.*?)(?P<end>-----END(.*?)-----)(?P<tseps>\s*)',
-                lambda m: m.group('lseps').replace(' ', '\n')
-                + m.group('begin')
-                + m.group('body').replace(' ', '\n')
-                + m.group('end')
-                + m.group('tseps').replace(' ', '\n'),
-                credentials,
-                flags=re.DOTALL)
-
-        def __get_body_from_pem(
-            self,
-            pem: str,
-            label: str
-        ) -> str | None:
-            label = re.escape(label)
-            pattern = f'^-----BEGIN {label}-----$(.*?)^-----END {label}-----$'
-            if m := re.search(pattern, pem, re.DOTALL | re.MULTILINE):
-                return m[1]
-            return None
+                    public_credential = credentials.get('credentials.user') or None
+                    private_credential = PrivateCredential(
+                        private_credential=ssh_key,
+                        decryption_password=ssh_key_pass
+                    )
+                elif password := demisto.get(credentials, 'credentials.password'):
+                    public_credential = credentials.get('credentials.user') or None
+                    private_credential = PrivateCredential(private_credential=password)
+                else:
+                    return None
+            elif password := demisto.get(credentials, 'password'):
+                public_credential = credentials.get('identifier') or None
+                if private_credential_only and\
+                    public_credential and\
+                    not re.search(r'-----BEGIN ([^-]+)-----.*?-----END ([^-]+)-----', password, flags=re.DOTALL):
+                    private_credential = PrivateCredential(
+                        private_credential=public_credential,
+                        decryption_password=password
+                    )
+                    public_credential = None
+                else:
+                    private_credential = PrivateCredential(private_credential=password)
+            else:
+                # No credentials or only identifier is provided
+                return None
+            return Credential(private_credential=private_credential, public_credential=public_credential)
 
         @property
         def host_port(
@@ -320,17 +458,26 @@ script:
 
         def get_client_credentials_pem(
             self
-        ) -> str | None:
-            if self.__client_credential_type == 'PKCS#12 PEM':
-                if p12_base64 := self.__client_credential_data:
-                    p12_base64 = self.__get_body_from_pem(self.__client_credential_data, 'PKCS12')
+        ) -> Tuple[str, str, Optional[str]] | None:
+            """ Get certificates and private key PEM for client authentication with the password to decrypt it
+
+            :return The certificates PEMs, private key PEMs, and the password to decrypt the private keys (Optional).
+            """
+            if self.__client_credential_type == ClientCredentialType.PKCS12_PEM.value:
+                if not self.__client_credential:
+                    raise DemistoException('Client PKCS#12 is required')
+
+                p12_cred = self.__client_credential.get_private_credential(pem_format=True)
+                p12_base64 = Credential.get_body_from_pem(p12_cred.private_credential, 'PKCS12') or p12_cred.private_credential
                 if not p12_base64:
                     raise DemistoException('Invalid Client PKCS#12 PEM')
-                p12_passwd = self.__client_credential_key or ''
+                p12_passwd = p12_cred.decryption_password or ''
 
                 pkey, cert, _ = pkcs12.load_key_and_certificates(
-                    base64.b64decode(p12_base64.encode()),
-                    p12_passwd.encode('utf-8'), backend=default_backend())
+                    base64.b64decode(p12_base64.encode('utf-8')),
+                    p12_passwd.encode('utf-8'),
+                    backend=default_backend()
+                )
                 if not pkey:
                     raise DemistoException('No private keys in Client PKCS#12')
                 if not cert:
@@ -339,13 +486,31 @@ script:
                 pkey_pem = pkey.private_bytes(
                     encoding=serialization.Encoding.PEM,
                     format=serialization.PrivateFormat.TraditionalOpenSSL,
-                    encryption_algorithm=serialization.NoEncryption())
+                    encryption_algorithm=serialization.NoEncryption()
+                )
                 cert_pem = cert.public_bytes(encoding=serialization.Encoding.PEM)
-                return (pkey_pem + b'\n' + cert_pem).decode()
+                return cert_pem.decode(), pkey_pem.decode(), None
 
-            elif self.__client_credential_type == 'Cert + Private Key PEM':
-                pem = '\n'.join([self.__client_credential_data or '', self.__client_credential_key or ''])
-                return pem
+            elif self.__client_credential_type == ClientCredentialType.CERT_PRIVATE_KEY_PEM.value:
+                if not self.__client_credential:
+                    raise DemistoException('Certificates and Private key are required')
+
+                pkey_cred = self.__client_credential.get_private_credential(pem_format=True)
+                pem_text = pkey_cred.private_credential
+                pem_text += '\n'
+                pem_text += self.__client_credential.get_public_credential(pem_format=True) or ''
+
+                certs_pem = []
+                pkeys_pem = []
+                for label, pem in Credential.enum_pem(pem_text):
+                    if label == 'CERTIFICATE':
+                        certs_pem.append(pem)
+                    elif 'PRIVATE KEY' in label:
+                        pkeys_pem.append(pem)
+                if not certs_pem or not pkeys_pem:
+                    raise DemistoException('Certificates and Private key are required')
+                else:
+                    return '\n'.join(certs_pem), '\n'.join(pkeys_pem), pkey_cred.decryption_password
             else:
                 return None
 
@@ -537,6 +702,146 @@ script:
             return self.__local_rainloop_port
 
 
+    class ProxyUtils:
+        """
+        Proxy Utilities
+        """
+        @staticmethod
+        def communicate_tcp_tcp(
+            s1: socket.socket,
+            s2: socket.socket
+        ) -> None:
+            """ Port Forwarding: TCP <-> TCP
+
+            :param s1: A TCP session 1
+            :param s2: A TCP session 2
+            """
+            buf1 = None
+            buf2 = None
+
+            s1.setblocking(True)
+            s2.setblocking(True)
+
+            while True:
+                rset = []
+                wset = []
+                if s2 is not None:
+                    if buf2:
+                        wset.append(s2)
+                    if s1 is not None and not buf1:
+                        rset.append(s2)
+
+                if s1 is not None:
+                    if buf1:
+                        wset.append(s1)
+                    if s2 is not None and not buf2:
+                        rset.append(s1)
+
+                if not rset and not wset:
+                    break
+
+                r, w, x = select.select(rset, wset, [])
+                if s1 in r:
+                    buf2 = s1.recv(1024)
+                    if not buf2:
+                        s1 = None
+
+                if s1 in w:
+                    n = s1.send(buf1)
+                    if n > 0:
+                        buf1 = buf1[n:]
+
+                if s2 in r:
+                    buf1 = s2.recv(1024)
+                    if not buf1:
+                        s2 = None
+
+                if s2 in w:
+                    n = s2.send(buf2)
+                    if n > 0:
+                        buf2 = buf2[n:]
+
+        @staticmethod
+        def communicate_tcp_ssl(
+            s1: socket.socket,
+            s2: ssl.SSLSocket
+        ) -> None:
+            """ Port Forwarding: TCP <-> SSL
+
+            :param s1: A TCP session
+            :param s2: A SSL session
+            """
+            buf1 = None
+            buf2 = None
+
+            s1.setblocking(True)
+            s2.setblocking(False)
+            s2_r = ssl.SSL_ERROR_ZERO_RETURN
+            s2_w = ssl.SSL_ERROR_ZERO_RETURN
+
+            while True:
+                rset = []
+                wset = []
+                if s2 is not None:
+                    if buf2:
+                        if s2_w in (ssl.SSL_ERROR_WANT_WRITE, ssl.SSL_ERROR_ZERO_RETURN):
+                            wset.append(s2)
+                        elif s2_w == ssl.SSL_ERROR_WANT_READ:
+                            rset.append(s2)
+                    if s1 is not None and not buf1:
+                        if s2_r in (ssl.SSL_ERROR_WANT_READ, ssl.SSL_ERROR_ZERO_RETURN):
+                            rset.append(s2)
+                        elif s2_r == ssl.SSL_ERROR_WANT_WRITE:
+                            wset.append(s2)
+
+                if s1 is not None:
+                    if buf1:
+                        wset.append(s1)
+                    if s2 is not None and not buf2:
+                        rset.append(s1)
+
+                if not rset and not wset:
+                    break
+
+                r, w, x = select.select(rset, wset, [])
+                if s1 in r:
+                    buf2 = s1.recv(1024)
+                    if not buf2:
+                        s1 = None
+
+                if s1 in w:
+                    n = s1.send(buf1)
+                    if n > 0:
+                        buf1 = buf1[n:]
+
+                if (s2_r in (ssl.SSL_ERROR_WANT_READ, ssl.SSL_ERROR_ZERO_RETURN) and s2 in r) or\
+                   (s2_r in (ssl.SSL_ERROR_WANT_WRITE,) and s2 in w):
+                    s2_r = ssl.SSL_ERROR_ZERO_RETURN
+                    try:
+                        if buf1 := s2.recv(1024):
+                            n = s2.pending()
+                            while n > 0:
+                                buf1 += s2.recv(n)
+                                n = s2.pending()
+                        else:
+                            s2 = None
+                    except ssl.SSLError as e:
+                        s2_r = e.errno
+                        if e.errno not in (ssl.SSL_ERROR_WANT_READ, ssl.SSL_ERROR_WANT_WRITE):
+                            raise
+                elif (s2_w in (ssl.SSL_ERROR_WANT_READ,) and s2 in r) or\
+                     (s2_w in (ssl.SSL_ERROR_WANT_WRITE, ssl.SSL_ERROR_ZERO_RETURN) and s2 in w):
+                    s2_w = ssl.SSL_ERROR_ZERO_RETURN
+                    try:
+                        n = s2.send(buf2)
+                        if n > 0:
+                            buf2 = buf2[n:]
+                    except ssl.SSLError as e:
+                        s2_w = e.errno
+                        if e.errno not in (ssl.SSL_ERROR_WANT_READ, ssl.SSL_ERROR_WANT_WRITE):
+                            raise
+
+
     class PortForwardingHandler(BaseRequestHandler):
         """ Port Forwarding for the services
         """
@@ -556,13 +861,32 @@ script:
             self.__local_rainloop_port = LOCAL_RAINLOOP_PORT
             BaseRequestHandler.__init__(self, request, client_address, server)
 
+        def __forward_tcp_tcp(
+            self,
+            remote_host: str,
+            remote_port: int
+        ) -> None:
+            """  Port Forwarding: TCP <-> TCP(remote host:port)
+            """
+            cs = self.request
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rs:
+                    rs.settimeout(DEFAULT_SOCKET_TIMEOUT)
+                    rs.connect((remote_host, remote_port))
+                    ProxyUtils.communicate_tcp_tcp(cs, rs)
+
+            except Exception:
+                demisto.debug(traceback.format_exc())
+            finally:
+                cs.close()
+
         def __forward_tcp_ssl(
             self,
             remote_host: str,
             remote_port: int,
             preceding_payload: bytes | None = None
         ) -> None:
-            """  Port Forwarding: tcp-ssl:port
+            """  Port Forwarding: TCP <-> SSL(remote host:port)
             """
             try:
                 cs = self.request
@@ -575,108 +899,26 @@ script:
                         if preceding_payload is not None:
                             rs.send(preceding_payload)
 
-                        while True:
-                            r, _, _ = select.select([cs, rs], [], [])
-                            if cs in r:
-                                payload = cs.recv(1024)
-                                if len(payload) == 0:
-                                    break
+                        ProxyUtils.communicate_tcp_ssl(cs, rs)
 
-                                rs.setblocking(True)
-                                rs.send(payload)
-
-                            if rs in r:
-                                rs.setblocking(False)
-                                try:
-                                    payload = rs.recv(1024)
-                                except ssl.SSLError as e:
-                                    if e.errno != ssl.SSL_ERROR_WANT_READ:
-                                        raise
-                                    continue
-
-                                if not payload:
-                                    break
-
-                                cs.send(payload)
-
-                                data_left = rs.pending()
-                                while data_left:
-                                    cs.send(rs.recv(data_left))
-                                    data_left = rs.pending()
             except Exception:
                 demisto.debug(traceback.format_exc())
             finally:
                 self.request.close()
-
-        def __forward_tcp_tcp(
-            self,
-            remote_host: str,
-            remote_port: int
-        ) -> None:
-            """ Port Forwarding: tcp-tcp:port
-            """
-            cs = self.request
-            try:
-                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rs:
-                    rs.settimeout(DEFAULT_SOCKET_TIMEOUT)
-                    rs.connect((remote_host, remote_port))
-                    while True:
-                        r, w, x = select.select([cs, rs], [], [])
-                        if cs in r:
-                            payload = cs.recv(1024)
-                            if len(payload) == 0:
-                                break
-                            rs.send(payload)
-                        if rs in r:
-                            payload = rs.recv(1024)
-                            if len(payload) == 0:
-                                break
-                            cs.send(payload)
-            except Exception:
-                demisto.debug(traceback.format_exc())
-            finally:
-                cs.close()
 
         def __forward_ssl_tcp(
             self,
             remote_host: str,
             remote_port: int
         ) -> None:
-            """ Port Forwarding: ssl-tcp:port
+            """  Port Forwarding: SSL <-> TCP(remote host:port)
             """
             try:
                 with self.__ssl_server_context.wrap_socket(self.request, server_side=True) as cs:
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rs:
                         rs.settimeout(DEFAULT_SOCKET_TIMEOUT)
                         rs.connect((remote_host, remote_port))
-                        while True:
-                            r, _, _ = select.select([cs, rs], [], [])
-                            if rs in r:
-                                payload = rs.recv(1024)
-                                if len(payload) == 0:
-                                    break
-
-                                cs.setblocking(True)
-                                cs.send(payload)
-
-                            if cs in r:
-                                cs.setblocking(False)
-                                try:
-                                    payload = cs.recv(1024)
-                                except ssl.SSLError as e:
-                                    if e.errno != ssl.SSL_ERROR_WANT_READ:
-                                        raise
-                                    continue
-
-                                if not payload:
-                                    break
-
-                                rs.send(payload)
-
-                                data_left = cs.pending()
-                                while data_left:
-                                    rs.send(cs.recv(data_left))
-                                    data_left = cs.pending()
+                        ProxyUtils.communicate_tcp_ssl(rs, cs)
 
             except Exception:
                 demisto.debug(traceback.format_exc())
@@ -732,34 +974,40 @@ script:
                     h = self.request.recv(3, socket.MSG_PEEK)
                     if h[:1] == b'\x16':
                         # TLS
-                        self.__forward_tcp_ssl(self.__remote_host,
-                                               self.__remote_port,
-                                               PROTOCOL_ID_IMAP4_SSL.to_bytes(1, 'big'))
+                        self.__forward_tcp_ssl(
+                            self.__remote_host,
+                            self.__remote_port,
+                            PROTOCOL_ID_IMAP4_SSL.to_bytes(1, 'big'))
                     elif h[:1] in (b'E', b'e'):
                         # EHLO
-                        self.__forward_tcp_ssl(self.__remote_host,
-                                               self.__remote_port,
-                                               PROTOCOL_ID_SMTP.to_bytes(1, 'big'))
+                        self.__forward_tcp_ssl(
+                            self.__remote_host,
+                            self.__remote_port,
+                            PROTOCOL_ID_SMTP.to_bytes(1, 'big'))
                     elif h[:1] in (b'H', b'h'):
                         if h.decode(errors='ignore').upper() == 'HEL':
                             # HELO
-                            self.__forward_tcp_ssl(self.__remote_host,
-                                                   self.__remote_port,
-                                                   PROTOCOL_ID_SMTP.to_bytes(1, 'big'))
+                            self.__forward_tcp_ssl(
+                                self.__remote_host,
+                                self.__remote_port,
+                                PROTOCOL_ID_SMTP.to_bytes(1, 'big'))
                         else:
                             # HEAD or default
-                            self.__forward_tcp_ssl(self.__remote_host,
-                                                   self.__remote_port,
-                                                   PROTOCOL_ID_RAINLOOP.to_bytes(1, 'big'))
+                            self.__forward_tcp_ssl(
+                                self.__remote_host,
+                                self.__remote_port,
+                                PROTOCOL_ID_RAINLOOP.to_bytes(1, 'big'))
                     else:
-                        self.__forward_tcp_ssl(self.__remote_host,
-                                               self.__remote_port,
-                                               PROTOCOL_ID_RAINLOOP.to_bytes(1, 'big'))
+                        self.__forward_tcp_ssl(
+                            self.__remote_host,
+                            self.__remote_port,
+                            PROTOCOL_ID_RAINLOOP.to_bytes(1, 'big'))
                 else:
                     # Client is waiting for SMTP greeting
-                    self.__forward_tcp_ssl(self.__remote_host,
-                                           self.__remote_port,
-                                           PROTOCOL_ID_SMTP.to_bytes(1, 'big'))
+                    self.__forward_tcp_ssl(
+                        self.__remote_host,
+                        self.__remote_port,
+                        PROTOCOL_ID_SMTP.to_bytes(1, 'big'))
 
             self.request.close()
 
@@ -785,7 +1033,11 @@ script:
             valid_until = valid_from + timedelta(1 * 365, 0, 0)
 
             hostname = socket.gethostname()
-            private_key = rsa.generate_private_key(public_exponent=65537, key_size=key_size, backend=default_backend())
+            private_key = rsa.generate_private_key(
+                public_exponent=65537,
+                key_size=key_size,
+                backend=default_backend()
+            )
             public_key = private_key.public_key()
 
             builder = x509.CertificateBuilder()
@@ -832,8 +1084,10 @@ script:
                     os.fsync(client_certificate_file.fileno())
 
                     ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-                    ssl_ctx.load_cert_chain(certfile=client_certificate_file.name,
-                                            keyfile=client_private_key_file.name)
+                    ssl_ctx.load_cert_chain(
+                        certfile=client_certificate_file.name,
+                        keyfile=client_private_key_file.name
+                    )
                     return ssl_ctx
 
         def __create_ssl_client_context(
@@ -851,13 +1105,22 @@ script:
             else:
                 ssl_ctx.verify_mode = ssl.CERT_REQUIRED
 
-            if client_creds_pem := self.__settings.get_client_credentials_pem():
-                with NamedTemporaryFile(mode='w') as pem_file:
-                    pem_file.write(client_creds_pem)
-                    pem_file.flush()
-                    pem_file.seek(0)
-                    ssl_ctx.load_cert_chain(certfile=pem_file.name, keyfile=None)
+            if client_creds := self.__settings.get_client_credentials_pem():
+                client_creds_certs_pem, client_creds_pkeys_pem, client_creds_password = client_creds
+                with NamedTemporaryFile(mode='w') as pem_certs_file:
+                    pem_certs_file.write(client_creds_certs_pem)
+                    pem_certs_file.flush()
+                    pem_certs_file.seek(0)
 
+                    with NamedTemporaryFile(mode='w') as pem_keys_file:
+                        pem_keys_file.write(client_creds_pkeys_pem)
+                        pem_keys_file.flush()
+                        pem_keys_file.seek(0)
+                        ssl_ctx.load_cert_chain(
+                            certfile=pem_certs_file.name,
+                            keyfile=pem_keys_file.name,
+                            password=client_creds_password
+                        )
             return ssl_ctx
 
         def __get_ssl_client_context(
@@ -968,8 +1231,8 @@ script:
                     server.settings = PortForwardingSettings(
                         remote_addr=remote_addr,
                         ssl_server_context=ssl_server_context,
-                        ssl_client_context=ssl_client_context)
-
+                        ssl_client_context=ssl_client_context
+                    )
                     save_port_fowarder_address(None, listen_port)
                     server.serve_forever()
             finally:
@@ -993,11 +1256,12 @@ script:
         ) -> None:
             """ Test to connect to the local TSRAIN server
             """
-            self.start_services()
+            # Restart the services
+            self.start_services(True)
 
             listen_port = self.__settings.docker_port
-
             try:
+                # Start the port forwarder
                 ThreadingTCPServer.allow_reuse_address = True
                 with ThreadingTCPServer(('', listen_port), PortForwardingHandler) as server:
                     server.timeout = DEFAULT_SOCKET_TIMEOUT
@@ -1007,6 +1271,28 @@ script:
                     thr = threading.Thread(target=serve_forever, args=(server,), daemon=False)
                     thr.start()
                     try:
+                        # Wait for the tsrain services up
+                        for _ in range(5):
+                            try:
+                                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                                    s.settimeout(3.0)
+                                    s.connect((server_ip, LOCAL_SMTP_PORT))
+                                    if s.recv(1):
+                                        break
+                            except Exception:
+                                time.sleep(2.0)
+
+                        # Wait for the port forwarder up
+                        for _ in range(5):
+                            try:
+                                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                                    s.settimeout(3.0)
+                                    s.connect((server_ip, server_port))
+                                    if s.recv(1):
+                                        break
+                            except Exception as e:
+                                time.sleep(2.0)
+
                         # Test SMTP connection
                         with smtplib.SMTP(server_ip, server_port, timeout=DEFAULT_SOCKET_TIMEOUT) as smtp:
                             smtp.quit()
@@ -1031,8 +1317,8 @@ script:
                 server.timeout = DEFAULT_SOCKET_TIMEOUT
                 server.settings = PortForwardingSettings(
                     remote_addr=self.__settings.remote_address,
-                    ssl_client_context=self.__get_ssl_client_context())
-
+                    ssl_client_context=self.__get_ssl_client_context()
+                )
                 server_ip, server_port = server.socket.getsockname()
 
                 thr = threading.Thread(target=serve_forever, args=(server,), daemon=False)
@@ -1062,11 +1348,15 @@ script:
                     server.timeout = DEFAULT_SOCKET_TIMEOUT
                     server.settings = PortForwardingSettings(
                         remote_addr=self.__settings.remote_address,
-                        ssl_client_context=self.__get_ssl_client_context())
-
+                        ssl_client_context=self.__get_ssl_client_context()
+                    )
                     server_ip, server_port = server.socket.getsockname()
 
-                    thr = threading.Thread(target=serve_forever, args=(server,), daemon=False)
+                    thr = threading.Thread(
+                        target=serve_forever,
+                        args=(server,),
+                        daemon=False
+                    )
                     thr.start()
 
                     # Send an email message
@@ -1113,7 +1403,11 @@ script:
             :param to_addrs: List of recipient addresses
             """
             if isinstance(msg, email.message.Message):
-                self.__sess.send_message(msg, from_addr=from_addr, to_addrs=to_addrs)
+                self.__sess.send_message(
+                    msg,
+                    from_addr=from_addr,
+                    to_addrs=to_addrs
+                )
             else:
                 self.__sess.sendmail(from_addr, to_addrs, msg)
 
@@ -1344,7 +1638,8 @@ script:
                     file_data=file_data,
                     main_type=main_type,
                     sub_type=sub_type,
-                    content_id=content_id or '')
+                    content_id=content_id or ''
+                )
                 self.__attachments.append(attachment)
             except Exception as e:
                 demisto.error(f'Invalid entry {entity_id} with exception: {str(e)}')
@@ -1368,7 +1663,8 @@ script:
                 file_data=file_data,
                 main_type=main_type,
                 sub_type=sub_type,
-                content_id=content_id or '')
+                content_id=content_id or ''
+            )
             self.__attachments.append(attachment)
 
         def build(
