@@ -45,12 +45,7 @@ configuration:
   additionalinfo: 'Default Password: Password123$'
 - display: Syslog Port Mapping
   name: syslogPortMapping
-  defaultvalue: |-
-              {
-                ".*THREAT.*": "1515",
-                ".*splunk_recommended_squid.*": "1516",
-                ".*": "1514"
-              }
+  defaultvalue: "514"
   type: 12
   required: false
   additionalinfo: Send by UDP syslog from messages coming in the listening port
@@ -691,7 +686,7 @@ script:
             return hr, {}, []
 
 
-    def send_syslog(
+    def send_syslog_command(
         args: Dict[str, Any],
         params: Dict[str, Any]
     ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
@@ -740,7 +735,7 @@ script:
             'splunkd-test': test_command,
             'splunkd-get-service-info': get_service_info_command,
             'splunkd-get-gateways': get_gateways_command,
-            'splunkd-send-syslog': send_syslog,
+            'splunkd-send-syslog': send_syslog_command,
             'splunkd-execute-shell': execute_shell_command
         }
         try:
@@ -785,7 +780,6 @@ script:
   - name: splunkd-send-syslog
     arguments:
     - name: port
-      required: true
       auto: PREDEFINED
       predefined:
       - ngfw
