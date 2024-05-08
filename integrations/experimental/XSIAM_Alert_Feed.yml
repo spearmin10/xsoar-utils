@@ -75,6 +75,7 @@ script:
     from enum import Enum
     from typing import Any, List, Tuple
     from datetime import datetime
+    import re
     import math
     import secrets
     import string
@@ -109,6 +110,27 @@ script:
         return parsed_alerts
 
 
+    def choose_ip(
+        pattern: list[str] | str
+    ) -> str:
+        """ Choose an IP from IP list, IP range or CIDR.
+
+        :param pattern: IP address pattern
+        :return: Selected IP address.
+        """
+        if not isinstance(pattern, list):
+            pattern = [pattern]
+
+        pattern = random.choice(pattern)
+
+        if m := re.fullmatch(r'([^-]+)-(.+)', pattern):
+            ip = random.randint(int(ipaddress.IPv4Address(m[1])), int(ipaddress.IPv4Address(m[2])))
+            return str(ipaddress.IPv4Address(ip))
+        else:
+            ip = ipaddress.IPv4Network(pattern, strict=False)
+            return str(ip[random.randrange(0, ip.num_addresses)])
+
+
     def build_parsed_alert(
         template: dict[str, Any]
     ) -> dict[str, Any]:
@@ -118,16 +140,10 @@ script:
         :return: A parsed alert generated.
         """
         if local_ip := template.get('local_ip'):
-            if not isinstance(local_ip, list):
-                local_ip = [local_ip]
-            local_ip = random.choice([ipaddress.IPv4Network(ip, strict=False) for ip in local_ip])
-            local_ip = str(local_ip[random.randrange(0, local_ip.num_addresses)])
+            local_ip = choose_ip(local_ip)
 
         if remote_ip := template.get('remote_ip'):
-            if not isinstance(remote_ip, list):
-                remote_ip = [remote_ip]
-            remote_ip = random.choice([ipaddress.IPv4Network(ip, strict=False) for ip in remote_ip])
-            remote_ip = str(remote_ip[random.randrange(0, remote_ip.num_addresses)])
+            remote_ip = choose_ip(remote_ip)
 
         if (local_port := template.get('local_port')) is None and 'local_port' in template:
             local_port = random.randint(1, 65534)
