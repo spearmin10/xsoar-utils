@@ -51,8 +51,13 @@ configuration:
   name: parsed_alerts
   type: 12
   required: false
-- display: Number of alerts to feed in fetch cycle
-  name: number_of_alerts
+- display: Number of templates to feed alerts in fetch cycle
+  name: number_of_templates
+  defaultvalue: "1"
+  type: 0
+  required: false
+- display: Number of clones for each alert
+  name: number_of_clones
   defaultvalue: "1"
   type: 0
   required: false
@@ -73,7 +78,7 @@ script:
 
     ''' IMPORTS '''
     from enum import Enum
-    from typing import Any, List, Tuple
+    from typing import Any, List, Tuple, Iterator
     from datetime import datetime
     import re
     import math
@@ -85,7 +90,8 @@ script:
     import dateparser
 
 
-    NUMBER_OF_ALERTS_IN_FETCH_CYCLE = 1
+    NUMBER_OF_TEMPLATES_IN_FETCH_CYCLE = 1
+    NUMBER_OF_CLONES_FOR_EACH_TEMPLATE = 1
     NUMBER_OF_ALERTS_IN_INSERT_PARSED_ALERTS_API = 60
 
 
@@ -305,14 +311,16 @@ script:
         def insert_parsed_alerts_by_template(
             self,
             alerts_template: list[dict[str, Any]],
-            num_of_alerts: int,
+            number_of_templates: int,
+            number_of_clones: int,
             random_choices: bool,
             start_index: int = 0
         ) -> list[dict[str, Any]]:
             """ Build and insert parsed alerts
 
             :param alerts_template: Parsed alerts template
-            :param num_of_alerts: Number of alerts to insert
+            :param number_of_templates: Number of templates to generate alerts
+            :param number_of_clones: Number of alerts to clone for each alert template
             :param random_choices: True to choose alert templates randomly (ignore start_index), otherwise False.
             :param start_index: Index to read templates from alerts_template
             :return: List of alerts inserted.
@@ -321,16 +329,30 @@ script:
                 raise DemistoException('Alerts template is required.')
 
             if random_choices:
-                templates = random.choices(alerts_template, k=num_of_alerts)
+                templates = random.choices(alerts_template, k=number_of_templates)
             else:
                 start_index = min(0, start_index) % len(alerts_template)
-                templates = alerts_template * ((num_of_alerts // len(alerts_template)) + 1)
-                templates = templates[start_index:start_index + num_of_alerts]
+                templates = alerts_template * ((number_of_templates // len(alerts_template)) + 1)
+                templates = templates[start_index:start_index + number_of_templates]
+
+            def _enum_alerts(
+                templates: list[dict[str, Any]],
+                number_of_clones: int,
+            ) -> Iterator[list[dict[str, Any]]]:
+                alerts = []
+                for template in templates:
+                    alert = build_parsed_alert(template)
+                    event_timestamp = alert.get('event_timestamp') or 0
+                    for i in range(0, max(1, number_of_clones)):
+                        alerts.append(dict(alert, event_timestamp=event_timestamp + i))
+                        if len(alerts) >= NUMBER_OF_ALERTS_IN_INSERT_PARSED_ALERTS_API:
+                            yield alerts
+                            alerts = []
+                if alerts:
+                    yield alerts
 
             alerts = []
-            n = NUMBER_OF_ALERTS_IN_INSERT_PARSED_ALERTS_API
-            for i in range(0, len(templates), n):
-                request_alerts = [build_parsed_alert(template) for template in templates[i: i+n]]
+            for request_alerts in _enum_alerts(templates, number_of_clones):
                 self.request(
                     method='POST',
                     path='/public_api/v1/alerts/insert_parsed_alerts',
@@ -379,12 +401,14 @@ script:
     ):
         if alerts_template := get_parsed_alerts_template(params):
             client = XsiamClient(params)
-            num_of_alerts = arg_to_number(params.get('number_of_alerts')) or NUMBER_OF_ALERTS_IN_FETCH_CYCLE
+            number_of_templates = arg_to_number(params.get('number_of_templates')) or NUMBER_OF_TEMPLATES_IN_FETCH_CYCLE
+            number_of_clones = arg_to_number(params.get('number_of_clones')) or NUMBER_OF_CLONES_FOR_EACH_TEMPLATE
 
             if random_choices := params.get('random_choices', False):
                 alerts = client.insert_parsed_alerts_by_template(
                     alerts_template=alerts_template,
-                    num_of_alerts=num_of_alerts,
+                    number_of_templates=number_of_templates,
+                    number_of_clones=number_of_clones,
                     random_choices=random_choices
                 )
             else:
@@ -393,12 +417,13 @@ script:
 
                 alerts = client.insert_parsed_alerts_by_template(
                     alerts_template=alerts_template,
-                    num_of_alerts=num_of_alerts,
+                    number_of_templates=number_of_templates,
+                    number_of_clones=number_of_clones,
                     random_choices=random_choices,
                     start_index=next_index
                 )
                 demisto.setLastRun({
-                    'last_index': (next_index + num_of_alerts - 1) % len(alerts_template)
+                    'last_index': (next_index + number_of_templates - 1) % len(alerts_template)
                 })
 
         demisto.incidents([])
@@ -414,7 +439,8 @@ script:
 
         alerts = XsiamClient(params).insert_parsed_alerts_by_template(
             alerts_template=alerts_template,
-            num_of_alerts=len(alerts_template),
+            number_of_templates=len(alerts_template),
+            number_of_clones=arg_to_number(args.get('number_of_clones') or 1),
             random_choices=False,
             start_index=0
         )
@@ -456,7 +482,10 @@ script:
   type: python
   commands:
   - name: xsiam-alert-feed-run
-    arguments: []
+    arguments:
+    - name: number_of_clones
+      description: Number of alerts to clone for each alert template
+      defaultValue: "1"
     description: Feed alerts to XSIAM/XDR
   dockerimage: demisto/python3:3.10.13.89009
   isfetch: true
