@@ -53,7 +53,6 @@ configuration:
   required: false
 - display: Number of templates to feed alerts in fetch cycle
   name: number_of_templates
-  defaultvalue: "1"
   type: 0
   required: false
 - display: Number of clones for each alert
@@ -90,7 +89,6 @@ script:
     import dateparser
 
 
-    NUMBER_OF_TEMPLATES_IN_FETCH_CYCLE = 1
     NUMBER_OF_CLONES_FOR_EACH_TEMPLATE = 1
     NUMBER_OF_ALERTS_IN_INSERT_PARSED_ALERTS_API = 60
 
@@ -311,7 +309,7 @@ script:
         def insert_parsed_alerts_by_template(
             self,
             alerts_template: list[dict[str, Any]],
-            number_of_templates: int,
+            number_of_templates: int | None,
             number_of_clones: int,
             random_choices: bool,
             start_index: int = 0
@@ -327,6 +325,9 @@ script:
             """
             if not alerts_template:
                 raise DemistoException('Alerts template is required.')
+
+            if not number_of_templates:
+                number_of_templates = len(alerts_template)
 
             if random_choices:
                 templates = random.choices(alerts_template, k=number_of_templates)
@@ -401,8 +402,10 @@ script:
     ):
         if alerts_template := get_parsed_alerts_template(params):
             client = XsiamClient(params)
-            number_of_templates = arg_to_number(params.get('number_of_templates')) or NUMBER_OF_TEMPLATES_IN_FETCH_CYCLE
             number_of_clones = arg_to_number(params.get('number_of_clones')) or NUMBER_OF_CLONES_FOR_EACH_TEMPLATE
+            number_of_templates = arg_to_number(params.get('number_of_templates'))
+            if not number_of_templates:
+                number_of_templates = len(alerts_template)
 
             if random_choices := params.get('random_choices', False):
                 alerts = client.insert_parsed_alerts_by_template(
