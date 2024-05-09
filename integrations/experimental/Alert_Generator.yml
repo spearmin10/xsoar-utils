@@ -314,6 +314,7 @@ script:
                 severity=args.get('severity'),
                 alert_description=args.get('alert_description'),
                 event_timestamp=int(datetime.now(timezone.utc).timestamp() * 1000),
+                action_status=args.get('action_status'),
             )
         )
         body = {
@@ -549,6 +550,12 @@ script:
       - High
       - Critical
       description: Severity level
+    - name: action_status
+      auto: PREDEFINED
+      predefined:
+      - Reported
+      - Blocked
+      description: Action Status
     - name: kwfields
       description: Custom fields
     description: Upload an alert
