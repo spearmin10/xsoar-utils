@@ -89,27 +89,18 @@ script:
 
     ''' CLASS DEFINITIONS '''
 
-    class AlertTemplate:
+
+    class AlertGenerator:
         def __init__(
             self,
-            template: dict[str, Any]
+            alert: dict[str, Any],
+            environments: dict[str, Any] = {}
         ) -> None:
-            self.__number_of_clones = template.get('number_of_clones')
-            self.__evals = template.get('evals') or {}
+            self.__alert = alert
+            self.__envs = environments
 
-            alerts = template.get('alerts')
-            if alerts is None:
-                raise DemistoException('No alerts field in the template.')
-
-            if isinstance(alerts, dict):
-                self.__alerts = [alerts]
-            elif isinstance(alerts, list):
-                self.__alerts = alerts
-            else:
-                raise DemistoException('alerts field must be list or dict.')
-
-        @staticmethod
-        def choose_ip(
+        def __choose_ip(
+            self,
             pattern: list[str] | str
         ) -> str:
             """ Choose an IP from IP list, IP range or CIDR.
@@ -128,14 +119,16 @@ script:
                         return str(ip)
 
             if m := re.fullmatch(r'([^-]+)-(.+)', pattern):
-                ip = random.randint(int(ipaddress.ip_address(m[1])), int(ipaddress.ip_address(m[2])))
+                ip1 = self.__replace_env_vals(m[1])
+                ip2 = self.__replace_env_vals(m[2])
+                ip = random.randint(int(ipaddress.ip_address(ip1)), int(ipaddress.ip_address(ip2)))
                 return str(ipaddress.ip_address(ip))
             else:
-                ip = ipaddress.ip_network(pattern, strict=False)
+                ip = ipaddress.ip_network(self.__replace_env_vals(pattern), strict=False)
                 return str(ip[random.randrange(0, ip.num_addresses)])
 
-        @staticmethod
-        def choose_port(
+        def __choose_port(
+            self,
             pattern: list[str | int | None] | str | int | None
         ) -> int:
             """ Choose a port number from port list or port range.
@@ -153,52 +146,51 @@ script:
                 return pattern
 
             if m := re.fullmatch(r'([^-]+)-(.*)', pattern):
-                return random.randint(int(m[1]), int(m[2] if m[2] else 65534))
-            return int(pattern)
+                port1 = self.__replace_env_vals(m[1])
+                port2 = self.__replace_env_vals(m[2]) if m[2] else 65534
+                return random.randint(int(port1), int(port2))
+            else:
+                return int(self.__replace_env_vals(pattern))
 
-        @staticmethod
-        def replace_env_vals(
-            text: str,
-            envs: dict[str, str]
+        def __replace_env_vals(
+            self,
+            text: str
         ) -> int:
             """ Replace variables in text by environment variables
 
             :param text: Target text
-            :param envs: Environment variables
             :return: Result.
             """
             return multiple_replace(
                 text,
-                {'${' + k + '}': v for k, v in envs.items()}
+                {'${' + k + '}': v for k, v in self.__envs.items()}
             )
 
-        def __build_parsed_alert(
+        def build(
             self,
-            template: dict[str, Any]
         ) -> dict[str, Any]:
-            """ Build a parsed alert from an alert template
+            """ Build a parsed alert
 
-            :param template: Parsed alert template
             :return: A parsed alert generated.
             """
-            if local_ip := template.get('local_ip'):
-                local_ip = AlertTemplate.choose_ip(local_ip)
+            if local_ip := self.__alert.get('local_ip'):
+                local_ip = self.__choose_ip(local_ip)
 
-            if remote_ip := template.get('remote_ip'):
-                remote_ip = AlertTemplate.choose_ip(remote_ip)
+            if remote_ip := self.__alert.get('remote_ip'):
+                remote_ip = self.__choose_ip(remote_ip)
 
             local_port = None
-            if 'local_port' in template:
-                local_port = AlertTemplate.choose_port(template.get('local_port'))
+            if 'local_port' in self.__alert:
+                local_port = self.__choose_port(self.__alert.get('local_port'))
 
             remote_port = None
-            if 'remote_port' in template:
-                remote_port = AlertTemplate.choose_port(template.get('remote_port'))
+            if 'remote_port' in self.__alert:
+                remote_port = self.__choose_port(self.__alert.get('remote_port'))
 
-            if event_timestamp := template.get('event_timestamp'):
+            if event_timestamp := self.__alert.get('event_timestamp'):
                 if isinstance(event_timestamp, str):
                     event_timestamp = dateparser.parse(
-                        event_timestamp,
+                        self.__replace_env_vals(event_timestamp),
                         settings={
                             'TIMEZONE': 'UTC',
                             'TO_TIMEZONE': 'UTC',
@@ -208,26 +200,25 @@ script:
             else:
                 event_timestamp = int(datetime.now(timezone.utc).timestamp() * 1000)
 
-            if severity := template.get('severity'):
-                severity = severity.capitalize()
+            if severity := self.__alert.get('severity'):
+                severity = self.__replace_env_vals(severity).capitalize()
                 if severity not in ('Critical', 'High', 'Medium', 'Low', 'Informational'):
                     raise DemistoException(f'severity must be Critical, High, Medium, Low or Informational - {severity}')
 
-            if action_status := template.get('action_status'):
-                action_status = action_status.capitalize()
+            if action_status := self.__alert.get('action_status'):
+                action_status = self.__replace_env_vals(action_status).capitalize()
                 if action_status not in ('Reported', 'Blocked'):
                     raise DemistoException(f'action_status must be either Reported or Blocked - {action_status}')
 
-            envs = self.__build_environments()
-            if alert_name := template.get('alert_name'):
-                alert_name = AlertTemplate.replace_env_vals(str(alert_name), envs)
+            if alert_name := self.__alert.get('alert_name'):
+                alert_name = self.__replace_env_vals(str(alert_name))
 
-            if alert_description := template.get('alert_description'):
-                alert_description = AlertTemplate.replace_env_vals(str(alert_description), envs)
+            if alert_description := self.__alert.get('alert_description'):
+                alert_description = self.__replace_env_vals(str(alert_description))
 
-            alert = assign_params(
-                vendor=template.get('vendor', 'Unknown'),
-                product=template.get('product', 'Unknown'),
+            return assign_params(
+                vendor=self.__replace_env_vals(self.__alert.get('vendor', 'Unknown')),
+                product=self.__replace_env_vals(self.__alert.get('product', 'Unknown')),
                 local_ip=local_ip,
                 local_port=arg_to_number(local_port),
                 remote_ip=remote_ip,
@@ -237,22 +228,44 @@ script:
                 alert_name=alert_name,
                 alert_description=alert_description,
                 action_status=action_status,
-                local_ip_v6=template.get('local_ip_v6'),
-                remote_ip_v6=template.get('remote_ip_v6'),
+                local_ip_v6=self.__alert.get('local_ip_v6'),
+                remote_ip_v6=self.__alert.get('remote_ip_v6'),
             )
-            return alert
 
-        def __build_environments(
+
+    class AlertsTemplate:
+        def __init__(
             self,
-        ) -> dict[str, str]:
-            return {
-                k: eval(v) for k, v in self.__evals.items()
-            }
+            template: dict[str, Any]
+        ) -> None:
+            self.__number_of_clones = template.get('number_of_clones')
+            self.__envs = template.get('environments') or {}
+            self.__envs_evals = template.get('environments.evals') or {}
+
+            alerts = template.get('alerts')
+            if alerts is None:
+                raise DemistoException('No alerts field in the template.')
+
+            if isinstance(alerts, dict):
+                self.__alerts = [alerts]
+            elif isinstance(alerts, list):
+                self.__alerts = alerts
+            else:
+                raise DemistoException('alerts field must be list or dict.')
 
         def build_alerts(
             self
         ) -> list[str, Any]:
-            return [self.__build_parsed_alert(alert) for alert in self.__alerts]
+            envs = dict(
+                {
+                    k: random.choice(v) if isinstance(v, list) else str(v)
+                    for k, v in self.__envs.items()
+                },
+                **{
+                    k: str(eval(v)) for k, v in self.__envs_evals.items()
+                }
+            )
+            return [AlertGenerator(alert, envs).build() for alert in self.__alerts]
 
         def generate_number_of_clones(
             self
@@ -372,18 +385,18 @@ script:
 
         def insert_parsed_alerts_by_templates(
             self,
-            templates: list[AlertTemplate]
+            templates: list[AlertsTemplate]
         ) -> list[dict[str, Any]]:
             """ Build and insert parsed alerts
 
-            :param templates: List of parsed alert templates
+            :param templates: List of parsed alerts templates
             :return: List of alerts inserted.
             """
             if not templates:
-                raise DemistoException('Alert templates are required.')
+                raise DemistoException('Alerts templates are required.')
 
             def _enum_alerts(
-                templates: list[AlertTemplate]
+                templates: list[AlertsTemplate]
             ) -> Iterator[list[dict[str, Any]]]:
                 alerts = []
                 for template in templates:
@@ -434,7 +447,7 @@ script:
 
     def get_parsed_alert_templates(
         params: dict[str, Any]
-    ) -> list[AlertTemplate]:
+    ) -> list[AlertsTemplate]:
         """ Get the list of parsed alert templates
 
         :param params: Instance configuration parameters
@@ -449,14 +462,14 @@ script:
         if not isinstance(templates, list):
             raise DemistoException('Parsed alert templates must be a dict or list of dicts.')
 
-        return [AlertTemplate(template) for template in templates]
+        return [AlertsTemplate(template) for template in templates]
 
 
     def read_templates(
-        templates: list[AlertTemplate],
+        templates: list[AlertsTemplate],
         number_of_templates: int,
         start_index: int
-    ) -> list[AlertTemplate]:
+    ) -> list[AlertsTemplate]:
         """ Build list of templates from the templates given
 
         :param templates: List of templates
@@ -568,7 +581,6 @@ script:
             else:
                 raise NotImplementedError(f'Command {command} is not implemented.')
         except Exception as err:
-            raise
             return_error(str(err), error=traceback.format_exc())
 
         finally:
@@ -582,10 +594,7 @@ script:
   type: python
   commands:
   - name: xsiam-alert-feed-run
-    arguments:
-    - name: number_of_clones
-      description: Number of alerts to clone for each alert template
-      defaultValue: "1"
+    arguments: []
     description: Feed alerts to XSIAM/XDR
   dockerimage: demisto/python3:3.10.13.89009
   isfetch: true
