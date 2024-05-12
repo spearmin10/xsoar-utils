@@ -281,7 +281,7 @@ script:
                     for k, v in self.__envs.items()
                 },
                 **{
-                    k: str(eval(v)) for k, v in self.__envs_evals.items()
+                    k: str(eval(v, {}, {})) for k, v in self.__envs_evals.items()
                 }
             )
             return [AlertGenerator(alert, envs).build() for alert in self.__alerts]
