@@ -101,11 +101,13 @@ script:
 
         def __choose_ip(
             self,
-            pattern: list[str] | str
+            pattern: list[str] | str,
+            extra_envs: dict[str, Any] = {}
         ) -> str:
             """ Choose an IP from IP list, IP range or CIDR.
 
             :param pattern: IP address pattern
+            :param extra_envs: Extra environment variables
             :return: Selected IP address.
             """
             if not isinstance(pattern, list):
@@ -119,21 +121,23 @@ script:
                         return str(ip)
 
             if m := re.fullmatch(r'([^-]+)-(.+)', pattern):
-                ip1 = self.__replace_env_vals(m[1])
-                ip2 = self.__replace_env_vals(m[2])
+                ip1 = self.__replace_env_vals(m[1], extra_envs)
+                ip2 = self.__replace_env_vals(m[2], extra_envs)
                 ip = random.randint(int(ipaddress.ip_address(ip1)), int(ipaddress.ip_address(ip2)))
                 return str(ipaddress.ip_address(ip))
             else:
-                ip = ipaddress.ip_network(self.__replace_env_vals(pattern), strict=False)
+                ip = ipaddress.ip_network(self.__replace_env_vals(pattern, extra_envs), strict=False)
                 return str(ip[random.randrange(0, ip.num_addresses)])
 
         def __choose_port(
             self,
-            pattern: list[str | int | None] | str | int | None
+            pattern: list[str | int | None] | str | int | None,
+            extra_envs: dict[str, Any] = {}
         ) -> int:
             """ Choose a port number from port list or port range.
 
             :param pattern: Port number pattern
+            :param extra_envs: Extra environment variables
             :return: Selected port number.
             """
             if not isinstance(pattern, list):
@@ -146,24 +150,27 @@ script:
                 return pattern
 
             if m := re.fullmatch(r'([^-]+)-(.*)', pattern):
-                port1 = self.__replace_env_vals(m[1])
-                port2 = self.__replace_env_vals(m[2]) if m[2] else 65534
+                port1 = self.__replace_env_vals(m[1], extra_envs)
+                port2 = self.__replace_env_vals(m[2], extra_envs) if m[2] else 65534
                 return random.randint(int(port1), int(port2))
             else:
-                return int(self.__replace_env_vals(pattern))
+                return int(self.__replace_env_vals(pattern, extra_envs))
 
         def __replace_env_vals(
             self,
-            text: str
+            text: str,
+            extra_envs: dict[str, Any] = {}
         ) -> int:
             """ Replace variables in text by environment variables
 
             :param text: Target text
+            :param extra_envs: Extra environment variables
             :return: Result.
             """
+            envs = dict(extra_envs, **self.__envs)
             return multiple_replace(
                 text,
-                {'${' + k + '}': v for k, v in self.__envs.items()}
+                {'${' + k + '}': v for k, v in envs.items()}
             )
 
         def build(
@@ -173,24 +180,30 @@ script:
 
             :return: A parsed alert generated.
             """
+            envs = {}
+
             if local_ip := self.__alert.get('local_ip'):
-                local_ip = self.__choose_ip(local_ip)
+                local_ip = self.__choose_ip(local_ip, envs)
+                envs['local_ip'] = local_ip
 
             if remote_ip := self.__alert.get('remote_ip'):
-                remote_ip = self.__choose_ip(remote_ip)
+                remote_ip = self.__choose_ip(remote_ip, envs)
+                envs['remote_ip'] = remote_ip
 
             local_port = None
             if 'local_port' in self.__alert:
-                local_port = self.__choose_port(self.__alert.get('local_port'))
+                local_port = self.__choose_port(self.__alert.get('local_port'), envs)
+                envs['local_port'] = str(local_port)
 
             remote_port = None
             if 'remote_port' in self.__alert:
-                remote_port = self.__choose_port(self.__alert.get('remote_port'))
+                remote_port = self.__choose_port(self.__alert.get('remote_port'), envs)
+                envs['remote_port'] = str(remote_port)
 
             if event_timestamp := self.__alert.get('event_timestamp'):
                 if isinstance(event_timestamp, str):
                     event_timestamp = dateparser.parse(
-                        self.__replace_env_vals(event_timestamp),
+                        self.__replace_env_vals(event_timestamp, envs),
                         settings={
                             'TIMEZONE': 'UTC',
                             'TO_TIMEZONE': 'UTC',
@@ -200,25 +213,31 @@ script:
             else:
                 event_timestamp = int(datetime.now(timezone.utc).timestamp() * 1000)
 
+            envs['event_timestamp'] = str(event_timestamp)
+
             if severity := self.__alert.get('severity'):
-                severity = self.__replace_env_vals(severity).capitalize()
+                severity = self.__replace_env_vals(severity, envs).capitalize()
                 if severity not in ('Critical', 'High', 'Medium', 'Low', 'Informational'):
                     raise DemistoException(f'severity must be Critical, High, Medium, Low or Informational - {severity}')
+                envs['severity'] = str(severity)
 
             if action_status := self.__alert.get('action_status'):
-                action_status = self.__replace_env_vals(action_status).capitalize()
+                action_status = self.__replace_env_vals(action_status, envs).capitalize()
                 if action_status not in ('Reported', 'Blocked'):
                     raise DemistoException(f'action_status must be either Reported or Blocked - {action_status}')
+                envs['action_status'] = str(action_status)
 
             if alert_name := self.__alert.get('alert_name'):
-                alert_name = self.__replace_env_vals(str(alert_name))
+                alert_name = self.__replace_env_vals(str(alert_name), envs)
+                envs['alert_name'] = str(alert_name)
 
             if alert_description := self.__alert.get('alert_description'):
-                alert_description = self.__replace_env_vals(str(alert_description))
+                alert_description = self.__replace_env_vals(str(alert_description), envs)
+                envs['alert_description'] = str(alert_description)
 
             return assign_params(
-                vendor=self.__replace_env_vals(self.__alert.get('vendor', 'Unknown')),
-                product=self.__replace_env_vals(self.__alert.get('product', 'Unknown')),
+                vendor=self.__replace_env_vals(self.__alert.get('vendor', 'Unknown'), envs),
+                product=self.__replace_env_vals(self.__alert.get('product', 'Unknown'), envs),
                 local_ip=local_ip,
                 local_port=arg_to_number(local_port),
                 remote_ip=remote_ip,
