@@ -302,15 +302,25 @@ script:
         if not isinstance(alert, dict):
             raise DemistoException('kwfields must be in dictionary')
 
+        if 'local_port' in args:
+            local_port = int(args.get('local_port'))
+        else:
+            local_port = random.randint(1025, 65534)
+
+        if 'remote_port' in args:
+            remote_port = int(args.get('remote_port'))
+        else:
+            remote_port = random.randint(1, 65534)
+
         alert.update(
             assign_params(
                 product=args.get('product'),
                 vendor=args.get('vendor'),
                 alert_name=args.get('alert_name'),
                 local_ip=args.get('local_ip'),
-                local_port=int(args.get('local_port')),
+                local_port=local_port,
                 remote_ip=args.get('remote_ip'),
-                remote_port=int(args.get('remote_port')),
+                remote_port=remote_port,
                 severity=args.get('severity'),
                 alert_description=args.get('alert_description'),
                 event_timestamp=int(datetime.now(timezone.utc).timestamp() * 1000),
@@ -415,12 +425,22 @@ script:
         if isinstance(alert, str):
             alert = json.loads(alert)
 
-        alert.update({
-            'vendor': args.get('vendor'),
-            'product': args.get('product'),
-            'severity': args.get('severity'),
-            'category': args.get('category')
-        })
+        alert.update(assign_params(
+            vendor=args.get('vendor'),
+            product=args.get('product'),
+            severity=args.get('severity'),
+            category=args.get('category'),
+            alert_name=args.get('alert_name'),
+            description=args.get('description'),
+            remote_ip=args.get('remote_ip'),
+            remote_port=args.get('remote_port'),
+            local_ip=args.get('local_ip'),
+            local_port=args.get('local_port'),
+            remote_host=args.get('remote_host'),
+            host_ip=args.get('host_ip'),
+            user_name=args.get('user_name'),
+            action=args.get('action'),
+        ))
         alert = build_custom_alert_fields(alert)
 
         body = {
@@ -532,13 +552,11 @@ script:
       required: true
       description: Local IPv4 address
     - name: local_port
-      required: true
       description: Local port number
     - name: remote_ip
       required: true
       description: Remote IPv4 address
     - name: remote_port
-      required: true
       description: Remote port number
     - name: severity
       required: true
@@ -556,6 +574,12 @@ script:
       - Reported
       - Blocked
       description: Action Status
+    - name: action
+      auto: PREDEFINED
+      predefined:
+      - DETECTED
+      - BLOCKED
+      description: Aciton status
     - name: kwfields
       description: Custom fields
     description: Upload an alert
@@ -604,6 +628,24 @@ script:
       - Reconnaissance
       - Tampering
       description: Category name
+    - name: alert_name
+      description: Alert name
+    - name: description
+      description: Alert description
+    - name: local_ip
+      description: Local IP Address
+    - name: local_port
+      description: Local Port
+    - name: remote_ip
+      description: Remote IP Address
+    - name: remote_port
+      description: Remote Port
+    - name: remote_host
+      description: Remote Host
+    - name: host_ip
+      description: Host IP
+    - name: user_name
+      description: User Name
     - name: kwfields
       description: Custom fields
     outputs:
