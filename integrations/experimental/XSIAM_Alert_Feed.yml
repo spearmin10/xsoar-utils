@@ -76,6 +76,7 @@ script:
     from datetime import datetime
     import re
     import math
+    import types
     import secrets
     import string
     import hashlib
@@ -275,13 +276,15 @@ script:
         def build_alerts(
             self
         ) -> list[str, Any]:
+            eval_globals = {k: v for k, v in globals().items() if isinstance(v, types.ModuleType)}
+            eval_locals = {k: v for k, v in locals().items() if isinstance(v, types.ModuleType)}
             envs = dict(
                 {
                     k: random.choice(v) if isinstance(v, list) else str(v)
                     for k, v in self.__envs.items()
                 },
                 **{
-                    k: str(eval(v, {}, {})) for k, v in self.__envs_evals.items()
+                    k: str(eval(v, eval_globals, eval_locals)) for k, v in self.__envs_evals.items()
                 }
             )
             return [AlertGenerator(alert, envs).build() for alert in self.__alerts]
@@ -566,7 +569,11 @@ script:
         args: dict[str, str],
         params: dict[str, str],
     ) -> str:
-        templates = get_parsed_alert_templates(params)
+        if templates := args.get('templates'):
+            templates = get_parsed_alert_templates({'templates': templates})
+        else:
+            templates = get_parsed_alert_templates(params)
+
         if not templates:
             raise DemistoException('Alert templates was not found.')
 
@@ -596,6 +603,7 @@ script:
                 try:
                     return_results(function(assign_params(**args), params))
                 except Exception as e:
+                    raise
                     raise DemistoException(f'Failed to execute {command} command.\nError:\n{str(e)}')
             else:
                 raise NotImplementedError(f'Command {command} is not implemented.')
@@ -613,7 +621,9 @@ script:
   type: python
   commands:
   - name: xsiam-alert-feed-run
-    arguments: []
+    arguments:
+    - name: templates
+      description: Alert templates
     description: Feed alerts to XSIAM/XDR
   dockerimage: demisto/python3:3.10.13.89009
   isfetch: true
