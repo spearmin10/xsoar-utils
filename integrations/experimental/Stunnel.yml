@@ -1,0 +1,355 @@
+commonfields:
+  id: Stunnel
+  version: -1
+vcShouldKeepItemLegacyProdMachine: false
+name: Stunnel
+display: Stunnel
+category: Utilities
+image: data:image/png;base64,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
+description: This is a proxy to communicate with a server over TLS.
+configuration:
+- advanced: true
+  display: Long Running Instance
+  name: longRunning
+  defaultvalue: "true"
+  type: 8
+  required: false
+- display: Listen Port
+  name: longRunningPort
+  type: 0
+  required: true
+  additionalinfo: Port mapping (<port> or <host port>:<docker port>) for the service
+    port
+- display: Incident type
+  name: incidentType
+  type: 13
+  required: false
+- display: Remote Server
+  name: serverHostPort
+  type: 0
+  required: true
+  additionalinfo: Hostname and port number of the remote server
+- display: Client PKCS#12
+  name: clientPKCS12
+  type: 4
+  required: false
+  additionalinfo: PKCS#12 in base64 used for client authentication
+- display: Client PKCS#12 password
+  name: clientPKCS12Password
+  type: 4
+  required: false
+- display: No SSL
+  name: nossl
+  defaultvalue: "false"
+  type: 8
+  required: false
+  additionalinfo: Simple TCP port forwarding
+- advanced: true
+  display: Trust any certificate (not secure)
+  name: insecure
+  defaultvalue: "false"
+  type: 8
+  required: false
+script:
+  script: |
+    register_module_line('Stunnel', 'start', __line__())
+
+
+    import os
+    import ssl
+    import select
+    import socket
+    import struct
+    import traceback
+    import base64
+    from tempfile import NamedTemporaryFile
+    from socketserver import BaseRequestHandler, ThreadingTCPServer
+    from cryptography.hazmat.backends import default_backend
+    from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.serialization import pkcs12
+    from typing import Dict, Any
+
+
+    DEFAULT_SOCKET_TIMEOUT = 30
+
+
+    def create_ssl_client_context(
+        params: Dict[str, Any]
+    ) -> ssl.SSLContext:
+        """
+        Create a SSL client context
+
+        :param params: The instance parameters
+        :return: a SSL client context
+        """
+        ssl_ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+        ssl_ctx.load_default_certs()
+        ssl_ctx.check_hostname = False
+        if argToBoolean(params.get('insecure', 'false')):
+            ssl_ctx.verify_mode = ssl.CERT_NONE
+        else:
+            ssl_ctx.verify_mode = ssl.CERT_REQUIRED
+
+        if p12_base64 := params.get('clientPKCS12'):
+            p12_password = params.get('clientPKCS12Password', '')
+
+            # Load the client certificate and private key
+            client_private_key, client_certificate, additional_certs = pkcs12.load_key_and_certificates(
+                base64.b64decode(p12_base64.encode()), p12_password.encode('utf-8'), backend=default_backend())
+            if client_private_key and client_certificate:
+                client_private_key_pem = client_private_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.TraditionalOpenSSL,
+                    encryption_algorithm=serialization.NoEncryption())
+                client_certificate_pem = client_certificate.public_bytes(
+                    encoding=serialization.Encoding.PEM)
+
+                with NamedTemporaryFile(mode='wb') as client_private_key_file:
+                    client_private_key_file.write(client_private_key_pem)
+                    client_private_key_file.flush()
+                    os.fsync(client_private_key_file.fileno())
+
+                    with NamedTemporaryFile(mode='wb') as client_certificate_file:
+                        client_certificate_file.write(client_certificate_pem)
+                        client_certificate_file.flush()
+                        os.fsync(client_certificate_file.fileno())
+
+                        ssl_ctx.load_cert_chain(certfile=client_certificate_file.name,
+                                                keyfile=client_private_key_file.name)
+        return ssl_ctx
+
+
+    class PortForwardingHandler(BaseRequestHandler):
+        """
+        Port Forwarding for the services
+        """
+        ssl_client_context: ssl.SSLContext = None  # type: ignore
+        remote_host: str = None  # type: ignore
+        remote_port: int = None  # type: ignore
+
+        def __init__(
+            self,
+            request,
+            client_address,
+            server
+        ) -> None:
+            BaseRequestHandler.__init__(self, request, client_address, server)
+
+            if not isinstance(PortForwardingHandler.remote_host, str):
+                raise DemistoException('Invalid PortForwardingHandler.remote_host')
+
+            if not isinstance(PortForwardingHandler.remote_port, int):
+                raise DemistoException('Invalid PortForwardingHandler.remote_port')
+
+        def forward_tcp_tcp(
+            self
+        ) -> None:
+            """
+            Port Forwarding: tcp-tcp:port
+            """
+            cs = self.request
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rs:
+                    rs.connect((PortForwardingHandler.remote_host, PortForwardingHandler.remote_port))
+                    while True:
+                        r, w, x = select.select([cs, rs], [], [])
+                        if cs in r:
+                            payload = cs.recv(1024)
+                            if not payload:
+                                break
+                            rs.send(payload)
+                        if rs in r:
+                            payload = rs.recv(1024)
+                            if not payload:
+                                break
+                            cs.send(payload)
+            except Exception:
+                demisto.debug(traceback.format_exc())
+            finally:
+                cs.close()
+
+        def forward_tcp_ssl(
+            self
+        ) -> None:
+            """
+            Port Forwarding: tcp-ssl:port
+            """
+            try:
+                cs = self.request
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rlow_socket:
+                    with PortForwardingHandler.ssl_client_context.wrap_socket(
+                            rlow_socket,
+                            server_hostname=PortForwardingHandler.remote_host) as rs:
+                        rs.connect((PortForwardingHandler.remote_host, PortForwardingHandler.remote_port))
+
+                        while True:
+                            r, _, _ = select.select([cs, rs], [], [])
+                            if cs in r:
+                                payload = cs.recv(1024)
+                                if len(payload) == 0:
+                                    break
+
+                                rs.setblocking(True)
+                                rs.send(payload)
+
+                            if rs in r:
+                                rs.setblocking(False)
+                                try:
+                                    payload = rs.recv(1024)
+                                except ssl.SSLError as e:
+                                    if e.errno != ssl.SSL_ERROR_WANT_READ:
+                                        raise
+                                    continue
+
+                                if not payload:
+                                    break
+
+                                cs.send(payload)
+
+                                data_left = rs.pending()
+                                while data_left:
+                                    cs.send(rs.recv(data_left))
+                                    data_left = rs.pending()
+            except Exception:
+                demisto.debug(traceback.format_exc())
+            finally:
+                self.request.close()
+
+        def handle(
+            self
+        ) -> None:
+            if PortForwardingHandler.ssl_client_context:
+                self.forward_tcp_ssl()
+            else:
+                self.forward_tcp_tcp()
+
+
+    def get_default_gateway(
+    ) -> Optional[str]:
+        """ Get a default gateway address.
+
+        :return: A default gateway address found.
+        """
+        with open('/proc/net/route') as f:
+            for line in f:
+                fields = line.strip().split()
+                if fields[1] != '00000000' or not int(fields[3], 16) & 2:
+                    continue
+                return socket.inet_ntoa(struct.pack('<L', int(fields[2], 16)))
+        return None
+
+
+    def test_module(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> str:
+        """
+        Validates:
+        """
+        run_long_running(params, is_test=True)
+        return 'ok'
+
+
+    def get_gateway_command(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> CommandResults:
+        """
+        Get gateway
+        """
+        if gw_ip := get_default_gateway():
+            return CommandResults(readable_output=f'#### Gateway IP: {gw_ip}')
+        else:
+            return CommandResults(readable_output='No gateway addresses')
+
+
+    def run_long_running(
+        params: Dict[str, Any],
+        is_test: bool = False
+    ) -> None:
+        """
+        Start the long running server
+
+        :param params: Demisto params
+        :param is_test: Indicates whether it's test-module run or regular run
+        :return: None
+        """
+        try:
+            # Set up PortForwardingHandler
+            remote_host_port = params.get('serverHostPort', '')
+            remote_host, sep, remote_port = remote_host_port.partition(':')
+            if not remote_host or sep != ':':
+                raise DemistoException(f'Invalid remote host - {remote_host_port}')
+
+            ssl_client_context = None
+            if not argToBoolean(params.get('nossl', 'false')):
+                ssl_client_context = create_ssl_client_context(params)
+
+            PortForwardingHandler.remote_host = remote_host
+            PortForwardingHandler.remote_port = int(remote_port)
+            PortForwardingHandler.ssl_client_context = ssl_client_context
+
+            port_mapping = params.get('longRunningPort', '')
+            host_port, _, docker_port = port_mapping.partition(':')
+            listen_port = int(docker_port or host_port)
+            if listen_port < 0:
+                raise DemistoException(f'Invalid long running port: {listen_port}')
+
+            if is_test:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as rlow_socket:
+                    if ssl_client_context:
+                        with ssl_client_context.wrap_socket(rlow_socket,
+                                                            server_hostname=remote_host) as rs:
+                            rs.connect((remote_host, int(remote_port)))
+                            rs.write(b' ')
+                    else:
+                        rlow_socket.connect((remote_host, int(remote_port)))
+            else:
+                # Run the server
+                with ThreadingTCPServer(('', listen_port), PortForwardingHandler) as server:
+                    socket.setdefaulttimeout(DEFAULT_SOCKET_TIMEOUT)
+                    server.serve_forever()
+
+        except Exception as e:
+            demisto.error(f'An error occurred in long running loop: {str(e)}')
+            raise DemistoException(str(e))
+
+
+    def main():
+        """
+        Main
+        """
+        params = assign_params(**demisto.params())
+        command = demisto.command()
+        demisto.debug(f'Command being called is {command}')
+
+        commands = {
+            'test-module': test_module,
+            'stun-get-gateway': get_gateway_command
+        }
+        try:
+            if command == 'long-running-execution':
+                run_long_running(params)
+            else:
+                return_results(commands[command](demisto.args(), params))
+        except Exception as e:
+            return_error(f'Error in Stunnel Integration [{e}]')
+
+
+    ''' ENTRY POINT '''
+
+    if __name__ in ('__main__', '__builtin__', 'builtins'):
+        main()
+
+    register_module_line('Stunnel', 'end', __line__())
+  type: python
+  commands:
+  - name: stun-get-gateway
+    arguments: []
+    description: Get gateway address of the instance
+  dockerimage: demisto/crypto:1.0.0.51288
+  runonce: false
+  longRunning: true
+  longRunningPort: true
+  subtype: python3
+sourcemoduleid: ExportIndicators

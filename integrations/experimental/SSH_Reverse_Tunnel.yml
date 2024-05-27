@@ -1,0 +1,1527 @@
+commonfields:
+  id: SSH Reverse Tunnel
+  version: -1
+vcShouldKeepItemLegacyProdMachine: false
+name: SSH Reverse Tunnel
+display: SSH Reverse Tunnel
+category: Utilities
+image: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAAyCAMAAACgee/qAAAB1FBMVEVwYXQAAAAAAFUAJ2IAG14AIGAAI2EgQGhAaL8AHmIAImAAH14AIGEAImIkPGhAbLsAH2IAH2EAIGEAH2IAIWFAbr8jOmgAIV8AIGAAIF8AH18AIWAAH18AIGAAH2AlO2gAIGAAIGAAIGAAIGAEI2EkPGg4WZQ/bbwAIGAFJmcAIGAAIGAlO2gpQWstRW8wS3o1WJhAb7pGdcgAIGAAIWEOMnUAIF8AIGAAIGEHJmIHJmUIJmIKKWUNKmMOLWkPLGMPM3gQLGMQNHcRL2sRNXoSNnsTN3wTOH4WPIMXMWQZM2YZP4gcOXIcQ40dNmYdNmceOGcgOWcgR5IhOmckPGglPWkmQXgoQGwpRHUqQmwtRW8tSHguTIIwSnkwSn4xS383WpU3ZLg4XKE5Xp46aL07VIU8YKA8Y6k9abE9a8E9bMFAbrtAcMdBa7ZCbr1CcL5DccBDccNEc8REdMZFXItHdstIeMtJec1JedJLe9BMftlVapVfc5tgdJxqfaJ0hah1hql/j6+JmLWUobyWoredr8+dsNGeqsKju+WlveeptMmptMqzvdC/x9fDy9rN093N0+DQ2ejU3/TY3efi5u3n6u/p7fTq8Pnr8Prt7/T3+Pr///+dvsHvAAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAAMsAAADLAAShkWtsAAAJcSURBVFjD7ZfbT9RAFMb3ZV7nwfiiJvpiJD5YL4kPKqDi/YqXKCWwsKDWhYp3gfUCeEGsF5YtrFTPP+vMmXaWtQ22ZwpNDF+yk9NkM7/9vp5pz5ZK/4d25rTPkdfZNM7YrUdrrg9Rwe50ZjBj18bCq8c2ldvhPiOAGbtyX16M2pwKPuy6L7KCuxF9ceSVzfkectJC0xnBw4tvEN15mZsYdrOFLcEAS28RfeJSahJr0/4e1NkL6XUKwQDLM2oLGpgmBAOszB7PgM4RDPDr/ZnUaPG1H8YCrd8frkry9l1pwJCvPt6V6B1s08EAC0MY+O5NBwN8e/DPFt8YMMD3l9vWR28cmBUB/lpM1AvDhTRX+uNU2AOksEdmbi+JOdJL4mhPpHPnM6jzGPG12DZ6oJ7X4vIBaol6yK+rQeAdESuGvEiTCfsD+MlgG8Hh6MPIMw9qKr69B+Alcie4BHfTsdSkBxEstZc8TmvDwh4EXmhUVSJpL0hybYfgrl6TqRb1NIDAD9ChrsQPCGTjBvHWQvDJG+RxumX4i9zeEw7FElU+Gg/i4EEJPn2TG47TqFW9fQukvCZ0tkia3xYfs/8PqrVamepK9XRCZ8uklUrGSU/W5G1V5KhSPe3Hk7aNwTrpJ1OhVx03RBnHDU9wY7A2/Lnx03GcBjSc+VYFMO/I1flLA7kZrpbrAM16HZqWtbaqW9Harjs5Ga6Uxf5NcV8RoSuAT3ptV3/INTzEZSuz+nJI+h6BG4ZtdIgrFkn9hoe4WraI6jNKukLmYthUcNUAK8OmcvcdtIx0oLSlLRWvP+0wokI85ycfAAAAAElFTkSuQmCC
+description: Reverse Tunnel over SSH
+detaileddescription: |
+  1. Configure SSH server to allow port forwarding
+       - Set "GatewayPorts yes" in /etc/ssh/sshd_config, if the server is openssh
+
+  2. Configure an integration instance
+
+  3. You should be able to connect to the backend server when connecting to the service addres
+configuration:
+- advanced: true
+  display: Long Running Instance
+  name: longRunning
+  defaultvalue: "true"
+  type: 8
+  required: false
+- display: Incident type
+  name: incidentType
+  type: 13
+  required: false
+- section: SSH Tunnel
+  display: SSH Server Address
+  name: sshServerAddress
+  type: 0
+  required: true
+- section: SSH Tunnel
+  display: Service Address/Port on SSH server (host:port or port)
+  name: remoteServiceAddress
+  type: 0
+  required: true
+  additionalinfo: Tunnel service will listen on the address/port of the SSH server
+- section: SSH Tunnel
+  display: Authentication Method
+  name: sshAuthMethod
+  defaultvalue: password
+  type: 15
+  required: true
+  options:
+  - password
+  - ssh_key
+- section: SSH Tunnel
+  display: Username for SSH authentication
+  displaypassword: Password / SSH Private Key (PEM)
+  name: sshAuthCredentials
+  type: 9
+  required: true
+- section: SSH Tunnel
+  advanced: true
+  display: Connection Channel
+  name: channelType
+  defaultvalue: ssh
+  type: 15
+  required: false
+  options:
+  - ssh
+  - ssh over ssl
+  - ssh over socks5
+  - ssh over ssl-socks5
+  additionalinfo: Communication channel to establish SSH (default = ssh)
+- section: SSH Tunnel
+  advanced: true
+  display: SOCKS Proxy for SSH connection (host:port)
+  name: socksProxy
+  type: 0
+  required: false
+  additionalinfo: The proxy will be used in SSH over SOCKS or SSL-SOCKS.
+- section: SSH Tunnel
+  advanced: true
+  display: Client Credential Type for Stunnel
+  name: stunnelClientCredentialType
+  type: 15
+  required: false
+  options:
+  - PKCS#12 PEM
+  - Cert + Private Key PEM
+  additionalinfo: These credentials are used for client authentication in SSH over
+    SSL or SSL-SOCKS.
+- section: SSH Tunnel
+  advanced: true
+  display: Encrypted or public client credential
+  displaypassword: Unprotected client credential or Key/Password to decrypt credential
+  name: stunnelClientCredentials
+  type: 9
+  required: false
+- section: SSH Tunnel
+  advanced: true
+  display: Trust any certificate (not secure)
+  name: insecure
+  defaultvalue: "false"
+  type: 8
+  required: false
+- section: Tunnel Service
+  display: Tunnel Service
+  name: tunnelType
+  defaultvalue: socks-proxy
+  type: 15
+  required: false
+  options:
+  - socks-proxy
+  - port-forwarding
+  additionalinfo: The tunneling service to incoming sessions (default = socks-proxy)
+- section: Tunnel Service
+  display: Target Internal Server Address (host:port)
+  name: internalServerAddress
+  type: 0
+  required: false
+  additionalinfo: Internal Server Address to which incoming sessions connect in port
+    fowarding mode (host:port)
+script:
+  script: |
+    register_module_line('SSH Reverse Tunnel', 'start', __line__())
+
+
+    import io
+    import re
+    import ssl
+    import base64
+    import struct
+    import socket
+    import select
+    import traceback
+    import threading
+    import paramiko
+    from functools import partial
+    from abc import ABCMeta, abstractmethod
+    from enum import IntEnum, Enum
+    from types import TracebackType
+    from tempfile import NamedTemporaryFile
+    from typing import Dict, Tuple, Union, Iterator, Optional
+    from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric import rsa, ed25519
+    from cryptography.hazmat.backends import default_backend
+    from cryptography.hazmat.primitives.serialization import pkcs12
+    from socketserver import BaseRequestHandler, ThreadingTCPServer
+
+
+    DEFAULT_SSH_PORT = 22
+    DEFAULT_SOCKET_TIMEOUT = 30
+
+
+    class SSHAuthMethod(Enum):
+        PASSWORD = 'password'
+        SSH_KEY = 'ssh_key'
+
+
+    class StunnelClientCredentialType(Enum):
+        PKCS12_PEM = 'PKCS#12 PEM'
+        CERT_PRIVATE_KEY_PEM = 'Cert + Private Key PEM'
+
+
+    class ChannelType(Enum):
+        SSH = 'ssh'
+        SSH_OVER_SSL = 'ssh over ssl'
+        SSH_OVER_SOCKS5 = 'ssh over socks5'
+        SSH_OVER_SOCKS5_SSL = 'ssh over ssl-socks5'
+
+
+    class TunnelType(Enum):
+        SOCKS_PROXY = 'socks-proxy'
+        PORT_FORWARDING = 'port-forwarding'
+
+
+    class PrivateCredential:
+        """ This class stores a private credential that is sensitive or should be protected such as password or private key.
+        """
+        def __init__(
+            self,
+            private_credential: str,
+            decryption_password: str | None = None
+        ) -> None:
+            """
+            :param private_credential: The private credential
+            :param decryption_password: The password to decrypt the private credential if it is encrypted
+            """
+            self.__private_credential = private_credential
+            self.__decryption_password = decryption_password
+
+        @property
+        def private_credential(
+            self
+        ) -> str:
+            return self.__private_credential
+
+        @property
+        def decryption_password(
+            self
+        ) -> str | None:
+            return self.__decryption_password
+
+
+    class Credential:
+        def __init__(
+            self,
+            private_credential: PrivateCredential,
+            public_credential: str | None = None
+        ) -> None:
+            """
+            :param private_credential: The private credential
+            :param public_credential: The public credential
+            """
+            self.__private_credential = private_credential
+            self.__public_credential = public_credential
+
+        @property
+        def private_credential(
+            self
+        ) -> PrivateCredential:
+            return self.__private_credential
+
+        @property
+        def public_credential(
+            self
+        ) -> str | None:
+            return self.__public_credential
+
+        def get_private_credential(
+            self,
+            pem_format: bool = False
+        ) -> PrivateCredential:
+            if pem_format:
+                pem = Credential.replace_spaces_in_credentials(self.__private_credential.private_credential)
+                if not pem.endswith('\n'):
+                    pem += '\n'
+
+                return PrivateCredential(
+                    private_credential=pem,
+                    decryption_password=self.__private_credential.decryption_password)
+            else:
+                return self.__private_credential
+
+        def get_public_credential(
+            self,
+            pem_format: bool = False
+        ) -> str | None:
+            if self.__public_credential and pem_format:
+                pem = Credential.replace_spaces_in_credentials(self.__public_credential)
+                return pem if pem.endswith('\n') else pem + '\n'
+            else:
+                return self.__public_credential
+
+        @staticmethod
+        def replace_spaces_in_credentials(
+            credentials: str | None
+        ) -> str | None:
+            """
+            This function is used in case of credential from type: 9 is in the wrong format
+            of one line with spaces instead of multiple lines.
+
+            :param credentials: the credentials to replace spaces in.
+            :return: the credential with spaces replaced with new lines if the credential is in the correct format,
+                     otherwise the credential will be returned as is.
+            """
+            if not credentials:
+                return credentials
+
+            def __pairwise(iterable):
+                x = iter(iterable)
+                return zip(x, x)
+
+            return re.sub(
+                r'(?P<lseps>\s*)(?P<begin>-----BEGIN(.*?)-----)(?P<begin_sep>\s)(?P<header>([^:]+:\s\S+\s?)*)(?P<body>.*?)(?P<end_sep>\s)(?P<end>-----END(.*?)-----)(?P<tseps>\s*)',
+                lambda m: m.group('lseps').replace(' ', '\n')
+                + m.group('begin')
+                + m.group('begin_sep').replace(' ', '\n')
+                + '\n'.join([' '.join(x) for x in __pairwise(m.group('header').split(' '))])
+                + ('\n' if m.group('header') else '')
+                + m.group('body').replace(' ', '\n')
+                + m.group('end_sep').replace(' ', '\n')
+                + m.group('end')
+                + m.group('tseps').replace(' ', '\n'),
+                credentials,
+                flags=re.DOTALL)
+
+        @staticmethod
+        def get_body_from_pem(
+            pem: str,
+            label: str
+        ) -> str | None:
+            label = re.escape(label)
+            pattern = f'^-----BEGIN {label}-----$(.*?)^-----END {label}-----$'
+            if m := re.search(pattern, pem, re.DOTALL | re.MULTILINE):
+                return m[1]
+            return None
+
+        @staticmethod
+        def enum_pem(
+            text: str
+        ) -> Iterator[Tuple[str, str]]:
+            """ Enumerate each PEM text containing in the text given
+
+            :param text: The text
+            :return: An iterator to enumerate label and pem text.
+            """
+            for m in re.finditer(
+                r'^-----BEGIN ([^-]+)-----$.*?^-----END ([^-]+)-----$\n',
+                text,
+                flags=re.DOTALL | re.MULTILINE):
+                if m[1] == m[2]:
+                    yield m[1], m[0]
+
+
+    class Settings:
+        def __init__(
+            self,
+            params: Dict[str, Any]
+        ) -> None:
+            params = assign_params(**params)
+            self.__params = params
+
+            self.__channel_type = params.get('channelType') or ChannelType.SSH.value
+
+            ssh_host, ssh_port = self.__get_host_port(params.get('sshServerAddress') or '', None, DEFAULT_SSH_PORT)
+            self.__ssh_host = ssh_host
+            self.__ssh_port = ssh_port
+
+            service_host, service_port = self.__get_host_port(params.get('remoteServiceAddress') or '', '')
+            self.__service_host = service_host
+            self.__service_port = service_port
+
+            if socks_proxy := params.get('socksProxy'):
+                socks_proxy_host, socks_proxy_port = self.__get_host_port(socks_proxy)
+                self.__socks_proxy_host = socks_proxy_host
+                self.__socks_proxy_port = socks_proxy_port
+            else:
+                self.__socks_proxy_host = None
+                self.__socks_proxy_port = None
+
+            self.__ssh_auth_method = params.get('sshAuthMethod') or SSHAuthMethod.PASSWORD.value
+            self.__ssh_auth_credential = self.__get_credential(params.get('sshAuthCredentials') or {})
+            if not self.__ssh_auth_credential:
+                raise DemistoException('No SSH authentication credentials')
+
+            self.__stunnel_client_credential_type = params.get('stunnelClientCredentialType')
+            if self.__stunnel_client_credential_type:
+                self.__stunnel_client_credential = self.__get_credential(
+                    credentials=params.get('stunnelClientCredentials') or {},
+                    private_credential_only=True
+                )
+            else:
+                self.__stunnel_client_credential = None
+
+            self.__tunnel_type = params.get('tunnelType') or TunnelType.SOCKS_PROXY.value
+            if internal_server := params.get('internalServerAddress'):
+                internal_server_host, internal_server_port = self.__get_host_port(internal_server)
+                self.__internal_server_host = internal_server_host
+                self.__internal_server_port = internal_server_port
+            else:
+                self.__internal_server_host = None
+                self.__internal_server_port = None
+
+            self.__insecure = argToBoolean(params.get('insecure', 'false'))
+
+        def __get_host_port(
+            self,
+            addrstr: str,
+            default_host: str | None = None,
+            default_port: int | None = None
+        ) -> Tuple[str, int]:
+            try:
+                host, sep, port = addrstr.partition(':')
+                if sep == ':':
+                    if host != '':
+                        return host, int(port)
+                    if default_host is not None:
+                        return default_host, int(port)
+                else:
+                    if default_host is not None:
+                        if default_port is None:
+                            return default_host, int(host)
+                    else:
+                        if default_port is not None:
+                            return host, default_port
+            except Exception:
+                pass
+            raise DemistoException(f'Invalid address: {addrstr}')
+
+        def __get_credential(
+            self,
+            credentials: Dict[str, Any],
+            private_credential_only: bool = False
+        ) -> Credential | None:
+            """ Get public and private credential from the credentials
+
+            :param credentials: The credentials
+            :param private_credential_only: Set to True if the credentials only have private credentials, otherwise False.
+            :return The public and private credential.
+            """
+            if credentials.get('credential'):
+                if ssh_key := demisto.get(credentials, 'credentials.sshkey'):
+                    ssh_key_pass = demisto.get(credentials, 'credentials.sshkeyPass') or \
+                                   demisto.get(credentials, 'credentials.password') or None
+
+                    public_credential = credentials.get('credentials.user') or None
+                    private_credential = PrivateCredential(
+                        private_credential=ssh_key,
+                        decryption_password=ssh_key_pass
+                    )
+                elif password := demisto.get(credentials, 'credentials.password'):
+                    public_credential = credentials.get('credentials.user') or None
+                    private_credential = PrivateCredential(private_credential=password)
+                else:
+                    return None
+            elif password := demisto.get(credentials, 'password'):
+                public_credential = credentials.get('identifier') or None
+                if private_credential_only and\
+                    public_credential and\
+                    not re.search(r'-----BEGIN ([^-]+)-----.*?-----END ([^-]+)-----', password, flags=re.DOTALL):
+                    private_credential = PrivateCredential(
+                        private_credential=public_credential,
+                        decryption_password=password
+                    )
+                    public_credential = None
+                else:
+                    private_credential = PrivateCredential(private_credential=password)
+            else:
+                # No credentials or only identifier is provided
+                return None
+            return Credential(private_credential=private_credential, public_credential=public_credential)
+
+        @property
+        def get_params(
+            self
+        ) -> Dict[str, Any]:
+            return self.__params
+
+        @property
+        def channel_type(
+            self
+        ) -> str:
+            return self.__channel_type
+
+        @property
+        def ssh_host(
+            self
+        ) -> str:
+            return self.__ssh_host
+
+        @property
+        def ssh_port(
+            self
+        ) -> int:
+            return self.__ssh_port
+
+        @property
+        def service_host(
+            self
+        ) -> str | None:
+            return self.__service_host
+
+        @property
+        def service_port(
+            self
+        ) -> int:
+            return self.__service_port
+
+        @property
+        def socks_proxy_host(
+            self
+        ) -> str | None:
+            return self.__socks_proxy_host
+
+        @property
+        def socks_proxy_port(
+            self
+        ) -> int | None:
+            return self.__socks_proxy_port
+
+        @property
+        def ssh_auth_method(
+            self
+        ) -> str:
+            return self.__ssh_auth_method
+
+        @property
+        def ssh_auth_credential(
+            self
+        ) -> Credential:
+            return self.__ssh_auth_credential
+
+        @property
+        def tunnel_type(
+            self
+        ) -> str:
+            return self.__tunnel_type
+
+        @property
+        def internal_server_host(
+            self
+        ) -> str | None:
+            return self.__internal_server_host
+
+        @property
+        def internal_server_port(
+            self
+        ) -> int | None:
+            return self.__internal_server_port
+
+        def get_stunnel_client_credentials_pem(
+            self
+        ) -> Tuple[str, str, Optional[str]] | None:
+            """ Get certificates and private key PEM for client authentication in Stunnel with the password to decrypt it
+
+            :return The certificates PEMs, private key PEMs, and the password to decrypt the private keys (Optional).
+            """
+            if self.__stunnel_client_credential_type == StunnelClientCredentialType.PKCS12_PEM.value:
+                if not self.__stunnel_client_credential:
+                    raise DemistoException('Client PKCS#12 is required')
+
+                p12_cred = self.__stunnel_client_credential.get_private_credential(pem_format=True)
+                p12_base64 = Credential.get_body_from_pem(p12_cred.private_credential, 'PKCS12') or p12_cred.private_credential
+                if not p12_base64:
+                    raise DemistoException('Invalid Client PKCS#12 PEM')
+                p12_passwd = p12_cred.decryption_password or ''
+
+                pkey, cert, _ = pkcs12.load_key_and_certificates(
+                    base64.b64decode(p12_base64.encode('utf-8')),
+                    p12_passwd.encode('utf-8'),
+                    backend=default_backend()
+                )
+                if not pkey:
+                    raise DemistoException('No private keys in Client PKCS#12')
+                if not cert:
+                    raise DemistoException('No certificates in Client PKCS#12')
+
+                pkey_pem = pkey.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.TraditionalOpenSSL,
+                    encryption_algorithm=serialization.NoEncryption()
+                )
+                cert_pem = cert.public_bytes(encoding=serialization.Encoding.PEM)
+                return cert_pem.decode(), pkey_pem.decode(), None
+
+            elif self.__stunnel_client_credential_type == StunnelClientCredentialType.CERT_PRIVATE_KEY_PEM.value:
+                if not self.__stunnel_client_credential:
+                    raise DemistoException('Certificates and Private key are required')
+
+                pkey_cred = self.__stunnel_client_credential.get_private_credential(pem_format=True)
+                pem_text = pkey_cred.private_credential
+                pem_text += '\n'
+                pem_text += self.__stunnel_client_credential.get_public_credential(pem_format=True) or ''
+
+                certs_pem = []
+                pkeys_pem = []
+                for label, pem in Credential.enum_pem(pem_text):
+                    if label == 'CERTIFICATE':
+                        certs_pem.append(pem)
+                    elif 'PRIVATE KEY' in label:
+                        pkeys_pem.append(pem)
+
+                if not certs_pem or not pkeys_pem:
+                    raise DemistoException('Certificates and Private key are required')
+                else:
+                    return '\n'.join(certs_pem), '\n'.join(pkeys_pem), pkey_cred.decryption_password
+            else:
+                return None
+
+        def create_ssl_client_context_from_stunnel_client_credentials(
+            self
+        ) -> ssl.SSLContext:
+            """ Create a SSL client context
+
+            :return: a SSL client context
+            """
+            ssl_ctx = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+            ssl_ctx.load_default_certs()
+            ssl_ctx.check_hostname = False
+            if self.__insecure:
+                ssl_ctx.verify_mode = ssl.CERT_NONE
+            else:
+                ssl_ctx.verify_mode = ssl.CERT_REQUIRED
+
+            if client_creds := self.get_stunnel_client_credentials_pem():
+                client_creds_certs_pem, client_creds_pkeys_pem, client_creds_password = client_creds
+                with NamedTemporaryFile(mode='w') as pem_certs_file:
+                    pem_certs_file.write(client_creds_certs_pem)
+                    pem_certs_file.flush()
+                    pem_certs_file.seek(0)
+
+                    with NamedTemporaryFile(mode='w') as pem_keys_file:
+                        pem_keys_file.write(client_creds_pkeys_pem)
+                        pem_keys_file.flush()
+                        pem_keys_file.seek(0)
+                        ssl_ctx.load_cert_chain(
+                            certfile=pem_certs_file.name,
+                            keyfile=pem_keys_file.name,
+                            password=client_creds_password
+                        )
+            return ssl_ctx
+
+
+    class ChannelSettings:
+        def __init__(
+            self,
+            channel_type: ChannelType,
+            ssh_host: str,
+            ssh_port: int,
+            proxy_host: str | None = None,
+            proxy_port: int | None = None,
+            ssl_client_context: ssl.SSLContext | None = None,
+            timeout: float = DEFAULT_SOCKET_TIMEOUT,
+        ) -> None:
+            self.__channel_type = channel_type
+            self.__ssh_host = ssh_host
+            self.__ssh_port = ssh_port
+            self.__proxy_host = proxy_host
+            self.__proxy_port = proxy_port
+            self.__ssl_client_context = ssl_client_context
+            self.__timeout = timeout
+
+            if not ssh_host:
+                raise DemistoException('Remote hostname is required.')
+
+            if channel_type in (ChannelType.SSH_OVER_SOCKS5, ChannelType.SSH_OVER_SOCKS5_SSL) and\
+               (not proxy_host or not proxy_port):
+                raise DemistoException('Proxy Host/Port is required.')
+
+            if channel_type in (ChannelType.SSH_OVER_SSL, ChannelType.SSH_OVER_SOCKS5_SSL) and\
+               not ssl_client_context:
+                raise DemistoException('SSL client context is required.')
+
+        @property
+        def channel_type(
+            self
+        ) -> ChannelType:
+            return self.__channel_type
+
+        @property
+        def ssh_host(
+            self
+        ) -> str:
+            return self.__ssh_host
+
+        @property
+        def ssh_port(
+            self
+        ) -> int:
+            return self.__ssh_port
+
+        @property
+        def proxy_host(
+            self
+        ) -> str:
+            return self.__proxy_host
+
+        @property
+        def proxy_port(
+            self
+        ) -> int:
+            return self.__proxy_port
+
+        @property
+        def ssl_client_context(
+            self
+        ) -> ssl.SSLContext | None:
+            return self.__ssl_client_context
+
+        @property
+        def communication_timeout(
+            self
+        ) -> float:
+            return self.__timeout
+
+
+    class ProxyUtils:
+        """
+        Proxy Utilities
+        """
+        class SocksDefs(IntEnum):
+            SOCKS_VERSION_4 = 4
+            SOCKS_VERSION_5 = 5
+
+            SOCKS_REQ_AUTH_METHOD_NONE = 0
+            SOCKS_REQ_CMD_TCP_CONNECT = 1
+
+            SOCKS_ADDRTYPE_IPV4 = 1
+            SOCKS_ADDRTYPE_FQDN = 3
+            SOCKS_ADDRTYPE_IPV6 = 4
+
+            SOCKS_V4_RESULT_GRANTED = 0x5a
+            SOCKS_V5_RESULT_GRANTED = 0x00
+
+        @staticmethod
+        def recv_all(
+            s: Union[socket.socket, ssl.SSLSocket, paramiko.channel.Channel],
+            size: int
+        ) -> bytes:
+            """ Receive exactly bufsize bytes from the socket.
+
+            :param s: The socket
+            :param size: The number of length to read.
+            :return: The data read.
+            """
+            if hasattr(s, 'recv_into'):
+                buf = bytearray(size)
+                view = memoryview(buf)
+                pos = 0
+                while pos < size:
+                    n = s.recv_into(view[pos:])
+                    if not n:
+                        raise DemistoException(f'Incomplete read data: {pos}/{size}')
+                    pos += n
+                return bytes(buf)
+            else:
+                data = b''
+                pos = 0
+                while pos < size:
+                    opos = pos
+                    data += s.recv(size - pos)
+                    pos = len(data)
+                    if pos == opos:
+                        raise DemistoException(f'Incomplete read data: {pos}/{size}')
+                return data
+
+        @staticmethod
+        def communicate_tcp_tcp(
+            s1: socket.socket,
+            s2: socket.socket
+        ) -> None:
+            """ Port Forwarding: TCP <-> TCP
+
+            :param s1: A TCP session 1
+            :param s2: A TCP session 2
+            """
+            buf1 = None
+            buf2 = None
+
+            s1.setblocking(True)
+            s2.setblocking(True)
+
+            while True:
+                rset = []
+                wset = []
+                if s2 is not None:
+                    if buf2:
+                        wset.append(s2)
+                    if s1 is not None and not buf1:
+                        rset.append(s2)
+
+                if s1 is not None:
+                    if buf1:
+                        wset.append(s1)
+                    if s2 is not None and not buf2:
+                        rset.append(s1)
+
+                if not rset and not wset:
+                    break
+
+                r, w, x = select.select(rset, wset, [])
+
+                if s1 in w:
+                    n = s1.send(buf1)
+                    if n > 0:
+                        buf1 = buf1[n:]
+
+                if s1 in r:
+                    buf2 = s1.recv(1024)
+                    if not buf2:
+                        s1 = None
+
+                if s2 in w:
+                    n = s2.send(buf2)
+                    if n > 0:
+                        buf2 = buf2[n:]
+
+                if s2 in r:
+                    buf1 = s2.recv(1024)
+                    if not buf1:
+                        s2 = None
+
+        @staticmethod
+        def communicate_tcp_ssl(
+            s1: socket.socket,
+            s2: ssl.SSLSocket
+        ) -> None:
+            """ Port Forwarding: TCP <-> SSL
+
+            :param s1: A TCP session
+            :param s2: A SSL session
+            """
+            buf1 = None
+            buf2 = None
+
+            s1.setblocking(True)
+            s2.setblocking(False)
+            s2_r = ssl.SSL_ERROR_ZERO_RETURN
+            s2_w = ssl.SSL_ERROR_ZERO_RETURN
+
+            while True:
+                rset = []
+                wset = []
+                if s2 is not None:
+                    if buf2:
+                        if s2_w in (ssl.SSL_ERROR_WANT_WRITE, ssl.SSL_ERROR_ZERO_RETURN):
+                            wset.append(s2)
+                        elif s2_w == ssl.SSL_ERROR_WANT_READ:
+                            rset.append(s2)
+                    if s1 is not None and not buf1:
+                        if s2_r in (ssl.SSL_ERROR_WANT_READ, ssl.SSL_ERROR_ZERO_RETURN):
+                            rset.append(s2)
+                        elif s2_r == ssl.SSL_ERROR_WANT_WRITE:
+                            wset.append(s2)
+
+                if s1 is not None:
+                    if buf1:
+                        wset.append(s1)
+                    if s2 is not None and not buf2:
+                        rset.append(s1)
+
+                if not rset and not wset:
+                    break
+
+                r, w, x = select.select(rset, wset, [])
+
+                if s1 in w:
+                    n = s1.send(buf1)
+                    if n > 0:
+                        buf1 = buf1[n:]
+
+                if s1 in r:
+                    buf2 = s1.recv(1024)
+                    if not buf2:
+                        s1 = None
+
+                if (s2_w in (ssl.SSL_ERROR_WANT_READ,) and s2 in r) or\
+                     (s2_w in (ssl.SSL_ERROR_WANT_WRITE, ssl.SSL_ERROR_ZERO_RETURN) and s2 in w):
+                    s2_w = ssl.SSL_ERROR_ZERO_RETURN
+                    try:
+                        n = s2.send(buf2)
+                        if n > 0:
+                            buf2 = buf2[n:]
+                    except ssl.SSLError as e:
+                        s2_w = e.errno
+                        if e.errno not in (ssl.SSL_ERROR_WANT_READ, ssl.SSL_ERROR_WANT_WRITE):
+                            raise
+
+                elif (s2_r in (ssl.SSL_ERROR_WANT_READ, ssl.SSL_ERROR_ZERO_RETURN) and s2 in r) or\
+                   (s2_r in (ssl.SSL_ERROR_WANT_WRITE,) and s2 in w):
+                    s2_r = ssl.SSL_ERROR_ZERO_RETURN
+                    try:
+                        if buf1 := s2.recv(1024):
+                            n = s2.pending()
+                            while n > 0:
+                                buf1 += s2.recv(n)
+                                n = s2.pending()
+                        else:
+                            s2 = None
+                    except ssl.SSLError as e:
+                        s2_r = e.errno
+                        if e.errno not in (ssl.SSL_ERROR_WANT_READ, ssl.SSL_ERROR_WANT_WRITE):
+                            raise
+
+        @staticmethod
+        def communicate_tcp_ssh(
+            s1: socket.socket,
+            s2: paramiko.channel.Channel
+        ) -> None:
+            """ Port Forwarding: TCP <-> SSH
+
+            :param s1: A TCP session
+            :param s2: A SSH session
+            """
+            def __forward_onway(r, w) -> None:
+                while d := r.recv(1024):
+                    w.sendall(d)
+
+            s1.setblocking(True)
+            s2.setblocking(True)
+            s1.settimeout(None)
+            s2.settimeout(None)
+
+            thr = threading.Thread(target=__forward_onway, args=(s2, s1), daemon=False)
+            thr.start()
+            try:
+                while d := s1.recv(1024):
+                    s2.sendall(d)
+            except:
+                pass
+            thr.join()
+
+        @staticmethod
+        def negotiate_with_socks5_server(
+            conn: Union[socket.socket, ssl.SSLSocket, paramiko.channel.Channel],
+            target_host: str,
+            target_port: int,
+            timeout: float | None
+        ) -> None:
+            """ Handle SOCKS v5 negotiation (client side)
+
+            :param conn: The connection to a SOCKS v5 server.
+            :param target_host: The target host name.
+            :param target_port: The port number of the target host.
+            :param timeout: The I/O timeout in seconds
+            """
+            conn.settimeout(timeout)
+            conn.setblocking(True)
+
+            target_host_bin = target_host.encode('utf-8')
+            if len(target_host_bin) >= 256:
+                raise DemistoException(f'The target hostname is too long: {target_host}')
+
+            # C->S: version, # of methods, methods[no authentication]
+            conn.sendall(
+                struct.pack(
+                    '!BBB',
+                    ProxyUtils.SocksDefs.SOCKS_VERSION_5,
+                    1,
+                    ProxyUtils.SocksDefs.SOCKS_REQ_AUTH_METHOD_NONE
+                )
+            )
+            # S->C: version, method
+            version, method = struct.unpack('!BB', ProxyUtils.recv_all(conn, 2))
+            if version != ProxyUtils.SocksDefs.SOCKS_VERSION_5:
+                raise DemistoException(f'Invalid version - {version}')
+            if method != ProxyUtils.SocksDefs.SOCKS_REQ_AUTH_METHOD_NONE:
+                raise DemistoException(f'Invalid authentication method - {method}')
+
+            # C->S: version, command, reserved, address type, address length, address (hostname), port
+            q = struct.pack(
+                '!BBBBB',
+                ProxyUtils.SocksDefs.SOCKS_VERSION_5,
+                ProxyUtils.SocksDefs.SOCKS_REQ_CMD_TCP_CONNECT,
+                0,
+                ProxyUtils.SocksDefs.SOCKS_ADDRTYPE_FQDN,
+                len(target_host_bin)
+            )
+            q += target_host_bin
+            q += struct.pack('!H', target_port)
+            conn.sendall(q)
+
+            # S->C: version, result
+            version, result = struct.unpack('!BB', ProxyUtils.recv_all(conn, 2))
+            if version != ProxyUtils.SocksDefs.SOCKS_VERSION_5:
+                raise DemistoException(f'Invalid version - {version}')
+            if result != ProxyUtils.SocksDefs.SOCKS_V5_RESULT_GRANTED:
+                raise DemistoException(f'Failed to connect to the server - {result}')
+
+            # S->C: reserved, address type
+            reserved, addr_type = struct.unpack('!BB', ProxyUtils.recv_all(conn, 2))
+            if reserved != 0:
+                raise DemistoException(f'Invalid reserved - {reserved}')
+
+            # S->: address, port
+            if addr_type == ProxyUtils.SocksDefs.SOCKS_ADDRTYPE_IPV4:
+                # ipv4 address, port
+                ProxyUtils.recv_all(conn, 4 + 2)
+            elif addr_type == ProxyUtils.SocksDefs.SOCKS_ADDRTYPE_IPV6:
+                # ipv6 address, port
+                ProxyUtils.recv_all(conn, 16 + 2)
+            elif addr_type == ProxyUtils.SocksDefs.SOCKS_ADDRTYPE_FQDN:
+                # address length, hostname, port
+                host_len, = struct.unpack('!B', ProxyUtils.recv_all(conn, 1))
+                ProxyUtils.recv_all(conn, host_len)
+                ProxyUtils.recv_all(conn, 2)
+            else:
+                raise DemistoException(f'Invalid address type - {addr_type}')
+
+        @staticmethod
+        def negotiate_with_socks_client(
+            conn: Union[socket.socket, ssl.SSLSocket, paramiko.channel.Channel],
+            timeout: float | None
+        ) -> socket.socket:
+            """ Handle SOCKS negotiation (server side)
+
+            :param conn: The connection to a SOCKS client.
+            :param timeout: The I/O timeout in seconds
+            :return The socket that has connected to the target server.
+            """
+            conn.settimeout(timeout)
+            conn.setblocking(True)
+
+            # C->S: version
+            version, = struct.unpack('!B', ProxyUtils.recv_all(conn, 1))
+            if version == ProxyUtils.SocksDefs.SOCKS_VERSION_4:
+                # C->S: command, port
+                command, target_port = struct.unpack('!BH', ProxyUtils.recv_all(conn, 3))
+                if command != ProxyUtils.SocksDefs.SOCKS_REQ_CMD_TCP_CONNECT:
+                    raise DemistoException(f'Connection request is only supported - {command}')
+
+                # C->S: ipv4 address
+                target_host = socket.inet_ntop(socket.AF_INET, ProxyUtils.recv_all(conn, 4))
+
+                # C->S: user id
+                userid = b''
+                for c in iter(partial(ProxyUtils.recv_all, conn, 1), b'\x00'):
+                    userid += c
+
+                if target_host == '0.0.0.0':
+                    # C->S: fqdn (socks4a)
+                    target_host = b''
+                    for c in iter(partial(ProxyUtils.recv_all, conn, 1), b'\x00'):
+                        target_host += c
+
+                    target_host = target_host.decode()
+                    if not target_host:
+                        raise DemistoException(f'Target host is not given.')
+
+                ts = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                try:
+                    ts.settimeout(timeout)
+                    ts.connect((target_host, target_port))
+
+                    # S->C: null, status, port, ipv4 address
+                    target_addr, target_port = ts.getpeername()
+                    r = struct.pack(
+                            '!BBH',
+                            0,
+                            ProxyUtils.SocksDefs.SOCKS_V4_RESULT_GRANTED,
+                            target_port
+                    )
+                    r += socket.inet_pton(socket.AF_INET, target_addr)
+                    conn.sendall(r)
+                except Exception:
+                    ts.close()
+                    raise
+                return ts
+            elif version == ProxyUtils.SocksDefs.SOCKS_VERSION_5:
+                # C->S: # of methods
+                nmethods, = struct.unpack('!B', ProxyUtils.recv_all(conn, 1))
+
+                # C->S: methods
+                methods = ProxyUtils.recv_all(conn, nmethods)
+                if ProxyUtils.SocksDefs.SOCKS_REQ_AUTH_METHOD_NONE not in methods:
+                    raise DemistoException('No authentication is only supported.')
+
+                # S->C: version, method
+                conn.sendall(
+                    struct.pack(
+                        '!BB',
+                        ProxyUtils.SocksDefs.SOCKS_VERSION_5,
+                        ProxyUtils.SocksDefs.SOCKS_REQ_AUTH_METHOD_NONE
+                    )
+                )
+                # C->S: version, command, reserved, address type
+                version, command, reserved, addr_type = struct.unpack('!BBBB', ProxyUtils.recv_all(conn, 4))
+                if version != ProxyUtils.SocksDefs.SOCKS_VERSION_5:
+                    raise DemistoException(f'Invalid version - {version}')
+                if reserved != 0:
+                    raise DemistoException(f'Invalid reserved - {reserved}')
+                if command != ProxyUtils.SocksDefs.SOCKS_REQ_CMD_TCP_CONNECT:
+                    raise DemistoException(f'Connection request is only supported - {command}')
+
+                # C->S: address type, address
+                if addr_type == ProxyUtils.SocksDefs.SOCKS_ADDRTYPE_IPV4:
+                    addr_family = socket.AF_INET
+                    target_host = socket.inet_ntop(addr_family, ProxyUtils.recv_all(conn, 4))
+                elif addr_type == ProxyUtils.SocksDefs.SOCKS_ADDRTYPE_IPV6:
+                    addr_family = socket.AF_INET6
+                    target_host = socket.inet_ntop(addr_family, ProxyUtils.recv_all(conn, 16))
+                elif addr_type == ProxyUtils.SocksDefs.SOCKS_ADDRTYPE_FQDN:
+                    # address = hostname length + hostname
+                    addr_family = socket.AF_INET
+                    addr_type = ProxyUtils.SocksDefs.SOCKS_ADDRTYPE_IPV4
+                    host_len, = struct.unpack('!B', ProxyUtils.recv_all(conn, 1))
+                    target_host = ProxyUtils.recv_all(conn, host_len).decode()
+                else:
+                    raise DemistoException(f'Invalid address type - {addr_type}')
+
+                # C->S: port
+                target_port, = struct.unpack('!H', ProxyUtils.recv_all(conn, 2))
+
+                ts = socket.socket(addr_family, socket.SOCK_STREAM)
+                try:
+                    ts.settimeout(timeout)
+                    ts.connect((target_host, target_port))
+
+                    # S->C: version, result, reserved, address type, address, port
+                    target_addr, target_port = ts.getpeername()
+                    r = struct.pack(
+                        '!BBBB',
+                        ProxyUtils.SocksDefs.SOCKS_VERSION_5,
+                        ProxyUtils.SocksDefs.SOCKS_V5_RESULT_GRANTED,
+                        0,
+                        addr_type
+                    )
+                    r += socket.inet_pton(addr_family, target_addr)
+                    r += struct.pack('!H', target_port)
+                    conn.sendall(r)
+                except Exception:
+                    ts.close()
+                    raise
+                return ts
+            else:
+                raise DemistoException(f'Unsupported version - {version}')
+
+
+    class ProxyChannel(BaseRequestHandler):
+        """
+        Proxy Channel
+        """
+        def __init__(
+            self,
+            request: Any,
+            client_address: Any,
+            server: Any
+        ) -> None:
+            BaseRequestHandler.__init__(self, request, client_address, server)
+
+        def setup(
+            self
+        ) -> None:
+            self.__settings = self.server.settings
+
+        def handle(
+            self
+        ) -> None:
+            try:
+                if self.__settings.channel_type == ChannelType.SSH_OVER_SSL:
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as tlow_socket:
+                        with self.__settings.ssl_client_context.wrap_socket(
+                                tlow_socket,
+                                server_hostname=self.__settings.ssh_host) as ts:
+                            ts.settimeout(self.__settings.communication_timeout)
+                            ts.connect((self.__settings.ssh_host, self.__settings.ssh_port))
+                            ProxyUtils.communicate_tcp_ssl(self.request, ts)
+
+                elif self.__settings.channel_type == ChannelType.SSH_OVER_SOCKS5:
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as ts:
+                        ts.settimeout(self.__settings.communication_timeout)
+                        ts.connect((self.__settings.proxy_host, self.__settings.proxy_port))
+                        ProxyUtils.negotiate_with_socks5_server(
+                            conn=ts,
+                            target_host=self.__settings.ssh_host,
+                            target_port=self.__settings.ssh_port,
+                            timeout=self.__settings.communication_timeout
+                        )
+                        demisto.debug(f'Connected!  Tunnel open to SOCKS server')
+
+                        ProxyUtils.communicate_tcp_tcp(self.request, ts)
+
+                elif self.__settings.channel_type == ChannelType.SSH_OVER_SOCKS5_SSL:
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as tlow_socket:
+                        with self.__settings.ssl_client_context.wrap_socket(
+                                tlow_socket,
+                                server_hostname=self.__settings.proxy_host) as ts:
+                            ts.settimeout(self.__settings.communication_timeout)
+                            ts.connect((self.__settings.proxy_host, self.__settings.proxy_port))
+                            ProxyUtils.negotiate_with_socks5_server(
+                                conn=ts,
+                                target_host=self.__settings.ssh_host,
+                                target_port=self.__settings.ssh_port,
+                                timeout=self.__settings.communication_timeout
+                            )
+                            demisto.debug(f'Connected!  Tunnel open to SOCKS server')
+
+                            ProxyUtils.communicate_tcp_ssl(self.request, ts)
+                else:
+                    raise DemistoException(f'Invalid channel type - {self.__settings.channel_type}')
+            except Exception:
+                demisto.debug(traceback.format_exc())
+            finally:
+                self.request.close()
+
+
+    class TunnelService(object):
+        @abstractmethod
+        def communicate(
+            self,
+            channel: paramiko.channel.Channel
+        ) -> None:
+            pass
+
+
+    class PortFowardingTunnelService(TunnelService):
+        def __init__(
+            self,
+            backend_host: str,
+            backend_port: int,
+            timeout: float | None
+        ) -> None:
+            """
+            :param backend_host: The remote host name
+            :param backend_port: The remote port number
+            :param timeout: The I/O timeout in seconds
+            """
+            self.__backend_host = backend_host
+            self.__backend_port = backend_port
+            self.__timeout = timeout
+
+        def communicate(
+            self,
+            channel: paramiko.channel.Channel
+        ) -> None:
+            """ Port fowarding: backend-host <-> incoming-session over SSH
+
+            :param channel: The incoming session over SSH
+            """
+            try:
+                cs = channel
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as ss:
+                    ss.settimeout(self.__timeout)
+                    try:
+                        ss.connect((self.__backend_host, self.__backend_port))
+                    except Exception as e:
+                        demisto.debug(f'Forwarding request to {self.__backend_host}:{self.__backend_port} failed: {str(e)}')
+                        raise
+
+                    origin_host, origin_port = cs.origin_addr
+                    demisto.debug(f'Connected!  Tunnel open {origin_host}:{origin_port} -> {self.__backend_host}:{self.__backend_port}')
+
+                    ProxyUtils.communicate_tcp_ssh(ss, cs)
+                    demisto.debug(f'Tunnel closed from {origin_host}:{origin_port}')
+            except Exception:
+                demisto.debug(traceback.format_exc())
+                raise
+            finally:
+                channel.close()
+
+
+    class SocksProxyTunnelService(TunnelService):
+        def __init__(
+            self,
+            timeout: float | None
+        ) -> None:
+            """
+            :param timeout: The I/O timeout in seconds
+            """
+            self.__timeout = timeout
+
+        def communicate(
+            self,
+            channel: paramiko.channel.Channel
+        ) -> None:
+            """ SOCKS proxy service: backend-host <-> incoming-session over SSH
+
+            :param channel: The incoming session over SSH
+            """
+            try:
+                cs = channel
+                with ProxyUtils.negotiate_with_socks_client(cs, self.__timeout) as ts:
+                    origin_host, origin_port = cs.origin_addr
+                    target_host, target_port = ts.getpeername()
+                    demisto.debug(f'Connected!  Tunnel open {origin_host}:{origin_port} -> {target_host}:{target_port}')
+
+                    ProxyUtils.communicate_tcp_ssh(ts, cs)
+                    demisto.debug(f'Tunnel closed from {origin_host}:{origin_port}')
+            except Exception:
+                demisto.debug(traceback.format_exc())
+                raise
+            finally:
+                channel.close()
+
+    class SSHReverseTunnel:
+        def __init__(
+            self
+        ) -> None:
+            self.__client = paramiko.SSHClient()
+            self.__client.load_system_host_keys()
+            self.__client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            self.__ssl_client_context: ssl.SSLContext | None = None
+            self.__proxy_channel: ThreadingTCPServer | None = None
+            self.__ssh_transport: paramiko.transport.Transport | None = None
+
+        def __enter__(
+            self
+        ) -> None:
+            return self
+
+        def __exit__(
+            self,
+            exc_type: type[BaseException] | None,
+            exc_val: BaseException | None,
+            exc_tb: TracebackType | None,
+        ) -> None:
+            if self.__proxy_channel is not None:
+                try:
+                    self.__proxy_channel.server_close()
+                except:
+                    pass
+
+            if self.__ssh_transport is not None:
+                try:
+                    self.__ssh_transport.close()
+                except:
+                    pass
+
+        def __run_proxy_channel(
+            self,
+            settings: ChannelSettings
+        ) -> Tuple[str, int]:
+            """ Start the proxy server on the local
+
+            :param settings: The channel settings
+            :return: The host and port of the proxy server.
+            """
+            def __start_server(server: ThreadingTCPServer) -> None:
+                server.serve_forever()
+
+            self.__proxy_channel = ThreadingTCPServer(('', 0), ProxyChannel)
+            self.__proxy_channel.settings = settings
+
+            thr = threading.Thread(
+                target=__start_server,
+                args=(self.__proxy_channel,),
+                daemon=False)
+            thr.start()
+            return self.__proxy_channel.server_address
+
+        def connect(
+            self,
+            channel_settings: ChannelSettings,
+            service_host: str | None,
+            service_port: int,
+            auth_method: str,
+            auth_credential: Credential,
+        ) -> None:
+            """ Connect the SSH server
+
+            :param channel_settings: The channel settings
+            :param service_host: The service address to listen on the SSH server
+            :param service_port: The service port to listen on the SSH server
+            :param auth_method: The authentication method (Can be: password or ssh_key)
+            :param auth_credential: The authentication credential.
+            """
+            username = auth_credential.public_credential
+            if not username:
+                raise DemistoException('SSH username is required')
+
+            if auth_method == SSHAuthMethod.PASSWORD.value:
+                password = auth_credential.private_credential.private_credential
+                ssh_key = None
+            elif auth_method == SSHAuthMethod.SSH_KEY.value:
+                password = None
+                ssh_key_cred = auth_credential.get_private_credential(pem_format=True)
+                ssh_key_pem = ssh_key_cred.private_credential
+                ssh_key_password = (ssh_key_cred.decryption_password or '').encode('utf-8')
+
+                if '-----BEGIN OPENSSH PRIVATE KEY-----' in ssh_key_pem:
+                    pkey = serialization.load_ssh_private_key(
+                        ssh_key_pem.encode('utf-8'),
+                        password=ssh_key_password or None)
+                else:
+                    pkey = serialization.load_pem_private_key(
+                        ssh_key_pem.encode('utf-8'),
+                        password=ssh_key_password or None)
+
+                if isinstance(pkey, rsa.RSAPrivateKey):
+                    ssh_key = paramiko.rsakey.RSAKey(key=pkey)  # type: ignore # [assignment]
+                elif isinstance(pkey, ed25519.Ed25519PrivateKey):
+                    ssh_key = paramiko.ed25519key.Ed25519Key(file_obj=io.StringIO(auth_key))  # type: ignore # [assignment]
+                else:
+                    raise DemistoException('Unsupported private key format.')
+            else:
+                raise DemistoException(f'Invalid authentication method - {auth_method}')
+
+            if channel_settings.channel_type == ChannelType.SSH:
+                target_host = channel_settings.ssh_host
+                target_port = channel_settings.ssh_port
+            else:
+                target_host, target_port = self.__run_proxy_channel(channel_settings)
+
+            # Connect to the SSH server
+            try:
+                self.__client.connect(
+                    hostname=target_host,
+                    port=target_port,
+                    username=username,
+                    password=password,
+                    pkey=ssh_key
+                )
+            except Exception as e:
+                demisto.debug(traceback.format_exc())
+                raise DemistoException(f'Failed to connect to {channel_settings.ssh_host}:{channel_settings.ssh_port}')
+
+            # Start reverse tunneling
+            self.__ssh_transport = self.__client.get_transport()
+            if not self.__ssh_transport:
+                raise DemistoException('Failed to get a transport object.')
+
+            try:
+                self.__ssh_transport.request_port_forward(service_host or '', service_port)
+            except paramiko.ssh_exception.SSHException as e:
+                if 'TCP forwarding request denied' in str(e):
+                    if service_port < 1024:
+                        raise DemistoException(f'TCP forwarding request denied - port {service_port} may already be in use or restricted port number (<1024) on the SSH server.')
+                    else:
+                        raise DemistoException(f'TCP forwarding request denied - port {service_port} may already be in use on the SSH server.')
+                raise
+
+        def run(
+            self,
+            tunnel_service: TunnelService,
+        ) -> None:
+            """ Handle sessions in the SSH reverse tunnel
+
+            :param tunnel_service: The tunnel service handler
+            """
+            timeout = 1000
+            while self.__ssh_transport.is_active():
+                chan = self.__ssh_transport.accept(timeout)
+                if chan is None:
+                    continue
+
+                thr = threading.Thread(target=tunnel_service.communicate, args=(chan,), daemon=False)
+                thr.start()
+
+
+    def test_module(
+        args: Dict[str, Any],
+        params: Dict[str, Any]
+    ) -> str:
+        """
+        Validates:
+        """
+        run_long_running(params, True)
+        return 'ok'
+
+
+    def run_long_running(
+        params: Dict[str, Any],
+        is_test: bool = False
+    ) -> None:
+        """
+        Start the long running server
+
+        :param params: Demisto params
+        :param is_test: Indicates whether it's test-module run or regular run
+        :return: None
+        """
+        try:
+            settings = Settings(params)
+            socket.setdefaulttimeout(DEFAULT_SOCKET_TIMEOUT)
+
+            with SSHReverseTunnel() as rtun:
+                if settings.channel_type == ChannelType.SSH.value:
+                    channel_settings = ChannelSettings(
+                        channel_type=ChannelType.SSH,
+                        ssh_host=settings.ssh_host,
+                        ssh_port=settings.ssh_port,
+                        timeout=DEFAULT_SOCKET_TIMEOUT
+                    )
+                elif settings.channel_type == ChannelType.SSH_OVER_SSL.value:
+                    channel_settings = ChannelSettings(
+                        channel_type=ChannelType.SSH_OVER_SSL,
+                        ssh_host=settings.ssh_host,
+                        ssh_port=settings.ssh_port,
+                        ssl_client_context=settings.create_ssl_client_context_from_stunnel_client_credentials(),
+                        timeout=DEFAULT_SOCKET_TIMEOUT
+                    )
+                elif settings.channel_type in (ChannelType.SSH_OVER_SOCKS5.value, ChannelType.SSH_OVER_SOCKS5_SSL.value):
+                    if settings.socks_proxy_host is None or settings.socks_proxy_port is None:
+                        raise DemistoException('SOCKS proxy host is required.')
+
+                    if settings.channel_type == ChannelType.SSH_OVER_SOCKS5.value:
+                        channel_type = ChannelType.SSH_OVER_SOCKS5
+                    else:
+                        channel_type = ChannelType.SSH_OVER_SOCKS5_SSL
+
+                    channel_settings = ChannelSettings(
+                        channel_type=channel_type,
+                        ssh_host=settings.ssh_host,
+                        ssh_port=settings.ssh_port,
+                        proxy_host=settings.socks_proxy_host,
+                        proxy_port=settings.socks_proxy_port,
+                        ssl_client_context=settings.create_ssl_client_context_from_stunnel_client_credentials(),
+                        timeout=DEFAULT_SOCKET_TIMEOUT
+                    )
+                else:
+                    raise DemistoException(f'Invalid channel type - {settings.channel_type}')
+
+                rtun.connect(
+                    channel_settings=channel_settings,
+                    service_host=settings.service_host,
+                    service_port=settings.service_port,
+                    auth_method=settings.ssh_auth_method,
+                    auth_credential=settings.ssh_auth_credential
+                )
+                if settings.tunnel_type == TunnelType.PORT_FORWARDING.value:
+                    if settings.internal_server_host is None or settings.internal_server_port is None:
+                        raise DemistoException('Internal Server Address is required.')
+
+                    tunnel_service = PortFowardingTunnelService(
+                            backend_host=settings.internal_server_host,
+                            backend_port=settings.internal_server_port,
+                            timeout=DEFAULT_SOCKET_TIMEOUT)
+                elif settings.tunnel_type == TunnelType.SOCKS_PROXY.value:
+                    tunnel_service = SocksProxyTunnelService(timeout=DEFAULT_SOCKET_TIMEOUT)
+                else:
+                    raise DemistoException(f'Invalid tunnel type - {settings.tunnel_type}')
+
+                if not is_test:
+                    rtun.run(tunnel_service=tunnel_service)
+
+        except Exception as e:
+            demisto.error(f'An error occurred in long running loop: {str(e)}')
+            raise DemistoException(str(e))
+
+
+    def main():
+        """
+        Main
+        """
+        params = assign_params(**demisto.params())
+        command = demisto.command()
+        demisto.debug(f'Command being called is {command}')
+
+        commands = {
+            'test-module': test_module
+        }
+        try:
+            if command == 'long-running-execution':
+                run_long_running(params)
+            else:
+                return_results(commands[command](demisto.args(), params))
+        except Exception as e:
+            return_error(f'Error in SSH Reverse Tunnel Integration [{e}]')
+
+
+    ''' ENTRY POINT '''
+
+    if __name__ in ('__main__', '__builtin__', 'builtins'):
+        main()
+
+
+    register_module_line('SSH Reverse Tunnel', 'end', __line__())
+  type: python
+  dockerimage: demisto/netmiko:1.0.0.78781
+  runonce: false
+  longRunning: true
+  subtype: python3
+sourcemoduleid: ExportIndicators
