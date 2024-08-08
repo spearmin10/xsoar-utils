@@ -385,6 +385,49 @@ script:
         )
 
 
+    def command_event_gen_check_point_vpn_1_firewall_1_port_scan(
+        client: Client,
+        params: dict[str, Any],
+        args: dict[str, Any]
+    ) -> CommandResults:
+        """ Generate CheckPoint VPN-1 & FireWall-1 traffic logs to generate a port scan alert
+
+        :param client: The HTTP collector client
+        :param params: The integration parameters given to the instance
+        :param args: The argument parameters given to the command
+        :return: The results of the command.
+        """
+        apikey = params.get('api_key_cef')
+        if not apikey:
+            raise DemistoException('An API key for CEF is required.')
+
+        client.api_key = apikey
+        client.content_type = 'text/plain'
+        client.cache_count_threshold = 100
+
+        client_ip = args.get('client_ip')
+        target_address = args.get('target_address')
+
+        app = 'HTTP'
+
+        for target_ip in netaddr.IPNetwork(target_address).iter_hosts():
+            for target_port in range(1, 65534):
+                timestamp = int(datetime.now().timestamp() * 1000000000)
+                client_port = random.randint(1025, 65534)
+
+                log = (
+                    'CEF:0|Check Point|VPN-1 & FireWall-1|Check Point|Log|${app}|informational|'
+                    f'act=accept spt=${client_port} dpt=${target_port} dst=${target_ip} src=${client_ip} app=${app} proto=TCP'
+                )
+                client.send_logs([log])
+
+        client.finish()
+
+        return CommandResults(
+            readable_output='Done.'
+        )
+
+
     def command_event_gen_isc_bind_dns_tunneling(
         client: Client,
         params: dict[str, Any],
@@ -502,6 +545,7 @@ script:
             commands = {
                 'test-module': test_module,
                 'event-gen-fortinet-fortigate-port-scan': command_event_gen_fortinet_fortigate_port_scan,
+                'event-gen-check-point-vpn-1-firewall-1-port-scan': command_event_gen_check_point_vpn_1_firewall_1_port_scan,
                 'event-gen-isc-bind-dns-tunneling': command_event_gen_isc_bind_dns_tunneling,
                 'event-gen-cisco-asa-vpn-connection-from-tor': command_event_gen_cisco_asa_vpn_connection_from_tor,
             }
@@ -535,6 +579,16 @@ script:
       description: The target IP address or network in CIDR
     description: Generate Fortinet Fortigate traffic logs to generate a port scan
       alert
+  - name: event-gen-check-point-vpn-1-firewall-1-port-scan
+    arguments:
+    - name: client_ip
+      required: true
+      description: The client IP from which the communications are
+    - name: target_address
+      required: true
+      description: The target IP address or network in CIDR
+    description: Generate CheckPoint VPN-1 & FireWall-1 traffic logs to generate a
+      port scan alert
   - name: event-gen-isc-bind-dns-tunneling
     arguments:
     - name: client_ip
