@@ -412,12 +412,11 @@ script:
 
         for target_ip in netaddr.IPNetwork(target_address).iter_hosts():
             for target_port in range(1, 65534):
-                timestamp = int(datetime.now().timestamp() * 1000000000)
                 client_port = random.randint(1025, 65534)
 
                 log = (
                     f'CEF:0|Check Point|VPN-1 & FireWall-1|Check Point|Log|${app}|informational|'
-                    f'act=accept spt=${client_port} dpt=${target_port} dst=${target_ip} src=${client_ip} app=${app} proto=TCP'
+                    f'act=drop spt=${client_port} dpt=${target_port} dst=${target_ip} src=${client_ip} app=${app} proto=TCP'
                 )
                 client.send_logs([log])
 
