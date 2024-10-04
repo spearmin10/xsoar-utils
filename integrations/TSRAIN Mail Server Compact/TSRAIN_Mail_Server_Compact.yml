@@ -113,11 +113,13 @@ configuration:
   type: 8
   required: false
 - advanced: true
-  display: Enable send-mail command
-  name: enableSendMailCommand
-  defaultvalue: "false"
-  type: 8
+  display: Active Shared Commands
+  name: activeSharedCommands
+  type: 16
   required: false
+  options:
+  - send-mail
+  - reply-mail
 - advanced: true
   display: Default sender address
   name: senderAddress
@@ -336,7 +338,7 @@ script:
             self.__local_mailbox_password = params.get('localMailboxPassword') or LOCAL_DEFAULT_MAILBOX_PASSWORD
             self.__local_default_admin_password = params.get('localDeafultAdminPassword')
             self.__insecure = argToBoolean(params.get('insecure', 'false'))
-            self.__enable_send_mail = argToBoolean(params.get('enableSendMailCommand', 'false'))
+            self.__active_shared_commands = argToList(params.get('activeSharedCommands'))
             self.__sender_email_address = params.get('senderAddress') or ''
             self.__client_credential_type = params.get('clientCredentialType')
             if self.__client_credential_type:
@@ -439,10 +441,10 @@ script:
             return self.__insecure
 
         @property
-        def is_send_mail_enabled(
+        def active_shared_commands(
             self
-        ) -> bool:
-            return self.__enable_send_mail
+        ) -> List[str]:
+            return self.__active_shared_commands
 
         @property
         def sender_email_address(
@@ -1519,14 +1521,15 @@ script:
         def __init__(
             self
         ) -> None:
-            self.__from: Optional[str] = None
+            self.__from: str | None = None
             self.__to: List[str] = []
             self.__cc: List[str] = []
             self.__bcc: List[str] = []
-            self.__reply_to: Optional[str] = None
-            self.__body: Optional[str] = None
-            self.__html_body: Optional[str] = None
-            self.__subject: Optional[str] = None
+            self.__reply_to: str | None = None
+            self.__in_reply_to: str | None = None
+            self.__body: str | None = None
+            self.__html_body: str | None = None
+            self.__subject: str | None = None
             self.__headers: List[str] = []
             self.__attachments: List[MIMEBase] = []
             self.__template_params: Dict[str, str] = {}
@@ -1560,6 +1563,12 @@ script:
             address: str | None
         ) -> None:
             self.__reply_to = address
+
+        def set_in_reply_to(
+            self,
+            in_reply_to: str | None
+        ) -> None:
+            self.__in_reply_to = in_reply_to
 
         def set_subject(
             self,
@@ -1741,6 +1750,8 @@ script:
                 msg['CC'] = _new_header(','.join(self.__cc))
             if self.__bcc:
                 msg['BCC'] = _new_header(','.join(self.__bcc))
+            if self.__in_reply_to:
+                msg['In-Reply-To'] = _new_header(self.__in_reply_to)
 
             for h in self.__headers:
                 name, value = h.split('=', 1)
@@ -1913,7 +1924,7 @@ script:
 
         :param args: The argument parameters
         """
-        if not SETTINGS.is_send_mail_enabled:
+        if 'send-mail' not in SETTINGS.active_shared_commands:
             return 'send-mail command is disabled', {}, {}
 
         sender = args.get('from') or SETTINGS.sender_email_address or ''
@@ -1927,6 +1938,8 @@ script:
         if not (rcpt_to := extract_email_addresses(to + cc + bcc)):
             raise DemistoException('You must have at least one recipient')
         rcpt_to = list(set(rcpt_to))
+
+        reply_to = args.get('replyTo') or args.get('reply_to') or None
 
         if raw_message := args.get('raw_message'):
             msg: Union[str, email.message.Message] = raw_message
@@ -1947,6 +1960,7 @@ script:
             builder.set_to(to)
             builder.set_cc(cc)
             builder.set_bcc(bcc)
+            builder.set_reply_to(reply_to)
             builder.set_subject(args.get('subject'))
             builder.set_body(body)
             builder.set_html_body(body_html)
@@ -1979,6 +1993,88 @@ script:
                     break
                 builder.add_attachment_file_by_data(name, data, cid)
             msg = builder.build()
+
+        # Send an email message
+        Service(settings=SETTINGS).send_mail(msg, mail_from, rcpt_to)
+
+        return 'An email has been sent successfully', {}, {}
+
+
+    def reply_mail_command(
+        args: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any], Dict[str, Any]]:
+        """ Reply an email message
+
+        :param args: The argument parameters
+        """
+        if 'reply-mail' not in SETTINGS.active_shared_commands:
+            return 'reply-mail command is disabled', {}, {}
+
+        sender = args.get('from') or SETTINGS.sender_email_address or ''
+        if not (senders := extract_email_addresses([sender])) or not senders[0]:
+            raise DemistoException('You must have an sender address')
+        mail_from = senders[0]
+
+        to = argToList(args.get('to'))
+        cc = argToList(args.get('cc'))
+        bcc = argToList(args.get('bcc'))
+        if not (rcpt_to := extract_email_addresses(to + cc + bcc)):
+            raise DemistoException('You must have at least one recipient')
+        rcpt_to = list(set(rcpt_to))
+
+        reply_to = args.get('replyTo') or args.get('reply_to') or None
+        in_reply_to = args.get('inReplyTo')
+
+        # Build an email message
+        body = args.get('body')
+        body_html = args.get('htmlBody')
+        body_type = args.get('body_type') or 'text'
+        if body_type == 'HTML':
+            if not body_html:
+                body_html = body
+                body = None
+        elif body_type != 'text':
+            raise DemistoException(f'Invalid body_type: {body_type}')
+
+        builder = MessageBuilder()
+        builder.set_from(sender)
+        builder.set_to(to)
+        builder.set_cc(cc)
+        builder.set_bcc(bcc)
+        builder.set_reply_to(reply_to)
+        builder.set_in_reply_to(in_reply_to)
+        builder.set_subject(args.get('subject'))
+        builder.set_body(body)
+        builder.set_html_body(body_html)
+        builder.set_additional_headers(argToList(args.get('additionalHeader')))
+        builder.set_template_params(args.get('templateParams'))
+
+        # Attachment files
+        for aid, name, cid in zip_longest(
+                argToList(args.get('attachIDs')),
+                argToList(args.get('attachNames')),
+                argToList(args.get('attachCIDs'))):
+            if aid:
+                builder.add_attachment_file_by_entry_id(aid, name, cid)
+        for aid, name, cid in zip_longest(
+                argToList(args.get('attach_ids')),
+                argToList(args.get('attach_names')),
+                argToList(args.get('attach_cids'))):
+            if aid:
+                builder.add_attachment_file_by_entry_id(aid, name, cid)
+
+        # Transient files
+        t_names = args.get('transientFile', [])
+        t_names = t_names if isinstance(t_names, (list, tuple)) else t_names.split(',')
+        t_contents = args.get('transientFileContent', [])
+        t_contents = t_contents if isinstance(t_contents, (list, tuple)) else t_contents.split(',')
+        t_cids = args.get('transientFileCID', [])
+        t_cids = t_cids if isinstance(t_cids, (list, tuple)) else t_cids.split(',')
+        for name, data, cid in zip_longest(t_names, t_contents, t_cids):
+            if not name or not data:
+                break
+            builder.add_attachment_file_by_data(name, data, cid)
+        msg = builder.build()
 
         # Send an email message
         Service(settings=SETTINGS).send_mail(msg, mail_from, rcpt_to)
@@ -2026,6 +2122,7 @@ script:
             'tsrc-restart': restart_command,
             'tsrc-send-eml': send_eml_command,
             'send-mail': send_mail_command,
+            'reply-mail': reply_mail_command,
         }
         try:
             if command == 'long-running-execution':
@@ -2175,6 +2272,93 @@ script:
       description: Raw email message to send. If provided, all other arguments, but
         to, cc and bcc, will be ignored.
     description: Send an email
+  - name: reply-mail
+    arguments:
+    - name: from
+      description: The email address from which to reply.
+    - name: to
+      required: true
+      default: true
+      description: A comma-separated list of email addresses for the 'to' field.
+      isArray: true
+    - name: cc
+      description: A comma-separated list of email addresses for the 'cc' field.
+      isArray: true
+    - name: bcc
+      description: A comma-separated list of email addresses for the 'bcc' field.
+      isArray: true
+    - name: inReplyTo
+      required: true
+      description: ID of the email to reply to.
+    - name: subject
+      description: Subject for the email to be sent
+    - name: body
+      description: The contents (body) of the email to be sent in plain text
+    - name: body_type
+      auto: PREDEFINED
+      predefined:
+      - text
+      - HTML
+      description: 'The body type of the email. Can be: "text", or "HTML".'
+    - name: htmlBody
+      description: The contents (body) of the email to be sent in HTML format
+    - name: replyTo
+      description: Address that should be used to reply to the message
+    - name: attachIDs
+      description: A comma-separated list of IDs of war room entries that contain
+        the files that should be attached to the email
+      isArray: true
+    - name: attachNames
+      description: A comma-separated list to rename file-names of corresponding attachments
+        IDs. (e.g. rename first two files - attachNames=file_name1,file_name2. rename
+        first and third file - attachNames=file_name1,,file_name3)
+      isArray: true
+    - name: attachCIDs
+      description: A comma-separated list of CIDs to embed attachments inside the
+        email itself
+      isArray: true
+    - name: attach_ids
+      description: A comma-separated list of IDs of war room entries that contain
+        the files that should be attached to the email
+      isArray: true
+    - name: attach_names
+      description: A comma-separated list to rename file-names of corresponding attachments
+        IDs. (e.g. rename first two files - attachNames=file_name1,file_name2. rename
+        first and third file - attachNames=file_name1,,file_name3)
+      isArray: true
+    - name: attach_cids
+      description: A comma-separated list of CIDs to embed attachments inside the
+        email itself
+      isArray: true
+    - name: transientFile
+      description: Desired name for attached file. Multiple files are supported as
+        comma-separated list. (e.g. transientFile="t1.txt,temp.txt,t3.txt" transientFileContent="test
+        2,temporary file content,third file content" transientFileCID="t1.txt@xxx.yyy,t2.txt@xxx.zzz")
+      isArray: true
+    - name: transientFileContent
+      description: Content for attached file. Multiple files are supported as comma-separated
+        list. (e.g. transientFile="t1.txt,temp.txt,t3.txt" transientFileContent="test
+        2,temporary file content,third file content" transientFileCID="t1.txt@xxx.yyy,t2.txt@xxx.zzz")
+      isArray: true
+    - name: transientFileCID
+      description: CID for attached file if we want it inline. Multiple files are
+        supported as comma-separated list. (e.g. transientFile="t1.txt,temp.txt,t3.txt"
+        transientFileContent="test 2,temporary file content,third file content" transientFileCID="t1.txt@xxx.yyy,t2.txt@xxx.zzz")
+      isArray: true
+    - name: templateParams
+      description: 'Replace {varname} variables with values from this argument. Expected
+        values are in the form of a JSON document like {"varname": {"value": "some
+        value", "key": "context key"}}. Each var name can either be provided with
+        the value or a context key to retrieve the value from. Note that only context
+        data is accessible for this argument, while incident fields are not.'
+    - name: additionalHeader
+      description: 'A CSV list of additional headers in the format: headerName=headerValue.
+        For example: "headerName1=headerValue1,headerName2=headerValue2".'
+      isArray: true
+    - name: raw_message
+      description: Raw email message to send. If provided, all other arguments, but
+        to, cc and bcc, will be ignored.
+    description: Reply to an email
   dockerimage: spearmint/xsoar-tsrain:3.10.20.2056
   runonce: false
   longRunning: true
