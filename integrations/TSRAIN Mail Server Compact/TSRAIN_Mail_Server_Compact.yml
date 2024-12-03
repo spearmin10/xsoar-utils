@@ -2359,8 +2359,7 @@ script:
       description: Raw email message to send. If provided, all other arguments, but
         to, cc and bcc, will be ignored.
     description: Reply to an email
-  dockerimage: spearmint/xsoar-tsrain:4.12.3.1130
-  runonce: false
+  dockerimage: spearmint/xsoar-tsrain:4.12.3.1606
   longRunning: true
   longRunningPort: true
   subtype: python3
