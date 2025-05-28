@@ -154,6 +154,7 @@ script:
     import netifaces
     import zipfile
     import base64
+    import socket
     import threading
     from ldaptor import interfaces, delta
     from ldaptor.protocols.pureldap import BERInteger, BERSequence, BEROctetString, LDAPMessage, LDAPFilter_or, LDAPFilter_and, LDAPFilter_extensibleMatch, LDAPFilter_equalityMatch, LDAPFilter_present, LDAPSearchResultEntry, LDAPSearchResultDone, LDAPBindResponse, LDAP_SCOPE_baseObject, LDAPPasswordModifyRequest
