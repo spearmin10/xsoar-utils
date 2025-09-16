@@ -1,0 +1,350 @@
+{
+	"brands": null,
+	"cacheVersn": 0,
+	"defaultIncidentType": "",
+	"definitionId": "",
+	"description": "Maps incoming phishing email messages fields.",
+	"feed": false,
+	"fromServerVersion": "6.0.0",
+	"id": "Mail Listener - Phishing Report Response Incoming Mapper",
+	"incidentSamples": null,
+	"indicatorSamples": null,
+	"instanceIds": null,
+	"isOverridable": false,
+	"itemVersion": "2.8.0",
+	"keyTypeMap": {},
+	"locked": false,
+	"logicalVersion": 16,
+	"mapping": {
+		"Phishing": {
+			"dontMapEventToLabels": false,
+			"internalMapping": {
+				"Attachment Name": {
+					"simple": "attachments"
+				},
+				"Email BCC": {
+					"simple": "bcc"
+				},
+				"Email Body": {
+					"simple": "text"
+				},
+				"Email CC": {
+					"complex": {
+						"filters": [],
+						"root": "cc",
+						"transformers": [
+							{
+								"args": {
+									"separator": {
+										"isContext": false,
+										"value": {
+											"simple": ","
+										}
+									}
+								},
+								"operator": "join"
+							}
+						]
+					}
+				},
+				"Email From": {
+					"simple": "headers.From"
+				},
+				"Email HTML": {
+					"simple": "HTML"
+				},
+				"Email Message ID": {
+					"complex": {
+						"filters": [],
+						"root": "rawHeaders",
+						"transformers": [
+							{
+								"args": {
+									"from": {
+										"isContext": false,
+										"value": {
+											"simple": "Message-ID: \u003c"
+										}
+									}
+								},
+								"operator": "substringFrom"
+							},
+							{
+								"args": {
+									"to": {
+										"isContext": false,
+										"value": {
+											"simple": "\u003e"
+										}
+									}
+								},
+								"operator": "substringTo"
+							}
+						]
+					}
+				},
+				"Email Received": {
+					"complex": {
+						"filters": [],
+						"root": "rawHeaders",
+						"transformers": [
+							{
+								"args": {
+									"from": {
+										"isContext": false,
+										"value": {
+											"simple": "Received:"
+										}
+									}
+								},
+								"operator": "substringFrom"
+							},
+							{
+								"args": {
+									"to": {
+										"isContext": false,
+										"value": {
+											"simple": ";"
+										}
+									}
+								},
+								"operator": "substringTo"
+							}
+						]
+					}
+				},
+				"Email Return Path": {
+					"simple": "headers.Return-Path"
+				},
+				"Email Sender IP": {
+					"complex": {
+						"filters": [],
+						"root": "rawHeaders",
+						"transformers": [
+							{
+								"args": {
+									"from": {
+										"isContext": false,
+										"value": {
+											"simple": "x-originating-ip: ["
+										}
+									}
+								},
+								"operator": "substringFrom"
+							},
+							{
+								"args": {
+									"to": {
+										"isContext": false,
+										"value": {
+											"simple": "]"
+										}
+									}
+								},
+								"operator": "substringTo"
+							}
+						]
+					}
+				},
+				"Email Subject": {
+					"simple": "subject"
+				},
+				"Email To": {
+					"complex": {
+						"filters": [],
+						"root": "to",
+						"transformers": [
+							{
+								"args": {
+									"separator": {
+										"isContext": false,
+										"value": {
+											"simple": ","
+										}
+									}
+								},
+								"operator": "join"
+							}
+						]
+					}
+				},
+				"Email To Count": {
+					"complex": {
+						"filters": [],
+						"root": "to",
+						"transformers": [
+							{
+								"operator": "count"
+							}
+						]
+					}
+				}
+			}
+		},
+		"Phishing Report Response - EN": {
+			"dontMapEventToLabels": false,
+			"internalMapping": {
+				"Reporter Display Name": {
+					"complex": {
+						"accessor": "From",
+						"filters": [],
+						"root": "headers",
+						"transformers": [
+							{
+								"args": {
+									"groups": {
+										"isContext": false,
+										"value": {
+											"simple": "0,1"
+										}
+									},
+									"keys": {
+										"isContext": false
+									},
+									"regex": {
+										"isContext": false,
+										"value": {
+											"simple": "(.+[^\u003c])\u003c.*|(.*)"
+										}
+									}
+								},
+								"operator": "RegexGroups"
+							},
+							{
+								"args": {
+									"limit": {
+										"isContext": false
+									},
+									"replaceWith": {
+										"isContext": false
+									},
+									"toReplace": {
+										"isContext": false,
+										"value": {
+											"simple": "None"
+										}
+									}
+								},
+								"operator": "replace"
+							},
+							{
+								"args": {
+									"separator": {
+										"isContext": false
+									}
+								},
+								"operator": "join"
+							},
+							{
+								"operator": "trim"
+							}
+						]
+					}
+				},
+				"Reporter Email Address": {
+					"simple": "from"
+				},
+				"Reporter Email Body": {
+					"simple": "text"
+				},
+				"Reporter Email Body HTML": {
+					"simple": "HTML"
+				},
+				"Reporter Email Subject": {
+					"simple": "subject"
+				},
+				"Reporter Language": {
+					"simple": "${.=\"en\"}"
+				}
+			}
+		},
+		"Phishing Report Response - JA": {
+			"dontMapEventToLabels": false,
+			"internalMapping": {
+				"Reporter Display Name": {
+					"complex": {
+						"accessor": "From",
+						"filters": [],
+						"root": "headers",
+						"transformers": [
+							{
+								"args": {
+									"groups": {
+										"isContext": false,
+										"value": {
+											"simple": "0,1"
+										}
+									},
+									"keys": {
+										"isContext": false
+									},
+									"regex": {
+										"isContext": false,
+										"value": {
+											"simple": "(.+[^\u003c])\u003c.*|(.*)"
+										}
+									}
+								},
+								"operator": "RegexGroups"
+							},
+							{
+								"args": {
+									"limit": {
+										"isContext": false
+									},
+									"replaceWith": {
+										"isContext": false
+									},
+									"toReplace": {
+										"isContext": false,
+										"value": {
+											"simple": "None"
+										}
+									}
+								},
+								"operator": "replace"
+							},
+							{
+								"args": {
+									"separator": {
+										"isContext": false
+									}
+								},
+								"operator": "join"
+							},
+							{
+								"operator": "trim"
+							}
+						]
+					}
+				},
+				"Reporter Email Address": {
+					"simple": "from"
+				},
+				"Reporter Email Body": {
+					"simple": "text"
+				},
+				"Reporter Email Body HTML": {
+					"simple": "HTML"
+				},
+				"Reporter Email Subject": {
+					"simple": "subject"
+				},
+				"Reporter Language": {
+					"simple": "${.=\"ja\"}"
+				}
+			}
+		}
+	},
+	"name": "Mail Listener - Phishing Report Response Incoming Mapper",
+	"nameRaw": "Mail Listener - Phishing Report Response Incoming Mapper",
+	"packID": "",
+	"packName": "",
+	"sourceClassifierId": "mail-listener-mapper",
+	"system": false,
+	"toServerVersion": "",
+	"transformer": {},
+	"type": "mapping-incoming",
+	"unclassifiedCases": null,
+	"version": -1
+}

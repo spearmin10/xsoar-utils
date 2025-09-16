@@ -1,0 +1,933 @@
+description: This playbook creates a mapping pattern for MapPattern to choose send-mail
+  integration instances.
+dirtyInputs: true
+id: MM - Make Send Mail Chooser
+inputs:
+- description: The preferred send-mail instances
+  key: PreferredInstance
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: sourceInstance
+      root: incident
+      transformers:
+      - operator: uniq
+name: MM - Make Send Mail Chooser
+outputs:
+- contextPath: SendMailChooser
+  description: The wild-card pattern mapping to an email address for MapPattern
+  type: unknown
+quiet: true
+starttaskid: "0"
+tasks:
+  "0":
+    continueonerrortype: ""
+    id: "0"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "1"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 14a026fa-6b00-443e-8cfb-3ad8ae2a6df1
+      iscommand: false
+      name: ""
+      version: -1
+    taskid: 14a026fa-6b00-443e-8cfb-3ad8ae2a6df1
+    timertriggers: []
+    type: start
+    view: |-
+      {
+        "position": {
+          "x": 771.5,
+          "y": 50
+        }
+      }
+  "1":
+    continueonerrortype: ""
+    id: "1"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "2"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: Instance.Preferred
+      value:
+        complex:
+          accessor: name
+          filters:
+          - - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.name
+              operator: in
+              right:
+                iscontext: true
+                value:
+                  simple: inputs.PreferredInstance
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.commands.name
+              operator: isEqualString
+              right:
+                value:
+                  simple: send-mail
+          root: modules
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: f6f4d366-ebc8-400f-8bdb-2c1f39d5ae0b
+      iscommand: false
+      name: Set available preferred instances
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: f6f4d366-ebc8-400f-8bdb-2c1f39d5ae0b
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 771.5,
+          "y": 210
+        }
+      }
+  "2":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              simple: Instance.Preferred
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "2"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "15"
+      "yes":
+      - "3"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 234980a3-f973-4785-8988-fa8e194cc1f4
+      iscommand: false
+      name: Are preferred instances available?
+      type: condition
+      version: -1
+    taskid: 234980a3-f973-4785-8988-fa8e194cc1f4
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 771.5,
+          "y": 380
+        }
+      }
+  "3":
+    continueonerrortype: ""
+    id: "3"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "13"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: SendMailChooser
+      value:
+        complex:
+          root: Instance
+          transformers:
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: |-
+                    {
+                      "*": "${.Preferred}"
+                    }
+              template_type:
+                value:
+                  simple: json
+              variable_markers: {}
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set a value in context under the key you entered.
+      id: 5cae8c90-af71-46ce-8cc3-b35dba534f4c
+      iscommand: false
+      name: Set SendMailChooser
+      script: Set
+      type: regular
+      version: -1
+    taskid: 5cae8c90-af71-46ce-8cc3-b35dba534f4c
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 2080
+        }
+      }
+  "4":
+    continueonerrortype: ""
+    id: "4"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "5"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: Instance.Tsrain
+      value:
+        complex:
+          accessor: name
+          filters:
+          - - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.brand
+              operator: isEqualString
+              right:
+                value:
+                  simple: TSRAIN Mail Server Compact
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.commands.name
+              operator: isEqualString
+              right:
+                value:
+                  simple: send-mail
+          root: modules
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: 12289ef0-8feb-4aa6-8bc0-05586c890555
+      iscommand: false
+      name: Set available TSRAIN Mail Server Compact
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 12289ef0-8feb-4aa6-8bc0-05586c890555
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1012,
+          "y": 1060
+        }
+      }
+  "5":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              simple: Instance.Tsrain
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "5"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "9"
+      "yes":
+      - "6"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: afa948b3-8506-4225-8320-7aee5eed28a4
+      iscommand: false
+      name: Are TSRAIN Mail Server Compact instances available?
+      type: condition
+      version: -1
+    taskid: afa948b3-8506-4225-8320-7aee5eed28a4
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 1012,
+          "y": 1230
+        }
+      }
+  "6":
+    continueonerrortype: ""
+    id: "6"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "9"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: SendMailChooser
+      value:
+        complex:
+          root: Instance
+          transformers:
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: |-
+                    {
+                      "*.lan": "${.Tsrain}"
+                    }
+              template_type:
+                value:
+                  simple: json
+              variable_markers: {}
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set a value in context under the key you entered.
+      id: 1cf4d13a-5112-440f-8d56-ea27a6d8f4ed
+      iscommand: false
+      name: Set SendMailChooser for *.lan
+      script: Set
+      type: regular
+      version: -1
+    taskid: 1cf4d13a-5112-440f-8d56-ea27a6d8f4ed
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 783,
+          "y": 1397
+        }
+      }
+  "7":
+    continueonerrortype: ""
+    id: "7"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "14"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: Instance.BuiltIn
+      value:
+        complex:
+          accessor: name
+          filters:
+          - - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.name
+              operator: isEqualString
+              right:
+                value:
+                  simple: Built-in Mail Sender
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.commands.name
+              operator: isEqualString
+              right:
+                value:
+                  simple: send-mail
+          root: modules
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: c882d470-b08e-456f-8e5f-61ab9b5e0d57
+      iscommand: false
+      name: Set available Built-in Mail Sender
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: c882d470-b08e-456f-8e5f-61ab9b5e0d57
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1012,
+          "y": 720
+        }
+      }
+  "9":
+    continueonerrortype: ""
+    id: "9"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "10"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: Instance.Default
+      value:
+        complex:
+          accessor: Tsrain
+          root: Instance
+          transformers:
+          - args:
+              item:
+                iscontext: true
+                value:
+                  simple: Instance.BuiltIn
+              raw: {}
+            operator: AppendIfNotEmpty
+          - args:
+              item:
+                iscontext: true
+                value:
+                  simple: instance.MailSenderNew
+              raw: {}
+            operator: AppendIfNotEmpty
+          - operator: FirstArrayElement
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: f3cc0dd9-bc6e-4c87-8809-8beaafe4230b
+      iscommand: false
+      name: Set Default Mail Sender
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: f3cc0dd9-bc6e-4c87-8809-8beaafe4230b
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1012,
+          "y": 1570
+        }
+      }
+  "10":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              simple: Instance.Default
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "10"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "16"
+      "yes":
+      - "11"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 12fc7152-b72d-4579-8cda-14341bf75c4b
+      iscommand: false
+      name: Are default instances available?
+      type: condition
+      version: -1
+    taskid: 12fc7152-b72d-4579-8cda-14341bf75c4b
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 1012,
+          "y": 1740
+        }
+      }
+  "11":
+    continueonerrortype: ""
+    id: "11"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "13"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "true"
+      key:
+        simple: SendMailChooser
+      value:
+        complex:
+          root: Instance
+          transformers:
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: |-
+                    {
+                      "*": "${.Default}"
+                    }
+              template_type:
+                value:
+                  simple: json
+              variable_markers: {}
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set a value in context under the key you entered.
+      id: 7f64b87b-8982-4da4-80f2-5a905f576b50
+      iscommand: false
+      name: Add Default SendMailChooser
+      script: Set
+      type: regular
+      version: -1
+    taskid: 7f64b87b-8982-4da4-80f2-5a905f576b50
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1441,
+          "y": 2080
+        }
+      }
+  "12":
+    continueonerrortype: ""
+    id: "12"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "13"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "true"
+      key:
+        simple: SendMailChooser
+      value:
+        complex:
+          accessor: =""}
+          root: ${
+          transformers:
+          - args:
+              prefix: {}
+              suffix:
+                value:
+                  simple: |-
+                    {
+                      "*": ""
+                    }
+            operator: concat
+          - operator: ParseJSON
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set a value in context under the key you entered.
+      id: 6cd575ae-dc46-41e3-81c5-38c7554d4317
+      iscommand: false
+      name: Add empty for all the instances
+      script: Set
+      type: regular
+      version: -1
+    taskid: 6cd575ae-dc46-41e3-81c5-38c7554d4317
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 531,
+          "y": 2080
+        }
+      }
+  "13":
+    continueonerrortype: ""
+    id: "13"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 1d51eb12-f804-4d8c-8b23-a82d2af6823d
+      iscommand: false
+      name: Done
+      type: title
+      version: -1
+    taskid: 1d51eb12-f804-4d8c-8b23-a82d2af6823d
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 771.5,
+          "y": 2250
+        }
+      }
+  "14":
+    continueonerrortype: ""
+    id: "14"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "4"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: Instance.MailSenderNew
+      value:
+        complex:
+          accessor: name
+          filters:
+          - - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.name
+              operator: containsString
+              right:
+                value:
+                  simple: Mail Sender (New)
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.commands.name
+              operator: isEqualString
+              right:
+                value:
+                  simple: send-mail
+          root: modules
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: 8a4f0096-78fa-46ba-8658-661b689bf264
+      iscommand: false
+      name: Set available Mail Sender New
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 8a4f0096-78fa-46ba-8658-661b689bf264
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1012,
+          "y": 890
+        }
+      }
+  "15":
+    continueonerrortype: ""
+    id: "15"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "7"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: Instance.All
+      value:
+        complex:
+          accessor: name
+          filters:
+          - - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.commands.name
+              operator: isEqualString
+              right:
+                value:
+                  simple: send-mail
+          root: modules
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: 0844a7b4-e988-4895-8c5c-73d06a95469b
+      iscommand: false
+      name: Set available all send-mail instances
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 0844a7b4-e988-4895-8c5c-73d06a95469b
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1012,
+          "y": 550
+        }
+      }
+  "16":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              simple: Instance.All
+          operator: isNotEmpty
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "16"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "12"
+      "yes":
+      - "17"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 5fec6893-9b38-433d-8dc0-ff3035716241
+      iscommand: false
+      name: Are any instances available?
+      type: condition
+      version: -1
+    taskid: 5fec6893-9b38-433d-8dc0-ff3035716241
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 771.5,
+          "y": 1910
+        }
+      }
+  "17":
+    continueonerrortype: ""
+    id: "17"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "13"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "true"
+      key:
+        simple: SendMailChooser
+      value:
+        complex:
+          root: Instance
+          transformers:
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: |-
+                    {
+                      "*": "${.All}"
+                    }
+              template_type:
+                value:
+                  simple: json
+              variable_markers: {}
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set a value in context under the key you entered.
+      id: e7ce15fb-54e4-4316-8c29-9105df28d94f
+      iscommand: false
+      name: Add Default SendMailChooser
+      script: Set
+      type: regular
+      version: -1
+    taskid: e7ce15fb-54e4-4316-8c29-9105df28d94f
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1012,
+          "y": 2080
+        }
+      }
+version: -1
+view: |-
+  {
+    "linkLabelsPosition": {},
+    "paper": {
+      "dimensions": {
+        "height": 2260,
+        "width": 1772,
+        "x": 50,
+        "y": 50
+      }
+    }
+  }

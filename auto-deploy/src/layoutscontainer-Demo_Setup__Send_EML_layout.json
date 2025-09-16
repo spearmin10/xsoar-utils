@@ -1,0 +1,125 @@
+{
+	"cacheVersn": 0,
+	"close": null,
+	"definitionId": "",
+	"description": "",
+	"detached": false,
+	"details": null,
+	"detailsV2": {
+		"TypeName": "",
+		"tabs": [
+			{
+				"id": "summary",
+				"name": "Legacy Summary",
+				"type": "summary"
+			},
+			{
+				"id": "caseinfoid",
+				"name": "Incident Info",
+				"sections": [
+					{
+						"h": 5,
+						"i": "caseinfoid-61263cc0-98b1-11e9-97d7-ed26ef9e46c8",
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Notes",
+						"static": false,
+						"type": "notes",
+						"w": 1,
+						"x": 2,
+						"y": 0
+					},
+					{
+						"displayType": "ROW",
+						"h": 5,
+						"i": "caseinfoid-6aabad20-98b1-11e9-97d7-ed26ef9e46c8",
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Work Plan",
+						"static": false,
+						"type": "workplan",
+						"w": 2,
+						"x": 0,
+						"y": 0
+					}
+				],
+				"type": "custom"
+			},
+			{
+				"id": "warRoom",
+				"name": "War Room",
+				"type": "warRoom"
+			},
+			{
+				"id": "workPlan",
+				"name": "Work Plan",
+				"type": "workPlan"
+			},
+			{
+				"id": "evidenceBoard",
+				"name": "Evidence Board",
+				"type": "evidenceBoard"
+			},
+			{
+				"id": "relatedIncidents",
+				"name": "Related Incidents",
+				"type": "relatedIncidents"
+			},
+			{
+				"id": "canvas",
+				"name": "Canvas",
+				"type": "canvas"
+			}
+		]
+	},
+	"edit": {
+		"sections": [
+			{
+				"description": "Enter your email address to which a demo email will be delivered",
+				"fields": [
+					{
+						"fieldId": "incident_type",
+						"isVisible": true
+					},
+					{
+						"fieldId": "incident_demosetuprecipientemailaddress",
+						"isVisible": true
+					},
+					{
+						"fieldId": "incident_demosetupemail",
+						"isVisible": true
+					},
+					{
+						"fieldId": "incident_attachment",
+						"isVisible": true
+					}
+				],
+				"isVisible": true,
+				"name": "Basic Information",
+				"query": null,
+				"queryType": "",
+				"readOnly": false,
+				"type": ""
+			}
+		]
+	},
+	"fromServerVersion": "",
+	"group": "incident",
+	"id": "Demo Setup: Send EML layout",
+	"indicatorsDetails": null,
+	"indicatorsQuickView": null,
+	"isOverridable": false,
+	"itemVersion": "",
+	"locked": false,
+	"mobile": null,
+	"name": "Demo Setup: Send EML layout",
+	"packID": "",
+	"packName": "",
+	"quickView": null,
+	"quickViewV2": null,
+	"system": false,
+	"toServerVersion": "",
+	"version": -1
+}

@@ -1,0 +1,2526 @@
+contentitemexportablefields:
+  contentitemfields:
+    definitionid: ""
+    fromServerVersion: ""
+    isoverridable: false
+    itemVersion: 2.0.4
+    packID: ""
+    packName: ""
+    prevname: ""
+    toServerVersion: ""
+description: Add email details to the relevant context entities and handle the case
+  where original emails are attached.
+dirtyInputs: true
+id: MM - Parse and Render an Email
+inputs:
+- description: An EML or MSG file with
+  key: File
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      root: File
+- description: The receiving email address of the forwarded email.
+  key: Email
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: labels.Email
+      root: incident
+      transformers:
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: incident.labels.Email/to
+          raw: {}
+        operator: AppendIfNotEmpty
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: incident.labels.Email/To
+          raw: {}
+        operator: AppendIfNotEmpty
+      - operator: uniq
+- description: The CC addresses of the forwarded email.
+  key: Email/cc
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: cc
+      root: incident.labels
+      transformers:
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: incident.labels.Cc
+          raw: {}
+        operator: AppendIfNotEmpty
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: incident.labels.CC
+          raw: {}
+        operator: AppendIfNotEmpty
+      - operator: uniq
+- description: The fowarder addresses of the forwarded email.
+  key: Email/from
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: labels.Email/from
+      root: incident
+      transformers:
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: incident.labels.Email/From
+          raw: {}
+        operator: AppendIfNotEmpty
+      - operator: uniq
+- description: The subject of the forwarded email.
+  key: Email/subject
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: labels.Email/subject
+      root: incident
+      transformers:
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: incident.labels.Email/Subject
+          raw: {}
+        operator: AppendIfNotEmpty
+      - operator: uniq
+- description: The email’s text of the forwarded email.
+  key: Email/text
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: labels.Email/text
+      root: incident
+      transformers:
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: incident.labels.Email/Text
+          raw: {}
+        operator: AppendIfNotEmpty
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: incident.labels.Email/Body
+          raw: {}
+        operator: AppendIfNotEmpty
+      - operator: uniq
+- description: The email’s htmlof the forwarded email.
+  key: Email/html
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: labels.Email/html
+      root: incident
+      transformers:
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: incident.labels.Email/HTML
+          raw: {}
+        operator: AppendIfNotEmpty
+      - operator: uniq
+- description: The email’s headers the forwarded email.
+  key: Email/headers
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: labels.Email/headers
+      root: incident
+      transformers:
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: incident.labels.Email/Headers
+          raw: {}
+        operator: AppendIfNotEmpty
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: incident.labels.Headers
+          raw: {}
+        operator: AppendIfNotEmpty
+      - operator: uniq
+- description: The email’s formatthe forwarded email.
+  key: Email/format
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: labels.Email/format
+      root: incident
+      transformers:
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: incident.labels.Email/Format
+          raw: {}
+        operator: AppendIfNotEmpty
+      - operator: uniq
+- description: true if the email is processed as a forwarded email when the file is
+    not given.
+  key: Forwarded
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: "false"
+- description: "The parameters about where to set email headers. \nThey must have
+    comma separated 3 values in the folowing order.\n - The name of Incident field
+    of Grid type\n - The column name for header names\n - The column name for header
+    values\nIf you don't want to set them to a Grid field, you can put single comma
+    (,)."
+  key: EmailHeadersGrid
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: emailheaders,headername,headervalue
+- description: true if attachment files extracted from the file are added to `attachments`
+    in the incident, otherwise false.
+  key: UploadAttachments
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: "true"
+- description: Determines whether the authenticity of the email should be verified
+    using SPF, DKIM, and DMARC.
+  key: AuthenticateEmail
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: "true"
+- description: |-
+    The list of incident field categories to specify where to set email parameters. These categories are available:
+    - email*
+    - attachment*
+    - reported*
+  key: IncidentFieldCategories
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: email*,attachment*
+name: MM - Parse and Render an Email
+outputs:
+- contextPath: Email
+  description: Email object.
+  type: unknown
+- contextPath: Email.To
+  description: This shows to whom the message was addressed, but may not contain the
+    recipient's address.
+  type: string
+- contextPath: Email.CC
+  description: Email 'cc' addresses
+  type: string
+- contextPath: Email.From
+  description: This displays who the message is from, however, this can be easily
+    forged and can be the least reliable.
+  type: string
+- contextPath: Email.Subject
+  description: Email subject
+  type: string
+- contextPath: Email.HTML
+  description: Email 'html' body if exists
+  type: string
+- contextPath: Email.Text
+  description: Email 'text' body if exists
+  type: string
+- contextPath: Email.Depth
+  description: The depth of the email. Depth=0 for the first level email. If email1
+    contains email2 contains email3. Then email1 depth is 0, email2 depth is 1, email3
+    depth is 2
+  type: number
+- contextPath: Email.AttachmentNames
+  description: The list of attachment names in the email
+  type: string
+- contextPath: Email.Format
+  description: The format of the email if available
+  type: string
+- contextPath: Email.HeadersMap
+  description: The full email headers json
+  type: Unknown
+- contextPath: Email.HeadersMap.From
+  description: This displays who the message is from, however, this can be easily
+    forged and can be the least reliable.
+  type: Unknown
+- contextPath: Email.HeadersMap.To
+  description: This shows to whom the message was addressed, but may not contain the
+    recipient's address.
+  type: Unknown
+- contextPath: Email.HeadersMap.Subject
+  description: Email subject
+  type: String
+- contextPath: Email.HeadersMap.Date
+  description: The date and time the email message was composed
+  type: Unknown
+- contextPath: Email.HeadersMap.CC
+  description: Email 'cc' addresses
+  type: Unknown
+- contextPath: Email.HeadersMap.Reply-To
+  description: The email address for return mail
+  type: String
+- contextPath: Email.HeadersMap.Received
+  description: List of all the servers/computers through which the message traveled
+  type: String
+- contextPath: Email.HeadersMap.Message-ID
+  description: A unique string assigned by the mail system when the message is first
+    created. These can easily be forged. (e.g. 5c530c1b.1c69fb81.bd826.0eff@mx.google.com)
+  type: String
+- contextPath: Email.AttachmentFile
+  type: unknown
+- contextPath: Email.AttachmentFile.EntryID
+  description: The EntryID of the attachment file
+  type: string
+- contextPath: Email.AttachmentFile.Extension
+  description: The extension of the attachment file
+  type: string
+- contextPath: Email.AttachmentFile.Name
+  description: The name of the attachment file
+  type: string
+- contextPath: Email.AttachmentFile.Info
+  description: The info of the attachment file
+  type: string
+- contextPath: Email.AttachmentFile.Size
+  description: The size of the attachment file
+  type: number
+- contextPath: Email.AuthenticityCheck
+  description: 'Possible values are be: Fail / Suspicious / Undetermined / Pass'
+  type: string
+- contextPath: Email.DKIM
+  description: DKIM information extracted from the email.
+  type: Unknown
+- contextPath: Email.DKIM.Message-ID
+  description: DKIM ID.
+  type: String
+- contextPath: Email.DKIM.Reason
+  description: DKIM reason (if found).
+  type: String
+- contextPath: Email.DKIM.Signing-Domain
+  description: Sender's Domain
+  type: String
+- contextPath: Email.DKIM.Validation-Result
+  description: Validation result. Possible values are "None", "Pass", "Fail", "Policy",
+    "Neutral", "Temperror", and "Permerror".
+  type: Unknown
+- contextPath: Email.SPF
+  description: SPF information extracted from the email.
+  type: Unknown
+- contextPath: Email.SPF.MessageID
+  description: SPF ID
+  type: String
+- contextPath: Email.SPF.Validation-Result
+  description: 'Validation Result. Possible values are "None", "Neutral", "Pass",
+    "Fail", "SoftFail", "TempError", and "PermError". '
+  type: String
+- contextPath: Email.SPF.Reason
+  description: Reason for the SPF result, which is located in the headers of the email.
+  type: String
+- contextPath: Email.SPF.Sender-IP
+  description: Email sender IP address.
+  type: String
+- contextPath: Email.DMARC
+  description: DMARC information extracted from the email.
+  type: Unknown
+- contextPath: Email.DMARC.Message-ID
+  description: DMARC ID.
+  type: String
+- contextPath: Email.DMARC.Validation-Result
+  description: DMARC reason. Possible values are "None", "Pass", "Fail", "Temperror",
+    and "Permerror".
+  type: String
+- contextPath: Email.DMARC.Tags
+  description: DMARC Tags (if found)
+  type: String
+- contextPath: Email.DMARC.From-Domain
+  description: Sender's Domain
+  type: String
+- contextPath: File
+  type: unknown
+- contextPath: File.EntryID
+  description: The EntryID of the attachment file
+  type: string
+- contextPath: File.Extension
+  description: The extension of the attachment file
+  type: string
+- contextPath: File.Name
+  description: The name of the attachment file
+  type: string
+- contextPath: File.Info
+  description: The info of the attachment file
+  type: string
+- contextPath: File.Size
+  description: The size of the attachment file
+  type: number
+starttaskid: "0"
+tasks:
+  "0":
+    continueonerrortype: ""
+    id: "0"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "23"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 3afacc23-e1a8-404e-8268-1786e2cc1c18
+      iscommand: false
+      name: ""
+      version: -1
+    taskid: 3afacc23-e1a8-404e-8268-1786e2cc1c18
+    timertriggers: []
+    type: start
+    view: |-
+      {
+        "position": {
+          "x": 285,
+          "y": 50
+        }
+      }
+  "1":
+    continueonerrortype: ""
+    id: "1"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      "no":
+      - "38"
+      "yes":
+      - "3"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      entryid:
+        complex:
+          accessor: EntryID
+          root: inputs.File
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Identify whether the incident includes an email message attached
+        as an eml or msg file and return the answer to playbook. Also saves the identified
+        entry ID to context for use for later. Commonly used in automated playbooks
+        that handle phishing reports sent to a special phishing mailbox set up by
+        the security team.
+      id: a21cfb08-f257-4bbe-89fe-5cc5775eb71d
+      iscommand: false
+      name: Does the file include email?
+      script: IdentifyAttachedEmail
+      type: condition
+      version: -1
+    taskid: a21cfb08-f257-4bbe-89fe-5cc5775eb71d
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 612.5,
+          "y": 370
+        }
+      }
+  "2":
+    continueonerrortype: ""
+    id: "2"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "39"
+    note: false
+    quietmode: 0
+    reputationcalc: 2
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Sets the details of the email that was forwarded under the Email
+        context key.
+      id: b8914750-7c2e-4ae5-8bdb-466ec27fe9a3
+      iscommand: false
+      name: Handle as a forwarded email
+      type: title
+      version: -1
+    taskid: b8914750-7c2e-4ae5-8bdb-466ec27fe9a3
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 720
+        }
+      }
+  "3":
+    continueonerrortype: ""
+    id: "3"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "22"
+    note: false
+    quietmode: 0
+    reputationcalc: 2
+    scriptarguments:
+      entryid:
+        complex:
+          root: reportedemailentryid
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Parse an email from an eml or msg file and populate all relevant
+        context data to investigate the email. Also extracts inner attachments and
+        returns them to the war room. The incident labels themselves are preserved
+        and not modified - only the "Label/x" context items that originated from the
+        labels, and the best practice is to rely on these for the remainder of the
+        playbook. This script is based on the parse-emails XSOAR python package, check
+        the script documentation for more info
+      id: 5dc82636-2957-4e41-8ce8-55a081bc9516
+      iscommand: false
+      name: Parse Emails
+      script: ParseEmailFilesV2
+      type: regular
+      version: -1
+    taskid: 5dc82636-2957-4e41-8ce8-55a081bc9516
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 612.5,
+          "y": 545
+        }
+      }
+  "4":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                accessor: HTML
+                root: Email
+          operator: isExists
+          right:
+            value: {}
+      - - left:
+            iscontext: true
+            value:
+              simple: Email.HTML
+          operator: isNotEmpty
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                filters:
+                - - left:
+                      iscontext: true
+                      value:
+                        simple: brand
+                    operator: isEqualString
+                    right:
+                      value:
+                        simple: Rasterize
+                - - left:
+                      iscontext: true
+                      value:
+                        simple: state
+                    operator: isEqualString
+                    right:
+                      value:
+                        simple: active
+                root: modules
+          operator: isExists
+      label: "yes"
+    continueonerrortype: ""
+    id: "4"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "6"
+      "yes":
+      - "5"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Checks whether the email is HTML-formatted, and whether the Rasterize
+        integration is enabled.
+      id: 9bd11331-9088-4965-866a-1215d2840e0c
+      iscommand: false
+      name: Is the rendering enabled for HTML?
+      type: condition
+      version: -1
+    taskid: 9bd11331-9088-4965-866a-1215d2840e0c
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 172.5,
+          "y": 4420
+        }
+      }
+  "5":
+    continueonerrortype: ""
+    id: "5"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "6"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      htmlBody:
+        complex:
+          accessor: HTML
+          root: Email
+      offline:
+        simple: "true"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Rasterize an email body into an image
+      id: 6b6f8430-f1d2-436a-886c-d79de93b3c78
+      iscommand: true
+      name: Rasterize HTML parts
+      script: '|||rasterize-email'
+      tags:
+      - email_html_image
+      type: regular
+      version: -1
+    taskid: 6b6f8430-f1d2-436a-886c-d79de93b3c78
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 285,
+          "y": 4595
+        }
+      }
+  "6":
+    continueonerrortype: ""
+    id: "6"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: f3524c61-ac2f-4f1c-82e3-0f43f2cafe08
+      iscommand: false
+      name: Done
+      type: title
+      version: -1
+    taskid: f3524c61-ac2f-4f1c-82e3-0f43f2cafe08
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 172.5,
+          "y": 4770
+        }
+      }
+  "11":
+    continueonerrortype: ""
+    id: "11"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "4"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: a06a10cc-54df-4d4d-8216-c7c9e6788197
+      iscommand: false
+      name: Render Emails
+      type: title
+      version: -1
+    taskid: a06a10cc-54df-4d4d-8216-c7c9e6788197
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 172.5,
+          "y": 4275
+        }
+      }
+  "19":
+    continueonerrortype: ""
+    id: "19"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "55"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: Updates Cortex XSOAR incident fields using data from the email
+        object.
+      id: c83036d5-67cb-4c0a-8025-61c515e48c55
+      iscommand: false
+      name: Authenticate Email
+      type: title
+      version: -1
+    taskid: c83036d5-67cb-4c0a-8025-61c515e48c55
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 172.5,
+          "y": 2585
+        }
+      }
+  "20":
+    continueonerror: true
+    continueonerrortype: ""
+    id: "20"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "52"
+    note: false
+    quietmode: 0
+    reputationcalc: 3
+    scriptarguments:
+      columns:
+        complex:
+          root: inputs.EmailHeadersGrid
+          transformers:
+          - args:
+              delimiter:
+                value:
+                  simple: ','
+            operator: splitAndTrim
+          - args:
+              from:
+                value:
+                  simple: "1"
+              to:
+                value:
+                  simple: "3"
+            operator: slice
+          - args:
+              separator:
+                value:
+                  simple: ','
+            operator: join
+      context_path:
+        simple: EmailHeadersGrid
+      grid_id:
+        complex:
+          root: inputs.EmailHeadersGrid
+          transformers:
+          - args:
+              delimiter:
+                value:
+                  simple: ','
+            operator: splitAndTrim
+          - args:
+              from:
+                value:
+                  simple: "0"
+              to:
+                value:
+                  simple: "1"
+            operator: slice
+      keys:
+        simple: name,value
+      overwrite:
+        simple: "true"
+      unpack_nested_elements:
+        simple: "false"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Fills the "Email Headers" grid field in the incident layout with
+        the email attachment's headers.
+      id: 6b9c9e1a-7de5-4217-8c73-f87d3bf154af
+      iscommand: false
+      name: Set Email Headers in the grid
+      script: SetGridField
+      type: regular
+      version: -1
+    taskid: 6b9c9e1a-7de5-4217-8c73-f87d3bf154af
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 725,
+          "y": 1215
+        }
+      }
+  "21":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                accessor: Headers
+                root: Email
+          operator: isNotEmpty
+          right:
+            value: {}
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.EmailHeadersGrid
+                transformers:
+                - args:
+                    delimiter:
+                      value:
+                        simple: ','
+                  operator: splitAndTrim
+                - args:
+                    from:
+                      value:
+                        simple: "0"
+                    to:
+                      value:
+                        simple: "1"
+                  operator: slice
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "21"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "52"
+      "yes":
+      - "43"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Checks whether the email headers were extracted from the original
+        email that was either attached or retrieved using available email integrations.
+      id: 900bf20f-ae83-473d-8c1a-bc76355b8bbf
+      iscommand: false
+      name: Do they have decoded headers?
+      type: condition
+      version: -1
+    taskid: 900bf20f-ae83-473d-8c1a-bc76355b8bbf
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 612.5,
+          "y": 865
+        }
+      }
+  "22":
+    continueonerrortype: ""
+    id: "22"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "21"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 6e4a6c58-c4ce-4daa-8bba-32d15a04e1ab
+      iscommand: false
+      name: Handle Email Headers
+      type: title
+      version: -1
+    taskid: 6e4a6c58-c4ce-4daa-8bba-32d15a04e1ab
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 612.5,
+          "y": 720
+        }
+      }
+  "23":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                accessor: EntryID
+                root: inputs.File
+          operator: isNotEmpty
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "23"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "38"
+      "yes":
+      - "1"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Checks whether the incident contains any kind of file.
+      id: 94dcc5fd-7f7f-43b1-89f7-c96093b016ec
+      iscommand: false
+      name: Is the email in file?
+      type: condition
+      version: -1
+    taskid: 94dcc5fd-7f7f-43b1-89f7-c96093b016ec
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 285,
+          "y": 195
+        }
+      }
+  "25":
+    continueonerrortype: ""
+    id: "25"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "26"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set multiple keys/values to the context.
+      id: 0cd14841-16ad-4e82-8d86-59faa7bc631c
+      iscommand: false
+      name: Attachment File Parameters
+      type: title
+      version: -1
+    taskid: 0cd14841-16ad-4e82-8d86-59faa7bc631c
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 612.5,
+          "y": 2090
+        }
+      }
+  "26":
+    continueonerrortype: ""
+    id: "26"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "41"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      key:
+        simple: Email.AttachmentCount
+      value:
+        complex:
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: File.EntryID
+              operator: notIn
+              right:
+                iscontext: true
+                value:
+                  simple: IncidentFiles.EntryID
+          root: File
+          transformers:
+          - operator: count
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Saves the number of attachments in the email.
+      id: c27eaf36-407f-47c9-80ec-e8fe304a0400
+      iscommand: false
+      name: Set Email.AttachmentCount
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: c27eaf36-407f-47c9-80ec-e8fe304a0400
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 612.5,
+          "y": 2235
+        }
+      }
+  "32":
+    continueonerrortype: ""
+    id: "32"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "25"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      entryID:
+        complex:
+          accessor: EntryID
+          root: File
+      incID:
+        complex:
+          accessor: id
+          root: incident
+      target:
+        simple: incident attachment
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Copies a file from this incident to the specified incident. The
+        file is recorded as an entry in the specified incident’s War Room.
+      id: b6a8e9c9-8b3a-453d-8212-a221d2ed46a2
+      iscommand: false
+      name: Upload attachment file to the incident
+      script: UploadFile
+      type: regular
+      version: -1
+    taskid: b6a8e9c9-8b3a-453d-8212-a221d2ed46a2
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 837.5,
+          "y": 1915
+        }
+      }
+  "33":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                filters:
+                - - left:
+                      iscontext: true
+                      value:
+                        simple: File.EntryID
+                    operator: isNotEmpty
+                root: File
+          operator: isNotEmpty
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "33"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "25"
+      "yes":
+      - "40"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Checks whether the email headers were extracted from the original
+        email that was either attached or retrieved using available email integrations.
+      id: 5876500e-2287-477b-8646-78b60802aa8c
+      iscommand: false
+      name: Do they have attachment files?
+      type: condition
+      version: -1
+    taskid: 5876500e-2287-477b-8646-78b60802aa8c
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 612.5,
+          "y": 1565
+        }
+      }
+  "35":
+    continueonerrortype: ""
+    id: "35"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "53"
+    note: false
+    quietmode: 0
+    reputationcalc: 2
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: Email.From
+      value:
+        complex:
+          root: inputs.Email/text
+          transformers:
+          - args:
+              error_if_no_match: {}
+              ignore_case:
+                value:
+                  simple: "true"
+              multi_line:
+                value:
+                  simple: "true"
+              period_matches_newline:
+                value:
+                  simple: "true"
+              regex:
+                value:
+                  simple: '(Forwarded|転送された)[^\r\n]+.*?(From|差出人): [^\r\n]*?([^\s<]+?@[^\s>]+)'
+            operator: RegexExtractAll
+          - operator: LastArrayElement
+          - args:
+              error_if_no_match: {}
+              ignore_case: {}
+              multi_line: {}
+              period_matches_newline: {}
+              regex:
+                value:
+                  simple: .'([^\s<]+?@[^\s<>']+)
+            operator: RegexExtractAll
+          - operator: LastArrayElement
+          - args:
+              applyIfEmpty: {}
+              defaultValue: {}
+            operator: SetIfEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set a value in context under the key you entered. If no value is
+        entered, the script doesn't do anything.
+      id: f85f500a-1553-4b7b-8faf-354b809f0ece
+      iscommand: false
+      name: Set Email.From from the original email
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: f85f500a-1553-4b7b-8faf-354b809f0ece
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 1040
+        }
+      }
+  "36":
+    continueonerrortype: ""
+    id: "36"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "44"
+    note: false
+    quietmode: 0
+    reputationcalc: 2
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: Email.Subject
+      value:
+        complex:
+          root: inputs.Email/subject
+          transformers:
+          - args:
+              error_if_no_match: {}
+              ignore_case:
+                value:
+                  simple: "true"
+              multi_line:
+                value:
+                  simple: "true"
+              period_matches_newline:
+                value:
+                  simple: "true"
+              regex:
+                value:
+                  simple: '(Forwarded|転送された)[^\r\n]+.*?(Subject|件名): ([^\r\n]*)'
+            operator: RegexExtractAll
+          - operator: LastArrayElement
+          - args:
+              error_if_no_match: {}
+              ignore_case: {}
+              multi_line: {}
+              period_matches_newline: {}
+              regex:
+                value:
+                  simple: '[^''].*?''[^''].*?''[^''].*?''[^''].*?''[^''].*?''(.*)''\)'
+            operator: RegexExtractAll
+          - operator: LastArrayElement
+          - args:
+              applyIfEmpty: {}
+              defaultValue: {}
+            operator: SetIfEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set a value in context under the key you entered. If no value is
+        entered, the script doesn't do anything.
+      id: 06db8e95-5706-4bfb-8923-fd48cd133b69
+      iscommand: false
+      name: Set Email.Subject from the original email
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 06db8e95-5706-4bfb-8923-fd48cd133b69
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 162.5,
+          "y": 1390
+        }
+      }
+  "37":
+    continueonerrortype: ""
+    id: "37"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "19"
+    note: false
+    quietmode: 0
+    reputationcalc: 2
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: Email
+      value:
+        simple: |-
+          ${.={
+              To: val.inputs.Email,
+              CC: val.inputs['Email/cc'],
+              From: val.Email && val.Email.From ? val.Email.From : val.inputs['Email/from'],
+              Subject: val.Email && val.Email.Subject ? val.Email.Subject : val.inputs['Email/subject'],
+              Text: val.inputs['Email/text'],
+              HTML: val.inputs['Email/html'],
+              Headers: val.Email.Headers,
+              Format: val.inputs['Email/format']
+            }
+          }
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Sets the details of the email that was forwarded under the Email
+        context key.
+      id: e109a340-84db-4998-880f-4fce10dbcddb
+      iscommand: false
+      name: Set Email.*
+      script: Set
+      type: regular
+      version: -1
+    taskid: e109a340-84db-4998-880f-4fce10dbcddb
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1740
+        }
+      }
+  "38":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.Forwarded
+          operator: isTrue
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "38"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      "yes":
+      - "2"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: f9677321-503d-4e0f-847e-2bdb0a85e297
+      iscommand: false
+      name: Do the emails need to deal with as forwarded ones?
+      type: condition
+      version: -1
+    taskid: f9677321-503d-4e0f-847e-2bdb0a85e297
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 545
+        }
+      }
+  "39":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.Email/text
+          operator: isNotEmpty
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "39"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "53"
+      "yes":
+      - "35"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 532e1c60-d25c-4806-855a-1c15cfc5ed22
+      iscommand: false
+      name: Are there any email text?
+      type: condition
+      version: -1
+    taskid: 532e1c60-d25c-4806-855a-1c15cfc5ed22
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 865
+        }
+      }
+  "40":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.UploadAttachments
+          operator: isTrue
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "40"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "25"
+      "yes":
+      - "32"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: c6703351-bbcf-4a4b-8808-aad6819e2edf
+      iscommand: false
+      name: Is it required to upload attachment files to the incident?
+      type: condition
+      version: -1
+    taskid: c6703351-bbcf-4a4b-8808-aad6819e2edf
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 725,
+          "y": 1740
+        }
+      }
+  "41":
+    continueonerrortype: ""
+    id: "41"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "19"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      key:
+        simple: Email.Attachment
+      value:
+        complex:
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: File.EntryID
+              operator: notIn
+              right:
+                iscontext: true
+                value:
+                  simple: IncidentFiles.EntryID
+          root: File
+          transformers:
+          - args:
+              dt:
+                value:
+                  simple: |-
+                    .= {
+                     Size: val.Size,
+                     Extension: val.Extension,
+                     Name: val.Name,
+                     Type: val.Type,
+                     Hash: val.MD5
+                    }
+            operator: DT
+          - args:
+              empty_values: {}
+              remove_keys:
+                value:
+                  simple: "true"
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Saves the email attachment sizes.
+      id: 943ed7ff-fb6f-44c1-8162-f2ec5361c546
+      iscommand: false
+      name: Set Email.Attachment.Size, Extension, Name, Type, Hash
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 943ed7ff-fb6f-44c1-8162-f2ec5361c546
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 612.5,
+          "y": 2410
+        }
+      }
+  "43":
+    continueonerror: true
+    continueonerrortype: ""
+    id: "43"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "20"
+    note: false
+    quietmode: 0
+    reputationcalc: 3
+    scriptarguments:
+      key:
+        simple: EmailHeadersGrid
+      value:
+        complex:
+          accessor: Headers
+          root: Email
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: a734dbbf-da7a-4c02-812b-9b6a1ea778a1
+      iscommand: false
+      name: Transform Email Headers for Grid
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: a734dbbf-da7a-4c02-812b-9b6a1ea778a1
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 725,
+          "y": 1040
+        }
+      }
+  "44":
+    continueonerrortype: ""
+    id: "44"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "37"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: Email.Headers
+      value:
+        complex:
+          root: inputs.Email/headers
+          transformers:
+          - args:
+              applyIfEmpty:
+                value:
+                  simple: "true"
+              defaultValue:
+                value:
+                  simple: '{}'
+            operator: SetIfEmpty
+          - operator: ParseJSON
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: ec7bbd00-8a34-4203-8aad-019d78846f20
+      iscommand: false
+      name: Parse Email.Headers
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: ec7bbd00-8a34-4203-8aad-019d78846f20
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1565
+        }
+      }
+  "46":
+    continueonerrortype: ""
+    id: "46"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "49"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      attachmentitem:
+        complex:
+          accessor: Attachment.Item
+          root: Email
+      deleteEmptyField:
+        simple: "True"
+      emailauthenticitycheck:
+        complex:
+          accessor: AuthenticityCheck
+          root: Email
+          transformers:
+          - operator: uniq
+          - operator: Stringify
+          - args:
+              algorithm:
+                value:
+                  simple: wildcard
+              caseless:
+                value:
+                  simple: "true"
+              compare_fields: {}
+              context: {}
+              default_value:
+                value:
+                  simple: Undetermined
+              flags: {}
+              mappings:
+                value:
+                  simple: |-
+                    {
+                      "undetermined": "Undetermined",
+                      "pass": "Pass",
+                      "fail": "Fail",
+                      "suspicious": "Suspicious"
+                    }
+              priority: {}
+              wildcards: {}
+            operator: MapPattern
+      emailbcc:
+        complex:
+          accessor: HeadersMap.BCC
+          root: Email
+          transformers:
+          - operator: uniq
+          - operator: Stringify
+      emailbody:
+        complex:
+          accessor: Text
+          root: Email
+          transformers:
+          - operator: Stringify
+      emailbodyformat:
+        complex:
+          accessor: BodyFormat
+          root: Email
+      emailbodyhtml:
+        complex:
+          accessor: HTML
+          root: Email
+          transformers:
+          - operator: Stringify
+      emailcc:
+        complex:
+          accessor: CC
+          root: Email
+          transformers:
+          - operator: uniq
+          - operator: Stringify
+      emailclientname:
+        complex:
+          accessor: ClientName
+          root: Email
+      emailfrom:
+        complex:
+          accessor: From
+          root: Email
+          transformers:
+          - operator: uniq
+          - operator: Stringify
+      emailhtml:
+        complex:
+          accessor: HTML
+          root: Email
+          transformers:
+          - operator: uniq
+      emailimage:
+        complex:
+          accessor: Image
+          root: Email
+      emailinreplyto:
+        complex:
+          accessor: InReplyTo
+          root: Email
+      emailkeywords:
+        complex:
+          accessor: Keywords
+          root: Email
+      emailmessageid:
+        complex:
+          accessor: HeadersMap.Message-ID
+          root: Email
+          transformers:
+          - operator: uniq
+      emailreplyto:
+        complex:
+          accessor: HeadersMap.Reply-To
+          root: Email
+          transformers:
+          - operator: uniq
+      emailreturnpath:
+        complex:
+          accessor: HeadersMap.Return-Path
+          root: Email
+          transformers:
+          - operator: uniq
+      emailsenderip:
+        complex:
+          accessor: SenderIP
+          root: Email
+          transformers:
+          - operator: uniq
+      emailsize:
+        complex:
+          accessor: Size
+          root: Email
+          transformers:
+          - operator: uniq
+      emailsource:
+        complex:
+          accessor: Source
+          root: Email
+          transformers:
+          - operator: uniq
+      emailsubject:
+        complex:
+          accessor: Subject
+          root: Email
+          transformers:
+          - operator: uniq
+          - operator: Stringify
+      emailto:
+        complex:
+          accessor: To
+          root: Email
+          transformers:
+          - operator: uniq
+          - args:
+              separator:
+                value:
+                  simple: ','
+            operator: join
+      emailtocount:
+        complex:
+          accessor: To
+          root: Email
+          transformers:
+          - operator: uniq
+          - operator: count
+      emailurlclicked:
+        complex:
+          root: EmailUrlClicked
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: Updates Cortex XSOAR incident fields using data from the email
+        object.
+      id: b0ce8223-9e17-4d91-8a76-32057286f197
+      iscommand: true
+      name: Set Email Parameters to the incident
+      script: Builtin|||setIncident
+      type: regular
+      version: -1
+    taskid: b0ce8223-9e17-4d91-8a76-32057286f197
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 285,
+          "y": 3750
+        }
+      }
+  "47":
+    conditions:
+    - condition:
+      - - left:
+            value:
+              simple: attachment*
+          operator: in
+          right:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.IncidentFieldCategories
+                transformers:
+                - args:
+                    delimiter:
+                      value:
+                        simple: ','
+                  operator: splitAndTrim
+      label: "yes"
+    continueonerrortype: ""
+    id: "47"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "51"
+      "yes":
+      - "48"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: Updates Cortex XSOAR incident fields using data from the email
+        object.
+      id: b09cc74c-032a-4940-82fe-cf93a5931878
+      iscommand: false
+      name: Is it required to set attachment* incident fields?
+      type: condition
+      version: -1
+    taskid: b09cc74c-032a-4940-82fe-cf93a5931878
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 172.5,
+          "y": 3225
+        }
+      }
+  "48":
+    continueonerrortype: ""
+    id: "48"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "51"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      attachmentcount:
+        complex:
+          accessor: AttachmentCount
+          root: Email
+          transformers:
+          - args:
+              empty_values: {}
+              remove_keys: {}
+            operator: RemoveEmpty
+      attachmentextension:
+        complex:
+          accessor: Attachment
+          root: Email
+          transformers:
+          - operator: FirstArrayElement
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{..=val.Extension ? val.Extension : ""}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+          - args:
+              empty_values: {}
+              remove_keys: {}
+            operator: RemoveEmpty
+      attachmenthash:
+        complex:
+          accessor: Attachment
+          root: Email
+          transformers:
+          - operator: FirstArrayElement
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{..=val.Hash ? val.Hash : ""}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+          - args:
+              empty_values: {}
+              remove_keys: {}
+            operator: RemoveEmpty
+      attachmentid:
+        complex:
+          accessor: Attachment
+          root: Email
+          transformers:
+          - operator: FirstArrayElement
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{..=val.ID ? val.ID : ""}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+          - args:
+              empty_values: {}
+              remove_keys: {}
+            operator: RemoveEmpty
+      attachmentitem:
+        complex:
+          accessor: Attachment.Item
+          root: Email
+      attachmentname:
+        complex:
+          accessor: Attachment
+          root: Email
+          transformers:
+          - operator: FirstArrayElement
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{..=val.Name ? val.Name : ""}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+          - args:
+              empty_values: {}
+              remove_keys: {}
+            operator: RemoveEmpty
+      attachmentsize:
+        complex:
+          accessor: Attachment
+          root: Email
+          transformers:
+          - operator: FirstArrayElement
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{..=val.Size ? val.Size : ""}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+          - args:
+              empty_values: {}
+              remove_keys: {}
+            operator: RemoveEmpty
+      attachmenttype:
+        complex:
+          accessor: Attachment
+          root: Email
+          transformers:
+          - operator: FirstArrayElement
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{..=val.Type ? val.Type : ""}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+          - args:
+              empty_values: {}
+              remove_keys: {}
+            operator: RemoveEmpty
+      deleteEmptyField:
+        simple: "True"
+      emailimage:
+        complex:
+          accessor: Image
+          root: Email
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: Updates Cortex XSOAR incident fields using data from the email
+        object.
+      id: 8055636f-ec8f-40b2-8896-94ae5dc7c1e0
+      iscommand: true
+      name: Set Email Parameters to the incident
+      script: Builtin|||setIncident
+      type: regular
+      version: -1
+    taskid: 8055636f-ec8f-40b2-8896-94ae5dc7c1e0
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 285,
+          "y": 3400
+        }
+      }
+  "49":
+    conditions:
+    - condition:
+      - - left:
+            value:
+              simple: reported*
+          operator: in
+          right:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.IncidentFieldCategories
+                transformers:
+                - args:
+                    delimiter:
+                      value:
+                        simple: ','
+                  operator: splitAndTrim
+      label: "yes"
+    continueonerrortype: ""
+    id: "49"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "11"
+      "yes":
+      - "50"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: Updates Cortex XSOAR incident fields using data from the email
+        object.
+      id: 160b53ce-7588-4a51-8019-cc8bc9d00aa3
+      iscommand: false
+      name: Is it required to set reported* incident fields?
+      type: condition
+      version: -1
+    taskid: 160b53ce-7588-4a51-8019-cc8bc9d00aa3
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 172.5,
+          "y": 3925
+        }
+      }
+  "50":
+    continueonerrortype: ""
+    id: "50"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "11"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      attachmentitem:
+        complex:
+          accessor: Attachment.Item
+          root: Email
+      deleteEmptyField:
+        simple: "True"
+      emailimage:
+        complex:
+          accessor: Image
+          root: Email
+      reportedemailcc:
+        complex:
+          accessor: CC
+          root: Email
+          transformers:
+          - operator: uniq
+          - operator: Stringify
+      reportedemailfrom:
+        complex:
+          accessor: From
+          root: Email
+          transformers:
+          - operator: uniq
+          - operator: Stringify
+      reportedemailmessageid:
+        complex:
+          accessor: HeadersMap.Message-ID
+          root: Email
+          transformers:
+          - operator: uniq
+      reportedemailsubject:
+        complex:
+          accessor: Subject
+          root: Email
+          transformers:
+          - operator: uniq
+          - operator: Stringify
+      reportedemailto:
+        complex:
+          accessor: To
+          root: Email
+          transformers:
+          - operator: uniq
+          - args:
+              separator:
+                value:
+                  simple: ','
+            operator: join
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: Updates Cortex XSOAR incident fields using data from the email
+        object.
+      id: 2128b41f-ada4-4bbb-82c1-cffd0b1700ec
+      iscommand: true
+      name: Set Email Parameters to the incident
+      script: Builtin|||setIncident
+      type: regular
+      version: -1
+    taskid: 2128b41f-ada4-4bbb-82c1-cffd0b1700ec
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 285,
+          "y": 4100
+        }
+      }
+  "51":
+    conditions:
+    - condition:
+      - - left:
+            value:
+              simple: email*
+          operator: in
+          right:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.IncidentFieldCategories
+                transformers:
+                - args:
+                    delimiter:
+                      value:
+                        simple: ','
+                  operator: splitAndTrim
+      label: "yes"
+    continueonerrortype: ""
+    id: "51"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "49"
+      "yes":
+      - "46"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: Updates Cortex XSOAR incident fields using data from the email
+        object.
+      id: 138c5452-4f0c-4b18-831d-0fe00f2eb16f
+      iscommand: false
+      name: Is it required to set email* incident fields?
+      type: condition
+      version: -1
+    taskid: 138c5452-4f0c-4b18-831d-0fe00f2eb16f
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 172.5,
+          "y": 3575
+        }
+      }
+  "52":
+    continueonerrortype: ""
+    id: "52"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "33"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 309221f4-049a-47ac-8e70-499186dd7767
+      iscommand: false
+      name: Handle Attachment Files
+      type: title
+      version: -1
+    taskid: 309221f4-049a-47ac-8e70-499186dd7767
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 612.5,
+          "y": 1405
+        }
+      }
+  "53":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.Email/subject
+          operator: isNotEmpty
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "53"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "44"
+      "yes":
+      - "36"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 23218dbc-c8c4-4a77-8375-7310e7da0e46
+      iscommand: false
+      name: Is there email subject?
+      type: condition
+      version: -1
+    taskid: 23218dbc-c8c4-4a77-8375-7310e7da0e46
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1215
+        }
+      }
+  "54":
+    continueonerrortype: ""
+    id: "54"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "47"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 71bf2a87-23c8-4178-8482-c788551b65b9
+      iscommand: false
+      name: Other Email Attributes to Incident Fields
+      type: title
+      version: -1
+    taskid: 71bf2a87-23c8-4178-8482-c788551b65b9
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 172.5,
+          "y": 3080
+        }
+      }
+  "55":
+    conditions:
+    - condition:
+      - - ignorecase: true
+          left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.AuthenticateEmail
+          operator: isTrue
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                accessor: Headers
+                root: Email
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "55"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "54"
+      "yes":
+      - "56"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Checks whether the email should be authenticated using DKIM, SPF,
+        and DMARC. This checks if "AuthenticateEmail" output is set to "True" and
+        if there are headers from an email to authenticate.
+      id: fe53c223-c35e-48fb-85e9-52c5c63fd80c
+      iscommand: false
+      name: Should the email be authenticated?
+      type: condition
+      version: -1
+    taskid: fe53c223-c35e-48fb-85e9-52c5c63fd80c
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 172.5,
+          "y": 2730
+        }
+      }
+  "56":
+    continueonerrortype: ""
+    id: "56"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "54"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      headers:
+        complex:
+          accessor: Headers
+          root: Email
+          transformers:
+          - operator: uniq
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Checks the authenticity of an email based on the email's SPF, DMARC,
+        and DKIM.
+      id: 882fc22f-c8c9-4608-8bf5-16ba30daacdf
+      iscommand: false
+      name: Authenticate email
+      script: CheckEmailAuthenticity
+      type: regular
+      version: -1
+    taskid: 882fc22f-c8c9-4608-8bf5-16ba30daacdf
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 60,
+          "y": 2905
+        }
+      }
+  "57":
+    continueonerror: true
+    continueonerrortype: ""
+    id: "57"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    note: false
+    quietmode: 0
+    reputationcalc: 3
+    scriptarguments:
+      key:
+        simple: EmailHeadersGrid
+      value:
+        complex:
+          accessor: HeadersMap
+          root: Email
+          transformers:
+          - args:
+              dt:
+                value:
+                  simple: '.=Object.keys(val).map(k => [{name: k, value: val[k]}])'
+            operator: DT
+          - args:
+              dt:
+                value:
+                  simple: '.=Array.isArray(val.value) ? val.value.map(v => [{name:
+                    val.name, value: v}]) : val'
+            operator: DT
+          - args:
+              dt:
+                value:
+                  simple: '.=val.value === null || typeof val.value !== ''object''
+                    ? val : {name: val.name, value: JSON.stringify(val.value)}'
+            operator: DT
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: a4b6917a-7df1-455b-8b99-a7d2dcd5dad3
+      iscommand: false
+      name: Transform Email Headers for Grid (From Email.HeadersMap)
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: a4b6917a-7df1-455b-8b99-a7d2dcd5dad3
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1125,
+          "y": 1040
+        }
+      }
+version: -1
+view: |-
+  {
+    "linkLabelsPosition": {
+      "4_5_yes": 0.57
+    },
+    "paper": {
+      "dimensions": {
+        "height": 4785,
+        "width": 1455,
+        "x": 50,
+        "y": 50
+      }
+    }
+  }

@@ -1,0 +1,555 @@
+{
+	"cacheVersn": 0,
+	"close": null,
+	"definitionId": "",
+	"description": "",
+	"detached": false,
+	"details": null,
+	"detailsV2": {
+		"TypeName": "",
+		"tabs": [
+			{
+				"id": "summary",
+				"name": "Legacy Summary",
+				"type": "summary"
+			},
+			{
+				"id": "caseinfoid",
+				"name": "Incident Info",
+				"sections": [
+					{
+						"displayType": "ROW",
+						"h": 2,
+						"i": "caseinfoid-fce71720-98b0-11e9-97d7-ed26ef9e46c8",
+						"isVisible": true,
+						"items": [
+							{
+								"endCol": 2,
+								"fieldId": "type",
+								"height": 22,
+								"id": "incident-type-field",
+								"index": 0,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 2,
+								"fieldId": "severity",
+								"height": 22,
+								"id": "incident-severity-field",
+								"index": 1,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 2,
+								"fieldId": "owner",
+								"height": 22,
+								"id": "incident-owner-field",
+								"index": 2,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 2,
+								"fieldId": "sourcebrand",
+								"height": 22,
+								"id": "incident-sourceBrand-field",
+								"index": 4,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 2,
+								"fieldId": "sourceinstance",
+								"height": 22,
+								"id": "incident-sourceInstance-field",
+								"index": 5,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 2,
+								"fieldId": "playbookid",
+								"height": 22,
+								"id": "incident-playbookId-field",
+								"index": 6,
+								"sectionItemType": "field",
+								"startCol": 0
+							}
+						],
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Case Details",
+						"static": false,
+						"w": 1,
+						"x": 0,
+						"y": 0
+					},
+					{
+						"h": 2,
+						"i": "caseinfoid-61263cc0-98b1-11e9-97d7-ed26ef9e46c8",
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Notes",
+						"static": false,
+						"type": "notes",
+						"w": 1,
+						"x": 2,
+						"y": 0
+					},
+					{
+						"displayType": "ROW",
+						"h": 2,
+						"i": "caseinfoid-6aabad20-98b1-11e9-97d7-ed26ef9e46c8",
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Work Plan",
+						"static": false,
+						"type": "workplan",
+						"w": 1,
+						"x": 1,
+						"y": 0
+					},
+					{
+						"displayType": "ROW",
+						"h": 2,
+						"i": "caseinfoid-770ec200-98b1-11e9-97d7-ed26ef9e46c8",
+						"isVisible": true,
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Linked Incidents",
+						"static": false,
+						"type": "linkedIncidents",
+						"w": 1,
+						"x": 1,
+						"y": 7
+					},
+					{
+						"displayType": "ROW",
+						"h": 2,
+						"i": "caseinfoid-4a31afa0-98ba-11e9-a519-93a53c759fe0",
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Evidence",
+						"static": false,
+						"type": "evidence",
+						"w": 1,
+						"x": 2,
+						"y": 7
+					},
+					{
+						"displayType": "ROW",
+						"h": 3,
+						"i": "caseinfoid-7ce69dd0-a07f-11e9-936c-5395a1acf11e",
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Indicators",
+						"query": "",
+						"queryType": "input",
+						"static": false,
+						"type": "indicators",
+						"w": 3,
+						"x": 0,
+						"y": 2
+					},
+					{
+						"displayType": "ROW",
+						"h": 2,
+						"i": "caseinfoid-88e6bf70-a0b1-11e9-b27f-13ae1773d289",
+						"isVisible": true,
+						"items": [
+							{
+								"endCol": 2,
+								"fieldId": "dbotclosed",
+								"height": 22,
+								"id": "incident-dbotClosed-field",
+								"index": 0,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 2,
+								"fieldId": "closereason",
+								"height": 22,
+								"id": "incident-closeReason-field",
+								"index": 1,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 2,
+								"fieldId": "closenotes",
+								"height": 22,
+								"id": "incident-closeNotes-field",
+								"index": 2,
+								"sectionItemType": "field",
+								"startCol": 0
+							}
+						],
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Closing Information",
+						"static": false,
+						"w": 1,
+						"x": 0,
+						"y": 7
+					},
+					{
+						"displayType": "CARD",
+						"h": 2,
+						"i": "caseinfoid-e54b1770-a0b1-11e9-b27f-13ae1773d289",
+						"isVisible": true,
+						"items": [
+							{
+								"endCol": 2,
+								"fieldId": "details",
+								"height": 22,
+								"id": "incident-details-field",
+								"index": 0,
+								"sectionItemType": "field",
+								"startCol": 0
+							}
+						],
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Investigation Data",
+						"static": false,
+						"w": 3,
+						"x": 0,
+						"y": 5
+					}
+				],
+				"type": "custom"
+			},
+			{
+				"hidden": false,
+				"id": "qruvkznf8q",
+				"name": "Phishing Report",
+				"sections": [
+					{
+						"displayType": "ROW",
+						"h": 2,
+						"hideName": false,
+						"i": "caseinfoid-qruvkznf8q-a58edba0-60a7-11eb-b8b8-afbda9a1f98b",
+						"items": [
+							{
+								"endCol": 6,
+								"fieldId": "reporterdisplayname",
+								"height": 22,
+								"id": "bedfcf30-6226-11eb-8701-f9e9e6836567",
+								"index": 0,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 6,
+								"fieldId": "reporteremailaddress",
+								"height": 22,
+								"id": "14de5dc0-60b0-11eb-8b3f-a3fd82a4c1ad",
+								"index": 2,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 6,
+								"fieldId": "reporteremailsubject",
+								"height": 22,
+								"id": "2ab5f310-60b0-11eb-8b3f-a3fd82a4c1ad",
+								"index": 3,
+								"sectionItemType": "field",
+								"startCol": 0
+							}
+						],
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Headline",
+						"static": false,
+						"w": 3,
+						"x": 0,
+						"y": 0
+					},
+					{
+						"displayType": "CARD",
+						"h": 4,
+						"hideName": false,
+						"i": "caseinfoid-qruvkznf8q-b967cbb0-60b0-11eb-8b3f-a3fd82a4c1ad",
+						"items": [
+							{
+								"endCol": 4,
+								"fieldId": "reporteremailbodyhtml",
+								"height": 106,
+								"id": "1b13b8c0-60b0-11eb-8b3f-a3fd82a4c1ad",
+								"index": 0,
+								"sectionItemType": "field",
+								"startCol": 0
+							}
+						],
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "HTML",
+						"static": false,
+						"w": 2,
+						"x": 1,
+						"y": 2
+					},
+					{
+						"displayType": "CARD",
+						"h": 4,
+						"hideName": false,
+						"i": "caseinfoid-qruvkznf8q-cb789500-60b0-11eb-8b3f-a3fd82a4c1ad",
+						"items": [
+							{
+								"endCol": 2,
+								"fieldId": "reporteremailbody",
+								"height": 44,
+								"id": "18cfbc30-60b0-11eb-8b3f-a3fd82a4c1ad",
+								"index": 0,
+								"sectionItemType": "field",
+								"startCol": 0
+							}
+						],
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Text",
+						"static": false,
+						"w": 1,
+						"x": 0,
+						"y": 2
+					}
+				],
+				"type": "custom"
+			},
+			{
+				"hidden": false,
+				"id": "8iifqoomv8",
+				"name": "Suspicious Email",
+				"sections": [
+					{
+						"displayType": "ROW",
+						"h": 2,
+						"hideItemTitleOnlyOne": true,
+						"i": "caseinfoid-qruvkznf8q-8iifqoomv8-0ec11220-6001-11eb-9580-9744244ee264",
+						"items": [
+							{
+								"endCol": 2,
+								"fieldId": "incident_attachment",
+								"height": 53,
+								"id": "0eb32f71-6001-11eb-9580-9744244ee264",
+								"index": 0,
+								"isVisible": true,
+								"sectionItemType": "field",
+								"startCol": 0
+							}
+						],
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Attachment Files",
+						"static": false,
+						"type": "",
+						"w": 1,
+						"x": 0,
+						"y": 3
+					},
+					{
+						"h": 5,
+						"hideName": false,
+						"i": "caseinfoid-qruvkznf8q-8iifqoomv8-27873be0-6001-11eb-9580-9744244ee264",
+						"items": [],
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Rendered HTML Email",
+						"query": {
+							"tags": [
+								"email_html_image"
+							]
+						},
+						"queryType": "warRoomFilter",
+						"static": false,
+						"type": "invTimeline",
+						"w": 1,
+						"x": 2,
+						"y": 0
+					},
+					{
+						"displayType": "CARD",
+						"h": 5,
+						"hideName": false,
+						"i": "caseinfoid-qruvkznf8q-8iifqoomv8-df5c3140-60aa-11eb-b8b8-afbda9a1f98b",
+						"items": [
+							{
+								"endCol": 6,
+								"fieldId": "emailheaders",
+								"height": 106,
+								"id": "f10d4e60-60aa-11eb-b8b8-afbda9a1f98b",
+								"index": 0,
+								"sectionItemType": "field",
+								"startCol": 0
+							}
+						],
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Email Headers",
+						"static": false,
+						"w": 3,
+						"x": 0,
+						"y": 5
+					},
+					{
+						"displayType": "CARD",
+						"h": 5,
+						"hideName": false,
+						"i": "caseinfoid-qruvkznf8q-8iifqoomv8-7c71a9b0-60ab-11eb-b8b8-afbda9a1f98b",
+						"items": [
+							{
+								"endCol": 2,
+								"fieldId": "emailbody",
+								"height": 44,
+								"id": "83beb640-60ab-11eb-b8b8-afbda9a1f98b",
+								"index": 0,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 2,
+								"fieldId": "emailhtml",
+								"height": 22,
+								"id": "574f0fe0-60ad-11eb-a3e4-f1cfb2d9b902",
+								"index": 1,
+								"sectionItemType": "field",
+								"startCol": 0
+							}
+						],
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Email Body",
+						"static": false,
+						"w": 1,
+						"x": 1,
+						"y": 0
+					},
+					{
+						"displayType": "CARD",
+						"h": 3,
+						"hideName": false,
+						"i": "caseinfoid-qruvkznf8q-8iifqoomv8-a87460a0-60ad-11eb-a3e4-f1cfb2d9b902",
+						"items": [
+							{
+								"endCol": 2,
+								"fieldId": "emailfrom",
+								"height": 53,
+								"id": "e4547100-60ad-11eb-a3e4-f1cfb2d9b902",
+								"index": 0,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 2,
+								"fieldId": "emailto",
+								"height": 53,
+								"id": "ebd25190-60ad-11eb-a3e4-f1cfb2d9b902",
+								"index": 1,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 2,
+								"fieldId": "emailcc",
+								"height": 53,
+								"id": "173e31a0-60ae-11eb-a3e4-f1cfb2d9b902",
+								"index": 2,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 2,
+								"fieldId": "emailsubject",
+								"height": 53,
+								"id": "ee4881b0-60ad-11eb-a3e4-f1cfb2d9b902",
+								"index": 3,
+								"sectionItemType": "field",
+								"startCol": 0
+							},
+							{
+								"endCol": 2,
+								"fieldId": "emailauthenticitycheck",
+								"height": 53,
+								"id": "b4ddd7a0-80dd-11ef-b269-c54cbfcf7bd1",
+								"index": 4,
+								"sectionItemType": "field",
+								"startCol": 0
+							}
+						],
+						"maxW": 3,
+						"minH": 1,
+						"moved": false,
+						"name": "Header Summary",
+						"static": false,
+						"w": 1,
+						"x": 0,
+						"y": 0
+					}
+				],
+				"type": "custom"
+			},
+			{
+				"id": "warRoom",
+				"name": "War Room",
+				"type": "warRoom"
+			},
+			{
+				"id": "workPlan",
+				"name": "Work Plan",
+				"type": "workPlan"
+			},
+			{
+				"id": "evidenceBoard",
+				"name": "Evidence Board",
+				"type": "evidenceBoard"
+			},
+			{
+				"id": "relatedIncidents",
+				"name": "Related Incidents",
+				"type": "relatedIncidents"
+			},
+			{
+				"id": "canvas",
+				"name": "Canvas",
+				"type": "canvas"
+			}
+		]
+	},
+	"edit": null,
+	"fromServerVersion": "",
+	"group": "incident",
+	"id": "Phishing Report Response Layout - EN",
+	"indicatorsDetails": null,
+	"indicatorsQuickView": null,
+	"isOverridable": false,
+	"itemVersion": "",
+	"locked": false,
+	"mobile": null,
+	"name": "Phishing Report Response Layout - EN",
+	"packID": "",
+	"packName": "",
+	"quickView": null,
+	"quickViewV2": null,
+	"system": false,
+	"toServerVersion": "",
+	"version": -1
+}

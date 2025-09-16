@@ -1,0 +1,943 @@
+description: |-
+  This playbook get an .eml/.msg file.
+   - The playbook only accepts an email file or a zip file, and it doesn't return an file if no files or 2 or more email/zip files are given.
+   - Zip files will be extracted to retrieve an email file.
+dirtyInputs: true
+id: MM - Extract an Email File
+inputs:
+- description: The reported email files or zip files in which they are archived
+  key: File
+  playbookInputQuery: null
+  required: false
+  value: {}
+- description: The password to decrypt the zip files
+  key: UnarchivePassword
+  playbookInputQuery: null
+  required: false
+  value: {}
+- description: Extract an email file from the original email file if it's given.
+  key: OriginalEmailFileName
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: original-email-file.eml
+name: MM - Extract an Email File
+outputs:
+- contextPath: EmailFile
+  description: The email file
+  type: unknown
+- contextPath: EmailFile.Size
+  description: File size
+  type: number
+- contextPath: EmailFile.Name
+  description: File name
+  type: string
+- contextPath: EmailFile.EntryID
+  description: File entry ID
+  type: string
+- contextPath: EmailFile.Info
+  description: File info
+  type: string
+- contextPath: EmailFile.Type
+  description: File type
+  type: string
+- contextPath: EmailFile.Extension
+  description: File extension
+  type: string
+- contextPath: EmailFile.MD5
+  description: File MD5
+  type: string
+- contextPath: EmailFile.SHA1
+  description: File SHA1
+  type: string
+- contextPath: EmailFile.SHA256
+  description: File SHA256
+  type: string
+- contextPath: EmailFile.SHA512
+  description: File SHA512
+  type: string
+- contextPath: EmailFile.SSDeep
+  description: File SSDeep
+  type: string
+- contextPath: OriginalEmailFile
+  description: The original email file
+  type: unknown
+- contextPath: OriginalEmailFile.Size
+  description: File size
+  type: number
+- contextPath: OriginalEmailFile.Name
+  description: File name
+  type: string
+- contextPath: OriginalEmailFile.EntryID
+  description: File entry ID
+  type: string
+- contextPath: OriginalEmailFile.Info
+  description: File info
+  type: string
+- contextPath: OriginalEmailFile.Type
+  description: File type
+  type: string
+- contextPath: OriginalEmailFile.Extension
+  description: File extension
+  type: string
+- contextPath: OriginalEmailFile.MD5
+  description: File MD5
+  type: string
+- contextPath: OriginalEmailFile.SHA1
+  description: File SHA1
+  type: string
+- contextPath: OriginalEmailFile.SHA256
+  description: File SHA256
+  type: string
+- contextPath: OriginalEmailFile.SHA512
+  description: File SHA512
+  type: string
+- contextPath: OriginalEmailFile.SSDeep
+  description: File SSDeep
+  type: string
+- contextPath: NoEmailFiles
+  description: true if no email files were found, otherwise false.
+  type: boolean
+starttaskid: "0"
+tasks:
+  "0":
+    continueonerrortype: ""
+    id: "0"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "15"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: ecad877f-bd91-4493-86e7-47c6b5fd1361
+      iscommand: false
+      name: ""
+      version: -1
+    taskid: ecad877f-bd91-4493-86e7-47c6b5fd1361
+    timertriggers: []
+    type: start
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 50
+        }
+      }
+  "1":
+    continueonerrortype: ""
+    id: "1"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "5"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: ZipFiles
+      value:
+        complex:
+          filters:
+          - - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: File.Info
+              operator: containsString
+              right:
+                value:
+                  simple: Zip archive
+            - left:
+                iscontext: true
+                value:
+                  simple: File.Type
+              operator: containsString
+              right:
+                value:
+                  simple: Zip archive
+            - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: File.Type
+              operator: endWith
+              right:
+                value:
+                  simple: /zip
+            - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: File.Info
+              operator: isEqualString
+              right:
+                value:
+                  simple: zip
+          root: File
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: eb1ce32e-7bae-4d5a-8e83-e5a42ad3443e
+      iscommand: false
+      name: Collect ZIP Files
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: eb1ce32e-7bae-4d5a-8e83-e5a42ad3443e
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 720
+        }
+      }
+  "5":
+    continueonerrortype: ""
+    id: "5"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "6"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: EmailFiles
+      value:
+        complex:
+          root: File
+          transformers:
+          - args:
+              algorithm:
+                value:
+                  simple: wildcard
+              caseless:
+                value:
+                  simple: "true"
+              compare_fields:
+                value:
+                  simple: "true"
+              context:
+                value:
+                  simple: dummy
+              default_value:
+                value:
+                  simple: "null"
+              flags: {}
+              mappings:
+                value:
+                  simple: |-
+                    {
+                      "EntryID": {
+                        "?*": {
+                          "next": {
+                            "Type": {
+                              "*SMTP mail*": "${..}"
+                            },
+                            "Info": {
+                              "*message/rfc822*": "${..}",
+                              "*cdfv2 microsoft outlook message*": "${..}",
+                              "*rfc 822 mail*": "${..}",
+                              "eml": "${..}"
+                            },
+                            "Name": {
+                              "*.eml": {
+                                "next": {
+                                  "Info": {
+                                    "*text*": "${..}",
+                                    "data": "${..}"
+                                  }
+                                }
+                              },
+                              "*.msg": {
+                                "next": {
+                                  "Info": {
+                                    "*composite document file v2 document*": "${..}"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+              priority: {}
+              wildcards: {}
+            operator: MapPattern
+          - args:
+              empty_values:
+                value:
+                  simple: "null"
+              remove_keys: {}
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: 13a789b7-fdc8-4fa2-8cc4-f498be892c9e
+      iscommand: false
+      name: Collect Email Files
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 13a789b7-fdc8-4fa2-8cc4-f498be892c9e
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 895
+        }
+      }
+  "6":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: ZipFiles
+                transformers:
+                - operator: count
+          operator: isEqualNumber
+          right:
+            value:
+              simple: "1"
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: EmailFiles
+          operator: isEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "6"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "8"
+      "yes":
+      - "7"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 2a3774ab-2f9b-4952-8d0f-94d2562093ee
+      iscommand: false
+      name: Is only one zip given?
+      type: condition
+      version: -1
+    taskid: 2a3774ab-2f9b-4952-8d0f-94d2562093ee
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 1070
+        }
+      }
+  "7":
+    continueonerrortype: ""
+    id: "7"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "9"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      entryID:
+        complex:
+          accessor: EntryID
+          root: ZipFiles
+      nonsensitive_password:
+        complex:
+          root: inputs.UnarchivePassword
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Unzip a file using fileName or entryID to specify a file. Unzipped
+        files will be loaded to the War Room and names will be put into the context.
+      id: 8bfaa024-65ef-493a-8a69-cc37d95f56b5
+      iscommand: false
+      name: Unzip the files
+      script: UnzipFile
+      type: regular
+      version: -1
+    taskid: 8bfaa024-65ef-493a-8a69-cc37d95f56b5
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 377.5,
+          "y": 1245
+        }
+      }
+  "8":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: EmailFiles
+                transformers:
+                - operator: count
+          operator: isEqualNumber
+          right:
+            value:
+              simple: "1"
+      label: "yes"
+    continueonerrortype: ""
+    id: "8"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "12"
+      "yes":
+      - "11"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 5d3142df-73b7-4d58-8340-dfaebbe44c8d
+      iscommand: false
+      name: Is only one email file given?
+      type: condition
+      version: -1
+    taskid: 5d3142df-73b7-4d58-8340-dfaebbe44c8d
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 1595
+        }
+      }
+  "9":
+    continueonerrortype: ""
+    id: "9"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "8"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "true"
+      key:
+        simple: EmailFiles
+      value:
+        complex:
+          root: File
+          transformers:
+          - args:
+              algorithm:
+                value:
+                  simple: wildcard
+              caseless:
+                value:
+                  simple: "true"
+              compare_fields:
+                value:
+                  simple: "true"
+              context:
+                value:
+                  simple: dummy
+              default_value:
+                value:
+                  simple: "null"
+              flags: {}
+              mappings:
+                value:
+                  simple: |-
+                    {
+                      "EntryID": {
+                        "?*": {
+                          "next": {
+                            "Type": {
+                              "*SMTP mail*": "${..}"
+                            },
+                            "Info": {
+                              "*message/rfc822*": "${..}",
+                              "*cdfv2 microsoft outlook message*": "${..}",
+                              "*rfc 822 mail*": "${..}",
+                              "eml": "${..}"
+                            },
+                            "Name": {
+                              "*.eml": {
+                                "next": {
+                                  "Info": {
+                                    "*text*": "${..}",
+                                    "data": "${..}"
+                                  }
+                                }
+                              },
+                              "*.msg": {
+                                "next": {
+                                  "Info": {
+                                    "*composite document file v2 document*": "${..}"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+              priority: {}
+              wildcards: {}
+            operator: MapPattern
+          - args:
+              empty_values:
+                value:
+                  simple: "null"
+              remove_keys: {}
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: 92b73a07-eeb2-4c56-8944-5fa7092a38b5
+      iscommand: false
+      name: Collect Email Files
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 92b73a07-eeb2-4c56-8944-5fa7092a38b5
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 377.5,
+          "y": 1420
+        }
+      }
+  "10":
+    continueonerrortype: ""
+    id: "10"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 18aa3aed-8455-4f9d-8ca3-1d31f60e255d
+      iscommand: false
+      name: Done
+      type: title
+      version: -1
+    taskid: 18aa3aed-8455-4f9d-8ca3-1d31f60e255d
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 2120
+        }
+      }
+  "11":
+    continueonerrortype: ""
+    id: "11"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "12"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: EmailFile
+      value:
+        complex:
+          root: EmailFiles
+          transformers:
+          - operator: FirstArrayElement
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set a value in context under the key you entered.
+      id: 440fe9b3-cef3-4f4c-8d25-cd18dda94512
+      iscommand: false
+      name: Set EmailFile
+      script: Set
+      type: regular
+      version: -1
+    taskid: 440fe9b3-cef3-4f4c-8d25-cd18dda94512
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 377.5,
+          "y": 1770
+        }
+      }
+  "12":
+    continueonerrortype: ""
+    id: "12"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "10"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: NoEmailFiles
+      value:
+        complex:
+          root: EmailFiles
+          transformers:
+          - operator: count
+          - args:
+              dt:
+                value:
+                  simple: .=val == 0
+            operator: DT
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set a value in context under the key you entered.
+      id: 000b5973-d42d-407a-8994-780f7951facf
+      iscommand: false
+      name: Set NoEmailFiles
+      script: Set
+      type: regular
+      version: -1
+    taskid: 000b5973-d42d-407a-8994-780f7951facf
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 1945
+        }
+      }
+  "13":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: OriginalEmailFile
+                transformers:
+                - operator: count
+          operator: isEqualNumber
+          right:
+            value:
+              simple: "1"
+      label: "yes"
+    continueonerrortype: ""
+    id: "13"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "16"
+      "yes":
+      - "14"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 820933b9-2067-456e-845c-d96059f2dd76
+      iscommand: false
+      name: Are original email files given?
+      type: condition
+      version: -1
+    taskid: 820933b9-2067-456e-845c-d96059f2dd76
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 370
+        }
+      }
+  "14":
+    continueonerrortype: ""
+    id: "14"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "1"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      entryid:
+        complex:
+          accessor: EntryID
+          root: OriginalEmailFile
+          transformers:
+          - operator: uniq
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Parse an email from an eml or msg file and populate all relevant
+        context data to investigate the email. Also extracts inner attachments and
+        returns them to the war room. The incident labels themselves are preserved
+        and not modified - only the "Label/x" context items that originated from the
+        labels, and the best practice is to rely on these for the remainder of the
+        playbook. This script is based on the parse-emails XSOAR python package, check
+        the script documentation for more info
+      id: 162a2604-eec9-4ef0-8bcc-3b6ce33fdfa7
+      iscommand: false
+      name: Parse the original email files
+      script: ParseEmailFilesV2
+      type: regular
+      version: -1
+    taskid: 162a2604-eec9-4ef0-8bcc-3b6ce33fdfa7
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 480,
+          "y": 545
+        }
+      }
+  "15":
+    continueonerrortype: ""
+    id: "15"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "13"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: OriginalEmailFile
+      value:
+        complex:
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: inputs.File.Name
+              operator: in
+              right:
+                iscontext: true
+                value:
+                  simple: inputs.OriginalEmailFileName
+          root: inputs.File
+          transformers:
+          - args:
+              algorithm:
+                value:
+                  simple: wildcard
+              caseless:
+                value:
+                  simple: "true"
+              compare_fields:
+                value:
+                  simple: "true"
+              context:
+                value:
+                  simple: dummy
+              default_value:
+                value:
+                  simple: "null"
+              flags: {}
+              mappings:
+                value:
+                  simple: |-
+                    {
+                      "EntryID": {
+                        "?*": {
+                          "next": {
+                            "Type": {
+                              "*SMTP mail*": "${..}"
+                            },
+                            "Info": {
+                              "*message/rfc822*": "${..}",
+                              "*cdfv2 microsoft outlook message*": "${..}",
+                              "*rfc 822 mail*": "${..}",
+                              "eml": "${..}"
+                            },
+                            "Name": {
+                              "*.eml": {
+                                "next": {
+                                  "Info": {
+                                    "*text*": "${..}",
+                                    "data": "${..}"
+                                  }
+                                }
+                              },
+                              "*.msg": {
+                                "next": {
+                                  "Info": {
+                                    "*composite document file v2 document*": "${..}"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+              priority: {}
+              wildcards: {}
+            operator: MapPattern
+          - args:
+              empty_values:
+                value:
+                  simple: "null"
+              remove_keys: {}
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: 99c784e6-af91-47e4-8ebe-a2a333fabb14
+      iscommand: false
+      name: Get the original email files
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 99c784e6-af91-47e4-8ebe-a2a333fabb14
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 265,
+          "y": 195
+        }
+      }
+  "16":
+    continueonerrortype: ""
+    id: "16"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "1"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      key:
+        simple: File
+      value:
+        complex:
+          root: inputs.File
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.10/Cortex-XSOAR-Administrator-Guide/Automations
+      id: a48d7101-f1b2-4f35-8355-b665c2efa6d5
+      iscommand: false
+      name: Set File
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: a48d7101-f1b2-4f35-8355-b665c2efa6d5
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 545
+        }
+      }
+version: -1
+view: |-
+  {
+    "linkLabelsPosition": {
+      "8_11_yes": 0.7
+    },
+    "paper": {
+      "dimensions": {
+        "height": 2135,
+        "width": 810,
+        "x": 50,
+        "y": 50
+      }
+    }
+  }

@@ -1,0 +1,1003 @@
+description: This playbook add indicators to the Threat Intel if they are not there,
+  and update enrich reputations.
+dirtyInputs: true
+id: MM - Register Indicators with Updated Verdict
+inputs:
+- description: IPv4 addresses
+  key: IP
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: Address
+      root: IP
+      transformers:
+      - operator: uniq
+- description: IPv6 addresses
+  key: IPv6
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: Address
+      root: IPv6
+      transformers:
+      - operator: uniq
+- description: File Hashes
+  key: FileHash
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: MD5
+      root: File
+      transformers:
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: File.SHA1
+          raw: {}
+        operator: AppendIfNotEmpty
+      - args:
+          item:
+            iscontext: true
+            value:
+              simple: File.SHA256
+          raw: {}
+        operator: AppendIfNotEmpty
+      - operator: uniq
+- description: Domains
+  key: Domain
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: Name
+      root: Domain
+      transformers:
+      - operator: uniq
+- description: URLs
+  key: URL
+  playbookInputQuery: null
+  required: false
+  value:
+    complex:
+      accessor: Data
+      root: URL
+      transformers:
+      - operator: uniq
+- description: Set to true to extract domains and register them, otherwise false.
+  key: ExtractDomainFromURL
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: "true"
+- description: Set to true to get IndicatorDBotScore in the context, otherwise false.
+  key: OutputIndicatorDBotScore
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: "true"
+- description: Set to true to get the final verdict by UseGetIndicatorDBotScoreFromContext,
+    otherwise false.
+  key: UseGetIndicatorDBotScoreFromContext
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: "false"
+name: MM - Register Indicators with Updated Verdict
+outputs:
+- contextPath: IndicatorDBotScore
+  description: DBot score
+  type: unknown
+- contextPath: IndicatorDBotScore.Indicator
+  description: Indicator Value
+  type: string
+- contextPath: IndicatorDBotScore.Type
+  description: Indicator Type
+  type: string
+- contextPath: IndicatorDBotScore.Score
+  description: Indicator Score
+  type: number
+- contextPath: IndicatorDBotScore.Vendor
+  description: Indicator score vendor
+  type: string
+starttaskid: "0"
+tasks:
+  "0":
+    continueonerrortype: ""
+    id: "0"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "149"
+      - "150"
+      - "151"
+      - "152"
+      - "153"
+      - "155"
+      - "160"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 16a0d2e7-b58e-4831-845b-15ea7a334067
+      iscommand: false
+      name: ""
+      version: -1
+    taskid: 16a0d2e7-b58e-4831-845b-15ea7a334067
+    timertriggers: []
+    type: start
+    view: |-
+      {
+        "position": {
+          "x": 1340,
+          "y": 50
+        }
+      }
+  "149":
+    continueonerrortype: ""
+    id: "149"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "171"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      indicator_values:
+        complex:
+          root: inputs.IP
+      type:
+        simple: IP
+      verbose:
+        simple: "false"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Create indicators to the Threat Intel DB only if they are not registered.
+      id: 15eeb045-7582-4933-8fec-c66c5f971f4c
+      iscommand: false
+      name: Add new IP indicators
+      script: CreateNewIndicatorsOnly
+      type: regular
+      version: -1
+    taskid: 15eeb045-7582-4933-8fec-c66c5f971f4c
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 545
+        }
+      }
+  "150":
+    continueonerrortype: ""
+    id: "150"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "171"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      indicator_values:
+        complex:
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: inputs.FileHash
+              operator: match
+              right:
+                value:
+                  simple: ^[0-9A-Fa-f]{32}$
+          root: inputs.FileHash
+      type:
+        simple: File
+      verbose:
+        simple: "false"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Create indicators to the Threat Intel DB only if they are not registered.
+      id: dd9791e8-b294-43e3-807a-75088f4492f6
+      iscommand: false
+      name: Add new File.MD5 indicators
+      script: CreateNewIndicatorsOnly
+      type: regular
+      version: -1
+    taskid: dd9791e8-b294-43e3-807a-75088f4492f6
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 480,
+          "y": 545
+        }
+      }
+  "151":
+    continueonerrortype: ""
+    id: "151"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "171"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      indicator_values:
+        complex:
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: inputs.FileHash
+              operator: match
+              right:
+                value:
+                  simple: ^[0-9A-Fa-f]{40}$
+          root: inputs.FileHash
+      type:
+        simple: File
+      verbose:
+        simple: "false"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Create indicators to the Threat Intel DB only if they are not registered.
+      id: b65dddd5-22ab-4d80-8a18-aadec8dec5d2
+      iscommand: false
+      name: Add new File.SHA1 indicators
+      script: CreateNewIndicatorsOnly
+      type: regular
+      version: -1
+    taskid: b65dddd5-22ab-4d80-8a18-aadec8dec5d2
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 910,
+          "y": 545
+        }
+      }
+  "152":
+    continueonerrortype: ""
+    id: "152"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "171"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      indicator_values:
+        complex:
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: inputs.FileHash
+              operator: match
+              right:
+                value:
+                  simple: ^[0-9A-Fa-f]{64}$
+          root: inputs.FileHash
+      type:
+        simple: File
+      verbose:
+        simple: "false"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Create indicators to the Threat Intel DB only if they are not registered.
+      id: 7e1bcca8-670c-4839-8beb-edbb92ebc78d
+      iscommand: false
+      name: Add new File.SHA256 indicators
+      script: CreateNewIndicatorsOnly
+      type: regular
+      version: -1
+    taskid: 7e1bcca8-670c-4839-8beb-edbb92ebc78d
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1340,
+          "y": 545
+        }
+      }
+  "153":
+    continueonerrortype: ""
+    id: "153"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "171"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      indicator_values:
+        complex:
+          root: inputs.IPv6
+      type:
+        simple: IPv6
+      verbose:
+        simple: "false"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Create indicators to the Threat Intel DB only if they are not registered.
+      id: c8e800e4-4652-4740-8cb8-e532b2dabb53
+      iscommand: false
+      name: Add new IPv6 indicators
+      script: CreateNewIndicatorsOnly
+      type: regular
+      version: -1
+    taskid: c8e800e4-4652-4740-8cb8-e532b2dabb53
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1770,
+          "y": 545
+        }
+      }
+  "154":
+    continueonerrortype: ""
+    id: "154"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "171"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      indicator_values:
+        complex:
+          root: inputs.Domain
+          transformers:
+          - args:
+              item:
+                iscontext: true
+                value:
+                  simple: ExtractedDomain
+              raw: {}
+            operator: AppendIfNotEmpty
+          - operator: uniq
+          - args:
+              empty_values: {}
+              remove_keys: {}
+            operator: RemoveEmpty
+      type:
+        simple: Domain
+      verbose:
+        simple: "false"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Create indicators to the Threat Intel DB only if they are not registered.
+      id: cbe15c9a-2dd4-4c2b-8731-8b95db957fa6
+      iscommand: false
+      name: Add new Domain indicators
+      script: CreateNewIndicatorsOnly
+      type: regular
+      version: -1
+    taskid: cbe15c9a-2dd4-4c2b-8731-8b95db957fa6
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 2640,
+          "y": 545
+        }
+      }
+  "155":
+    continueonerrortype: ""
+    id: "155"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "171"
+    note: false
+    quietmode: 0
+    reputationcalc: 1
+    scriptarguments:
+      indicator_values:
+        complex:
+          root: inputs.URL
+      type:
+        simple: URL
+      verbose:
+        simple: "false"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Create indicators to the Threat Intel DB only if they are not registered.
+      id: e902cf64-b4d2-4b01-8bc4-67cb0887717a
+      iscommand: false
+      name: Add new URL indicators
+      script: CreateNewIndicatorsOnly
+      type: regular
+      version: -1
+    taskid: e902cf64-b4d2-4b01-8bc4-67cb0887717a
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 2200,
+          "y": 545
+        }
+      }
+  "157":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                accessor: Value
+                filters:
+                - - ignorecase: true
+                    left:
+                      iscontext: true
+                      value:
+                        simple: CreateNewIndicatorsOnly.CreationStatus
+                    operator: isNotEqualString
+                    right:
+                      value:
+                        simple: unavailable
+                root: CreateNewIndicatorsOnly
+          operator: isNotEmpty
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "157"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "158"
+      "yes":
+      - "163"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 18770de5-b847-4f35-8bb2-271fa71b1772
+      iscommand: false
+      name: Are there any indicators?
+      type: condition
+      version: -1
+    taskid: 18770de5-b847-4f35-8bb2-271fa71b1772
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 1340,
+          "y": 895
+        }
+      }
+  "158":
+    continueonerrortype: ""
+    id: "158"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: cfda5c5b-1ba1-4938-8fb9-d4a78e8e4b78
+      iscommand: false
+      name: Done
+      type: title
+      version: -1
+    taskid: cfda5c5b-1ba1-4938-8fb9-d4a78e8e4b78
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 1340,
+          "y": 1990
+        }
+      }
+  "159":
+    continueonerrortype: ""
+    id: "159"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "154"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      extend-context:
+        simple: ExtractedDomain=.
+      input:
+        complex:
+          root: inputs.URL
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Extracts domains and FQDNs from URLs and emails.
+      id: 0635298c-b090-4133-845b-2cdc4deb280e
+      iscommand: false
+      name: Extract Domains from URLs
+      script: ExtractDomainAndFQDNFromUrlAndEmail
+      type: regular
+      version: -1
+    taskid: 0635298c-b090-4133-845b-2cdc4deb280e
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 2527.5,
+          "y": 370
+        }
+      }
+  "160":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.ExtractDomainFromURL
+          operator: isTrue
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "160"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "154"
+      "yes":
+      - "159"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: fbf1c752-ef74-46a6-8808-39e54c80072e
+      iscommand: false
+      name: Does it extract domains from URLs?
+      type: condition
+      version: -1
+    taskid: fbf1c752-ef74-46a6-8808-39e54c80072e
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 2640,
+          "y": 195
+        }
+      }
+  "163":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.OutputIndicatorDBotScore
+          operator: isTrue
+      label: "yes"
+    continueonerrortype: ""
+    id: "163"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "158"
+      "yes":
+      - "170"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 3dece411-d5ef-42fd-83f2-0522cc4bd05a
+      iscommand: false
+      name: Is IndicatorDBotScore required to return?
+      type: condition
+      version: -1
+    taskid: 3dece411-d5ef-42fd-83f2-0522cc4bd05a
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 1570,
+          "y": 1110
+        }
+      }
+  "165":
+    continueonerror: true
+    continueonerrortype: ""
+    id: "165"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "166"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      indicator_value:
+        complex:
+          accessor: Value
+          root: CreateNewIndicatorsOnly
+          transformers:
+          - operator: uniq
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Get the final verdict from the DBotScore of the context.
+        Provided that it has all of the latest source verdict, this script gives you the right final verdict.
+      id: ba36e7ca-f89b-4e84-8c39-8db4a4be1450
+      iscommand: false
+      name: Get indicator's final verdict
+      script: GetIndicatorDBotScoreFromContext
+      type: regular
+      version: -1
+    taskid: ba36e7ca-f89b-4e84-8c39-8db4a4be1450
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1600,
+          "y": 1460
+        }
+      }
+  "166":
+    continueonerrortype: ""
+    id: "166"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "158"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: IndicatorDBotScore
+      value:
+        complex:
+          root: FinalDBotScore
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs.paloaltonetworks.com/cortex/cortex-xsoar/6-2/cortex-xsoar-admin/playbooks/automations.html
+      id: 1d612b22-1d9b-438d-8e96-758560e428cd
+      iscommand: false
+      name: Set IndicatorDBotScore
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 1d612b22-1d9b-438d-8e96-758560e428cd
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1600,
+          "y": 1810
+        }
+      }
+  "167":
+    continueonerrortype: ""
+    id: "167"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "168"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      seconds:
+        simple: "10"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Sleep for X seconds
+      id: 88a27103-af58-46cc-8a8a-3f87b3310eb5
+      iscommand: false
+      name: Wait for reputation in the DB to update
+      script: Sleep
+      type: regular
+      version: -1
+    taskid: 88a27103-af58-46cc-8a8a-3f87b3310eb5
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 2030,
+          "y": 1460
+        }
+      }
+  "168":
+    continueonerrortype: ""
+    id: "168"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "169"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      value:
+        complex:
+          accessor: Value
+          root: CreateNewIndicatorsOnly
+          transformers:
+          - operator: uniq
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Get the overall score for the indicator as calculated by DBot.
+      id: 9ef6e136-b322-49b9-8ee9-650899542838
+      iscommand: false
+      name: Get indicator's final verdict
+      script: GetIndicatorDBotScoreFromCache
+      type: regular
+      version: -1
+    taskid: 9ef6e136-b322-49b9-8ee9-650899542838
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 2030,
+          "y": 1635
+        }
+      }
+  "169":
+    continueonerrortype: ""
+    id: "169"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "158"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: IndicatorDBotScore
+      value:
+        complex:
+          root: DBotScoreCache
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs.paloaltonetworks.com/cortex/cortex-xsoar/6-2/cortex-xsoar-admin/playbooks/automations.html
+      id: c2301411-c932-4764-8b55-453c5d001dc0
+      iscommand: false
+      name: Set IndicatorDBotScore
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: c2301411-c932-4764-8b55-453c5d001dc0
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 2030,
+          "y": 1810
+        }
+      }
+  "170":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.UseGetIndicatorDBotScoreFromContext
+          operator: isTrue
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                accessor: name
+                filters:
+                - - left:
+                      iscontext: true
+                      value:
+                        simple: modules.commands.name
+                    operator: isEqualString
+                    right:
+                      value:
+                        simple: GetIndicatorDBotScoreFromContext
+                root: modules.commands
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "170"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "167"
+      "yes":
+      - "165"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 1dfd398b-6f80-41ca-85aa-76a210d98b89
+      iscommand: false
+      name: Do we use GetIndicatorDBotScoreFromContext?
+      type: condition
+      version: -1
+    taskid: 1dfd398b-6f80-41ca-85aa-76a210d98b89
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 1720,
+          "y": 1285
+        }
+      }
+  "171":
+    continueonerrortype: ""
+    id: "171"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "157"
+    note: false
+    quietmode: 0
+    reputationcalc: 2
+    scriptarguments:
+      value:
+        complex:
+          root: CreateNewIndicatorsOnly
+          transformers:
+          - args:
+              dt:
+                value:
+                  simple: |-
+                    .={
+                      Type: val.Type,
+                      CreationStatus: val.CreationStatus,
+                      Score: val.Score,
+                      Value: val.Value
+                    }
+            operator: DT
+          - args:
+              headers: {}
+              is_auto_json_transform: {}
+              json_transform_properties: {}
+              title: {}
+            operator: JsonToTable
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Prints text to war room (Markdown supported)
+      id: af4ae70a-f58c-481b-8a30-fc8db6946c2e
+      iscommand: false
+      name: Register Indicators with auto-extraction
+      script: Print
+      type: regular
+      version: -1
+    taskid: af4ae70a-f58c-481b-8a30-fc8db6946c2e
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 1340,
+          "y": 720
+        }
+      }
+version: -1
+view: |-
+  {
+    "linkLabelsPosition": {},
+    "paper": {
+      "dimensions": {
+        "height": 2005,
+        "width": 2970,
+        "x": 50,
+        "y": 50
+      }
+    }
+  }

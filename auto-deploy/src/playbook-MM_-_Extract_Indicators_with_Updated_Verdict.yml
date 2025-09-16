@@ -1,0 +1,1019 @@
+description: |-
+  This playbook extracts indicators from files and texts with the latest scores.
+  Supported file types:
+
+  - CSV
+  - PDF
+  - TXT
+  - HTM, HTML
+  - DOC, DOCX
+  - PPT
+  - PPTX
+  - RTF
+  - XLS
+  - XLSX
+  - XML
+  - XLSM
+  - DOCM
+  - PPTM
+  - DOTM
+  - XLSB
+  - DOT
+  - PPSM
+
+  Note: this playbook doesn't extract indicators matched to the excluded list.
+dirtyInputs: true
+id: MM - Extract Indicators with Updated Verdict
+inputs:
+- description: The file to extract indicators from
+  key: File
+  playbookInputQuery: null
+  required: false
+  value: {}
+- description: Transient text to extract indicators from
+  key: Text
+  playbookInputQuery: null
+  required: false
+  value: {}
+- description: Set to true to get the final verdict by UseGetIndicatorDBotScoreFromContext,
+    otherwise false.
+  key: UseGetIndicatorDBotScoreFromContext
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: "false"
+- description: Set true to include hash values of the files given in the argument
+    parameters, otherwise false.
+  key: IncludeSelfFileHashes
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: "true"
+- description: Update indicator verdicts in line if all the indicator scores are less
+    than or equal to the score given.
+  key: InlineUpdateThresholdScore
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: "2"
+name: MM - Extract Indicators with Updated Verdict
+outputs:
+- contextPath: IndicatorDBotScore
+  description: DBot score
+  type: unknown
+- contextPath: IndicatorDBotScore.Indicator
+  description: The Indicator
+  type: string
+- contextPath: IndicatorDBotScore.Type
+  description: The Indicator type
+  type: string
+- contextPath: IndicatorDBotScore.Score
+  description: The DBot score
+  type: number
+- contextPath: IndicatorDBotScore.Vendor
+  description: The DBot score vendor
+  type: string
+- contextPath: IndicatorDBotScore.New
+  description: True if the indicator is newly added, otherwise False
+  type: boolean
+starttaskid: "0"
+tasks:
+  "0":
+    continueonerrortype: ""
+    id: "0"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "155"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 5bf42a66-58a5-4962-81d9-16d083c4cc17
+      iscommand: false
+      name: ""
+      version: -1
+    taskid: 5bf42a66-58a5-4962-81d9-16d083c4cc17
+    timertriggers: []
+    type: start
+    view: |-
+      {
+        "position": {
+          "x": 162.5,
+          "y": 50
+        }
+      }
+  "97":
+    continueonerrortype: ""
+    id: "97"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 466a6ba5-b17e-4d4b-87b6-869705f80086
+      iscommand: false
+      name: Done
+      type: title
+      version: -1
+    taskid: 466a6ba5-b17e-4d4b-87b6-869705f80086
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": -217.5,
+          "y": 2130
+        }
+      }
+  "155":
+    continueonerrortype: ""
+    id: "155"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    loop:
+      exitCondition: ""
+      iscommand: false
+      max: 100
+      wait: 1
+    nexttasks:
+      '#none#':
+      - "166"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      AutoExtration:
+        simple: None
+      File:
+        complex:
+          root: inputs.File
+      IncludeSelfFileHashes:
+        complex:
+          root: inputs.IncludeSelfFileHashes
+      Text:
+        complex:
+          root: inputs.Text
+    separatecontext: true
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        This playbook extracts indicators from files and texts without registering them in the Threat Intel DB.
+        Supported file types:
+
+        - CSV
+        - PDF
+        - TXT
+        - HTM, HTML
+        - DOC, DOCX
+        - PPT
+        - PPTX
+        - RTF
+        - XLS
+        - XLSX
+        - XML
+        - XLSM
+        - DOCM
+        - PPTM
+        - DOTM
+        - XLSB
+        - DOT
+        - PPSM
+      id: dc9d5963-522b-4aeb-8628-14906d1d2cce
+      iscommand: false
+      name: Extract Indicators
+      playbookId: MM - Extract Indicators
+      type: playbook
+      version: -1
+    taskid: dc9d5963-522b-4aeb-8628-14906d1d2cce
+    timertriggers: []
+    type: playbook
+    view: |-
+      {
+        "position": {
+          "x": 162.5,
+          "y": 195
+        }
+      }
+  "166":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: ExtractedIndicatorValue
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "166"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "97"
+      "yes":
+      - "180"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: d71c967b-876e-4ffb-873c-ef043fce258c
+      iscommand: false
+      name: Are there indicators extracted?
+      type: condition
+      version: -1
+    taskid: d71c967b-876e-4ffb-873c-ef043fce258c
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 162.5,
+          "y": 370
+        }
+      }
+  "175":
+    continueonerror: true
+    continueonerrortype: ""
+    id: "175"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "190"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      indicator_value:
+        complex:
+          root: ExtractedIndicatorValue
+          transformers:
+          - operator: uniq
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Get the final verdict from the DBotScore of the context.
+        Provided that it has all of the latest source verdict, this script gives you the right final verdict.
+      id: ad37b86d-71b3-4653-81eb-396f84faa56f
+      iscommand: false
+      name: Get Indicator's final verdict
+      script: GetIndicatorDBotScoreFromContext
+      type: regular
+      version: -1
+    taskid: ad37b86d-71b3-4653-81eb-396f84faa56f
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 490,
+          "y": 720
+        }
+      }
+  "178":
+    continueonerrortype: ""
+    id: "178"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "191"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      value:
+        complex:
+          root: ExtractedIndicatorValue
+          transformers:
+          - operator: uniq
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Get the overall score for the indicator as calculated by DBot.
+      id: 2b442355-ea46-4f06-87e1-4668f300abf0
+      iscommand: false
+      name: Get indicator's final verdict
+      script: GetIndicatorDBotScoreFromCache
+      type: regular
+      version: -1
+    taskid: 2b442355-ea46-4f06-87e1-4668f300abf0
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 60,
+          "y": 720
+        }
+      }
+  "180":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.UseGetIndicatorDBotScoreFromContext
+          operator: isTrue
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                accessor: name
+                filters:
+                - - left:
+                      iscontext: true
+                      value:
+                        simple: modules.commands.name
+                    operator: isEqualString
+                    right:
+                      value:
+                        simple: GetIndicatorDBotScoreFromContext
+                root: modules.commands
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "180"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "178"
+      "yes":
+      - "175"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 661bb24a-d11e-4763-8740-2d624b0b5f44
+      iscommand: false
+      name: Do we use GetIndicatorDBotScoreFromContext?
+      type: condition
+      version: -1
+    taskid: 661bb24a-d11e-4763-8740-2d624b0b5f44
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 545
+        }
+      }
+  "182":
+    continueonerrortype: ""
+    id: "182"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "188"
+    note: false
+    quietmode: 0
+    reputationcalc: 2
+    scriptarguments:
+      indicator_values:
+        complex:
+          root: ExtractedIndicatorValue
+      verbose:
+        simple: "true"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: Create indicators to the Threat Intel DB only if they are not registered.
+      id: 49d9169d-122a-47e3-8515-656a854ca571
+      iscommand: false
+      name: Register indicators to the DB  (verdict update - inline)
+      script: CreateNewIndicatorsOnly
+      type: regular
+      version: -1
+    taskid: 49d9169d-122a-47e3-8515-656a854ca571
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1245
+        }
+      }
+  "183":
+    continueonerror: true
+    continueonerrortype: ""
+    id: "183"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "184"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      indicator_value:
+        complex:
+          root: ExtractedIndicatorValue
+          transformers:
+          - operator: uniq
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Get the final verdict from the DBotScore of the context.
+        Provided that it has all of the latest source verdict, this script gives you the right final verdict.
+      id: 6b783d13-c9ca-48bb-86ed-3d9035385179
+      iscommand: false
+      name: Get Indicator's final verdict
+      script: GetIndicatorDBotScoreFromContext
+      type: regular
+      version: -1
+    taskid: 6b783d13-c9ca-48bb-86ed-3d9035385179
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1770
+        }
+      }
+  "184":
+    continueonerrortype: ""
+    id: "184"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "97"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: IndicatorDBotScore
+      value:
+        complex:
+          root: ExtractedIndicatorValue
+          transformers:
+          - operator: uniq
+          - args:
+              dt:
+                value:
+                  simple: |-
+                    .={
+                      Indicator: val
+                    }
+            operator: DT
+          - args:
+              appendable:
+                value:
+                  simple: "false"
+              array_path:
+                iscontext: true
+              conflict_strategy:
+                value:
+                  simple: source
+              mapping:
+                value:
+                  simple: Value:Indicator
+              merge_with:
+                iscontext: true
+                value:
+                  simple: CreateNewIndicatorsOnly
+              out_key: {}
+              out_path: {}
+              overwrite_by_destination: {}
+              overwrite_by_source: {}
+            operator: MergeDictArray
+          - args:
+              appendable:
+                value:
+                  simple: "false"
+              array_path: {}
+              conflict_strategy:
+                value:
+                  simple: source
+              mapping:
+                value:
+                  simple: Indicator:Indicator
+              merge_with:
+                iscontext: true
+                value:
+                  simple: FinalDBotScore
+              out_key: {}
+              out_path: {}
+              overwrite_by_destination: {}
+              overwrite_by_source: {}
+            operator: MergeDictArray
+          - args:
+              dt:
+                value:
+                  simple: |-
+                    .={
+                      Indicator: val.Indicator,
+                      Type: val.Type ? val.Type : 'Unknown',
+                      Score: val.Score ? val.Score : 0,
+                      Vendor: val.Vendor,
+                      New: val.CreationStatus == 'new' ? true : false
+                    }
+            operator: DT
+          - args:
+              empty_values: {}
+              remove_keys:
+                value:
+                  simple: "true"
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs.paloaltonetworks.com/cortex/cortex-xsoar/6-2/cortex-xsoar-admin/playbooks/automations.html
+      id: c478508b-7ce9-455a-8987-ca86318cd9f4
+      iscommand: false
+      name: Set IndicatorDBotScore
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: c478508b-7ce9-455a-8987-ca86318cd9f4
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1945
+        }
+      }
+  "185":
+    continueonerrortype: ""
+    id: "185"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "186"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      seconds:
+        simple: "10"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Sleep for X seconds
+      id: 422c3c66-dd59-4ce2-8b33-7bc66f9b4ed9
+      iscommand: false
+      name: Wait for reputation in the DB to update
+      script: Sleep
+      type: regular
+      version: -1
+    taskid: 422c3c66-dd59-4ce2-8b33-7bc66f9b4ed9
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 490,
+          "y": 1595
+        }
+      }
+  "186":
+    continueonerrortype: ""
+    id: "186"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "194"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      value:
+        complex:
+          accessor: Value
+          root: CreateNewIndicatorsOnly
+          transformers:
+          - operator: uniq
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Get the overall score for the indicator as calculated by DBot.
+      id: dc9f7cae-5ec4-4495-8988-6e6fc9c8e4de
+      iscommand: false
+      name: Get indicator's final verdict
+      script: GetIndicatorDBotScoreFromCache
+      type: regular
+      version: -1
+    taskid: dc9f7cae-5ec4-4495-8988-6e6fc9c8e4de
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 490,
+          "y": 1770
+        }
+      }
+  "188":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.UseGetIndicatorDBotScoreFromContext
+          operator: isTrue
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                accessor: name
+                filters:
+                - - left:
+                      iscontext: true
+                      value:
+                        simple: modules.commands.name
+                    operator: isEqualString
+                    right:
+                      value:
+                        simple: GetIndicatorDBotScoreFromContext
+                root: modules.commands
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "188"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "185"
+      "yes":
+      - "183"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: f48b3cfa-6529-40e8-863f-3fe1b6e6433c
+      iscommand: false
+      name: Do we use GetIndicatorDBotScoreFromContext?
+      type: condition
+      version: -1
+    taskid: f48b3cfa-6529-40e8-863f-3fe1b6e6433c
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 1420
+        }
+      }
+  "189":
+    continueonerrortype: ""
+    id: "189"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "182"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      seconds:
+        simple: "10"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Sleep for X seconds
+      id: b7530a55-8726-441c-8837-f828e8584b1d
+      iscommand: false
+      name: Wait for indicators to be stored in the DB
+      script: Sleep
+      type: regular
+      version: -1
+    taskid: b7530a55-8726-441c-8837-f828e8584b1d
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1070
+        }
+      }
+  "190":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                accessor: Score
+                root: FinalDBotScore
+          operator: greaterThan
+          right:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.InlineUpdateThresholdScore
+      label: "yes"
+    continueonerrortype: ""
+    id: "190"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "189"
+      "yes":
+      - "193"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Checks if the investigation found any malicious indicators (file,
+        URL, IP address, domain, or email). Returns "yes" if at least one malicious
+        indicator is found.
+      id: 8826d5ff-83c0-414e-8c0d-2fa513cf6fb7
+      iscommand: false
+      name: No need to check verdict inline?
+      type: condition
+      version: -1
+    taskid: 8826d5ff-83c0-414e-8c0d-2fa513cf6fb7
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 490,
+          "y": 895
+        }
+      }
+  "191":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                accessor: Score
+                root: DBotScoreCache
+          operator: greaterThan
+          right:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.InlineUpdateThresholdScore
+      label: "yes"
+    continueonerrortype: ""
+    id: "191"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "189"
+      "yes":
+      - "193"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Checks if the investigation found any malicious indicators (file,
+        URL, IP address, domain, or email). Returns "yes" if at least one malicious
+        indicator is found.
+      id: 49d9422b-0247-478f-8e77-4f8c4ff0a043
+      iscommand: false
+      name: No need to check verdict inline?
+      type: condition
+      version: -1
+    taskid: 49d9422b-0247-478f-8e77-4f8c4ff0a043
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 60,
+          "y": 895
+        }
+      }
+  "192":
+    continueonerrortype: ""
+    id: "192"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "188"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      indicator_values:
+        complex:
+          root: ExtractedIndicatorValue
+      verbose:
+        simple: "true"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: Create indicators to the Threat Intel DB only if they are not registered.
+      id: 28d5e24f-77f9-4272-84d7-00daa838d0a3
+      iscommand: false
+      name: Register indicators to the DB  (verdict update - system default)
+      script: CreateNewIndicatorsOnly
+      type: regular
+      version: -1
+    taskid: 28d5e24f-77f9-4272-84d7-00daa838d0a3
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 500,
+          "y": 1245
+        }
+      }
+  "193":
+    continueonerrortype: ""
+    id: "193"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "192"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      seconds:
+        simple: "10"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Sleep for X seconds
+      id: ffb91e0d-c486-4d3c-80ca-7aad19e89cd1
+      iscommand: false
+      name: Wait for indicators to be stored in the DB
+      script: Sleep
+      type: regular
+      version: -1
+    taskid: ffb91e0d-c486-4d3c-80ca-7aad19e89cd1
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 500,
+          "y": 1070
+        }
+      }
+  "194":
+    continueonerrortype: ""
+    id: "194"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "97"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: IndicatorDBotScore
+      value:
+        complex:
+          root: DBotScoreCache
+          transformers:
+          - args:
+              keys:
+                value:
+                  simple: Indicator
+            operator: DedupBy
+          - args:
+              appendable:
+                value:
+                  simple: "false"
+              array_path:
+                iscontext: true
+              conflict_strategy:
+                value:
+                  simple: destination
+              mapping:
+                value:
+                  simple: Indicator:Indicator
+              merge_with:
+                iscontext: true
+                value:
+                  simple: CreateNewIndicatorsOnly
+              out_key: {}
+              out_path: {}
+              overwrite_by_destination: {}
+              overwrite_by_source: {}
+            operator: MergeDictArray
+          - args:
+              dt:
+                value:
+                  simple: |-
+                    .={
+                      Indicator: val.Indicator,
+                      Type: val.Type ? val.Type : 'Unknown',
+                      Score: val.Score ? val.Score : 0,
+                      Vendor: val.Vendor,
+                      New: val.CreationStatus == 'new' ? true : false
+                    }
+            operator: DT
+          - args:
+              empty_values: {}
+              remove_keys:
+                value:
+                  simple: "true"
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs.paloaltonetworks.com/cortex/cortex-xsoar/6-2/cortex-xsoar-admin/playbooks/automations.html
+      id: 0eeb1e29-37e9-4f0c-8ab2-4da47c65060c
+      iscommand: false
+      name: Set IndicatorDBotScore
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 0eeb1e29-37e9-4f0c-8ab2-4da47c65060c
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 490,
+          "y": 1945
+        }
+      }
+version: -1
+view: |-
+  {
+    "linkLabelsPosition": {},
+    "paper": {
+      "dimensions": {
+        "height": 2145,
+        "width": 1097.5,
+        "x": -217.5,
+        "y": 50
+      }
+    }
+  }
