@@ -18,7 +18,7 @@
 	"hoursR": 0,
 	"id": "Auto Deploy",
 	"itemVersion": "",
-	"layout": "ae554e8f-7448-46a8-8d99-feb8c3e595c7",
+	"layout": "Auto Deploy Layout",
 	"locked": false,
 	"name": "Auto Deploy",
 	"onChangeRepAlg": 1,
