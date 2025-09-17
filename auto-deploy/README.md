@@ -25,7 +25,7 @@ Below are two ways to deploy it depending on whether the Core REST API instance 
 
 ---
 
-#### Case 1: Core REST API instance for the target server is already configured  
+#### Case 1: Core REST API instance for the target server is already configured
 
 | Step | Action                                                                                                                                                                                                                               |
 | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -41,6 +41,7 @@ Below are two ways to deploy it depending on whether the Core REST API instance 
 
 | Step                 | Action                                                                                                                                                                                                                                                          |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0                    | Ensure a Core REST API instance is configured for the local server.          |
 | 1                    | Go to **Incidents** view                                                                                                                                                                                                                                        |
 | 2                    | Click **+ New Incident**                                                                                                                                                                                                                                        |
 | 3                    | Choose **Auto Deploy** as Incident Type                                                                                                                                                                                                                         |
