@@ -1,0 +1,2707 @@
+description: This playbook deploys and configures a deployment package on a target
+  server.
+id: 'Auto Deploy - M: Deployment Process'
+inputs:
+- description: The entry ID of the installation package
+  key: PackageFileEntryID
+  playbookInputQuery: null
+  required: true
+  value: {}
+- description: The password to decrypt the installation package file.
+  key: PackageFilePassword
+  playbookInputQuery: null
+  required: false
+  value: {}
+- description: Set to true to update installed content packs if an update is available;
+    set to false to take no action.
+  key: UpdateInstalledPacks
+  playbookInputQuery: null
+  required: false
+  value:
+    simple: "true"
+- description: The name of the Core REST API integration instance for the target server.
+  key: APIInstance
+  playbookInputQuery: null
+  required: false
+  value: {}
+name: 'Auto Deploy - M: Deployment Process'
+outputs:
+- contextPath: SetupConfig
+  type: unknown
+- contextPath: SetupConfig.no-self-destruction
+  description: True if self destruction is not allowed, otherwise False.
+  type: boolean
+quiet: true
+sourceplaybookid: Auto Setup - Main
+starttaskid: "0"
+tags:
+- auto-deploy
+tasks:
+  "0":
+    continueonerrortype: ""
+    id: "0"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "182"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 08b30c2d-f11e-43ed-8b25-ca1dfe6a2eb0
+      iscommand: false
+      name: ""
+      version: -1
+    taskid: 08b30c2d-f11e-43ed-8b25-ca1dfe6a2eb0
+    timertriggers: []
+    type: start
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 50
+        }
+      }
+  "11":
+    continueonerrortype: ""
+    id: "11"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "124"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      entryID:
+        complex:
+          filters:
+          - - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: File.Name
+              operator: isEqualString
+              right:
+                value:
+                  simple: instances-config.json
+          root: File
+          transformers:
+          - args:
+              field:
+                value:
+                  simple: EntryID
+            operator: getField
+      extend-context:
+        simple: IntegrationConfigurations=.=val.Data
+      input_encoding:
+        simple: utf-8
+      output_metadata:
+        simple: "true"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Load the contents of a file into context.
+      id: 676dda57-bc0b-4a63-8099-8cf969f62f42
+      iscommand: false
+      name: Load Integration Config File
+      script: ReadFile
+      type: regular
+      version: -1
+    taskid: 676dda57-bc0b-4a63-8099-8cf969f62f42
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 3050
+        }
+      }
+  "12":
+    continueonerrortype: ""
+    id: "12"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "152"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: f0d1633b-8a39-49cb-8d32-a6337a85e1a8
+      iscommand: false
+      name: Upload Content Bundle
+      type: title
+      version: -1
+    taskid: f0d1633b-8a39-49cb-8d32-a6337a85e1a8
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 1215
+        }
+      }
+  "13":
+    continueonerrortype: ""
+    id: "13"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "11"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: ba2569c7-a2cc-40f8-8f81-40565a40d0a7
+      iscommand: false
+      name: Create Integration Instances
+      type: title
+      version: -1
+    taskid: ba2569c7-a2cc-40f8-8f81-40565a40d0a7
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 2905
+        }
+      }
+  "28":
+    continueonerrortype: ""
+    id: "28"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "181"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 18c6a700-6904-4672-81ee-5a552fef1b6a
+      iscommand: false
+      name: Install Content Packs
+      type: title
+      version: -1
+    taskid: 18c6a700-6904-4672-81ee-5a552fef1b6a
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 1535
+        }
+      }
+  "85":
+    continueonerrortype: ""
+    id: "85"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "86"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: e8bc90e1-e4d9-4519-8002-2be225c705fc
+      iscommand: false
+      name: Update Incident Fields
+      type: title
+      version: -1
+    taskid: e8bc90e1-e4d9-4519-8002-2be225c705fc
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 4975
+        }
+      }
+  "86":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                filters:
+                - - left:
+                      iscontext: true
+                      value:
+                        simple: File.Name
+                    operator: isEqualString
+                    right:
+                      value:
+                        simple: incident-fields-config.json
+                root: File
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "86"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "95"
+      "yes":
+      - "87"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Load the contents of a file into context.
+      id: e39f5dc3-aefd-4505-83e5-27bcc32149e8
+      iscommand: false
+      name: Has incident-fields config?
+      type: condition
+      version: -1
+    taskid: e39f5dc3-aefd-4505-83e5-27bcc32149e8
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 5120
+        }
+      }
+  "87":
+    continueonerrortype: ""
+    id: "87"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "172"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      entryID:
+        complex:
+          filters:
+          - - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: File.Name
+              operator: isEqualString
+              right:
+                value:
+                  simple: incident-fields-config.json
+          root: File
+          transformers:
+          - args:
+              field:
+                value:
+                  simple: EntryID
+            operator: getField
+      extend-context:
+        simple: IncidentFieldsConfiguration=.=JSON.parse(val.Data)
+      output_metadata:
+        simple: "true"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Load the contents of a file into context.
+      id: d9198035-ccdf-4261-83b4-835c248eb6a4
+      iscommand: false
+      name: Load Configuration File
+      script: ReadFile
+      type: regular
+      version: -1
+    taskid: d9198035-ccdf-4261-83b4-835c248eb6a4
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 162.5,
+          "y": 5295
+        }
+      }
+  "95":
+    continueonerrortype: ""
+    id: "95"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "164"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: f334a991-1c9c-494a-8b72-1bf3eeafacf0
+      iscommand: false
+      name: Update Installed Content Packs
+      type: title
+      version: -1
+    taskid: f334a991-1c9c-494a-8b72-1bf3eeafacf0
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 6170
+        }
+      }
+  "97":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                filters:
+                - - left:
+                      iscontext: true
+                      value:
+                        simple: File.Name
+                    operator: isEqualString
+                    right:
+                      value:
+                        simple: content-pack-list.json
+                root: File
+          operator: isNotEmpty
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "97"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "13"
+      "yes":
+      - "140"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Load the contents of a file into context.
+      id: 76ded618-6d8a-4cbe-89b4-7bc9eaab51ac
+      iscommand: false
+      name: Has content pack list?
+      type: condition
+      version: -1
+    taskid: 76ded618-6d8a-4cbe-89b4-7bc9eaab51ac
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 2030
+        }
+      }
+  "105":
+    continueonerrortype: ""
+    id: "105"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "12"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      entryID:
+        complex:
+          root: inputs.PackageFileEntryID
+      lastZipFileInWarroom:
+        simple: "no"
+      nonsensitive_password:
+        complex:
+          root: inputs.PackageFilePassword
+      retry-count:
+        simple: "3"
+      retry-interval:
+        simple: "10"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Unzip a file using fileName or entryID to specify a file. Unzipped
+        files will be loaded to the War Room and names will be put into the context.
+      id: cdd37b3c-6e7d-4bf7-86f4-8519fc9f9a83
+      iscommand: false
+      name: Unzip Package File
+      script: UnzipFile
+      type: regular
+      version: -1
+    taskid: cdd37b3c-6e7d-4bf7-86f4-8519fc9f9a83
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 1040
+        }
+      }
+  "111":
+    continueonerrortype: ""
+    id: "111"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "105"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 9eee9418-8220-4d8e-87fb-2f68d02463c1
+      iscommand: false
+      name: Extract the installation package
+      type: title
+      version: -1
+    taskid: 9eee9418-8220-4d8e-87fb-2f68d02463c1
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 880
+        }
+      }
+  "117":
+    continueonerrortype: ""
+    id: "117"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: f1b467dc-d5a7-4802-893f-da1e2902e70e
+      iscommand: false
+      name: Done
+      type: title
+      version: -1
+    taskid: f1b467dc-d5a7-4802-893f-da1e2902e70e
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 6840
+        }
+      }
+  "124":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                filters:
+                - - left:
+                      iscontext: true
+                      value:
+                        simple: IntegrationConfiguration
+                    operator: containsString
+                    right:
+                      value:
+                        simple: 'APIKEY.KEY:'
+                root: IntegrationConfiguration
+          operator: isNotEmpty
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "124"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "175"
+      "yes":
+      - "157"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs.paloaltonetworks.com/cortex/cortex-xsoar/6-2/cortex-xsoar-admin/playbooks/automations.html
+      id: a69e6eb1-778f-4769-8e7e-efb5ec51c743
+      iscommand: false
+      name: Core REST API Key Required?
+      type: condition
+      version: -1
+    taskid: a69e6eb1-778f-4769-8e7e-efb5ec51c743
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 3225
+        }
+      }
+  "140":
+    continueonerrortype: ""
+    id: "140"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "162"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      entryID:
+        complex:
+          filters:
+          - - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: File.Name
+              operator: isEqualString
+              right:
+                value:
+                  simple: content-pack-list.json
+          root: File
+          transformers:
+          - args:
+              field:
+                value:
+                  simple: EntryID
+            operator: getField
+      extend-context:
+        simple: XSOAR.ContentPackList=.=JSON.parse(val.Data)
+      output_metadata:
+        simple: "true"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Load the contents of a file into context.
+      id: 9a69d711-b7b9-46a1-8c5e-0d976e804d78
+      iscommand: false
+      name: Load content pack list file
+      script: ReadFile
+      type: regular
+      version: -1
+    taskid: 9a69d711-b7b9-46a1-8c5e-0d976e804d78
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 387.5,
+          "y": 2205
+        }
+      }
+  "143":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: ContentPacks
+          operator: isNotEmpty
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "143"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "13"
+      "yes":
+      - "161"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: fda32d19-0f88-4f37-8afa-e5d48c6828a6
+      iscommand: false
+      name: Any content packs to install?
+      type: condition
+      version: -1
+    taskid: fda32d19-0f88-4f37-8afa-e5d48c6828a6
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 387.5,
+          "y": 2555
+        }
+      }
+  "152":
+    continueonerrortype: ""
+    id: "152"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "28"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      entryID:
+        complex:
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: File.Name
+              operator: endWith
+              right:
+                value:
+                  simple: .tar.gz
+          root: File
+          transformers:
+          - args:
+              field:
+                value:
+                  simple: EntryID
+            operator: getField
+          - operator: uniq
+      uri:
+        simple: /public/v1/content/bundle
+      using:
+        complex:
+          accessor: name
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.brand
+              operator: isEqualString
+              right:
+                value:
+                  simple: Core REST API
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          root: modules
+          transformers:
+          - operator: StringifyArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs:
+                iscontext: true
+                value:
+                  simple: inputs
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: Send HTTP Multipart request to upload files to Demisto server
+      id: 5c9d1d93-99ad-4482-8402-b5c685961eb6
+      iscommand: true
+      name: Upload Content Bundle
+      script: Core REST API|||core-api-multipart
+      type: regular
+      version: -1
+    taskid: 5c9d1d93-99ad-4482-8402-b5c685961eb6
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 1360
+        }
+      }
+  "153":
+    continueonerrortype: ""
+    id: "153"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "97"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      execution-timeout:
+        simple: "1800"
+      extend-context:
+        simple: |-
+          XSOAR.MarketPlacePacks=.response.packs={
+            packID: val.id,
+            currentVersion: val.currentVersion,
+            name: val.name,
+            mppack: true
+          }
+      uri:
+        simple: /public/v1/contentpacks/marketplace/search
+      using:
+        complex:
+          accessor: name
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.brand
+              operator: isEqualString
+              right:
+                value:
+                  simple: Core REST API
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          root: modules
+          transformers:
+          - operator: StringifyArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs:
+                iscontext: true
+                value:
+                  simple: inputs
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: send HTTP POST request
+      id: d50aa216-a951-4641-8585-f292bea397ef
+      iscommand: true
+      name: List content packs from MP
+      script: Core REST API|||core-api-post
+      type: regular
+      version: -1
+    taskid: d50aa216-a951-4641-8585-f292bea397ef
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 1855
+        }
+      }
+  "154":
+    continueonerrortype: ""
+    id: "154"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "158"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: IntegrationPacks
+      value:
+        complex:
+          root: IntegrationConfigurations
+          transformers:
+          - args:
+              appendable:
+                value:
+                  simple: "false"
+              array_path: {}
+              conflict_strategy:
+                value:
+                  simple: source
+              mapping:
+                value:
+                  simple: packID:packID
+              merge_with:
+                iscontext: true
+                value:
+                  simple: XSOAR.MarketPlacePacks
+              out_key: {}
+              out_path: {}
+              overwrite_by_destination: {}
+              overwrite_by_source: {}
+            operator: MergeDictArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{..=val.mppack ? val : ""}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+          - args:
+              empty_values:
+                value:
+                  simple: None
+              remove_keys: {}
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs.paloaltonetworks.com/cortex/cortex-xsoar/6-2/cortex-xsoar-admin/playbooks/automations.html
+      id: 84f560a5-809f-4a0a-8271-f0b2084f0c33
+      iscommand: false
+      name: Prepare to install integration packs
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 84f560a5-809f-4a0a-8271-f0b2084f0c33
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 3750
+        }
+      }
+  "155":
+    continueonerrortype: ""
+    id: "155"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "170"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      packs_to_install:
+        complex:
+          root: IntegrationPacks
+          transformers:
+          - args:
+              dt:
+                value:
+                  simple: '.={[val.packID]: val.currentVersion}'
+            operator: DT
+          - operator: StringifyArray
+      using:
+        complex:
+          accessor: name
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.brand
+              operator: isEqualString
+              right:
+                value:
+                  simple: Core REST API
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          root: modules
+          transformers:
+          - operator: StringifyArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs:
+                iscontext: true
+                value:
+                  simple: inputs
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: Upload packs to Demisto server from url or the marketplace.
+      id: faed847f-2648-4066-8964-77a1e075529d
+      iscommand: true
+      name: Install Content Packs for integrations
+      script: Core REST API|||core-api-install-packs
+      type: regular
+      version: -1
+    taskid: faed847f-2648-4066-8964-77a1e075529d
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 162.5,
+          "y": 4100
+        }
+      }
+  "156":
+    continueonerrortype: ""
+    id: "156"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "154"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: IntegrationConfigurations
+      value:
+        complex:
+          root: IntegrationConfigurations
+          transformers:
+          - args:
+              action_dt:
+                value:
+                  simple: .='"'+val+'"'
+              ignore_case: {}
+              multi_line: {}
+              output_format:
+                iscontext: true
+                value:
+                  simple: GenerateKey.key
+              period_matches_newline: {}
+              regex:
+                value:
+                  simple: '"APIKEY.KEY:12345678901234567890123456789012"'
+            operator: RegexReplace
+          - args:
+              action_dt:
+                value:
+                  simple: .='"'+val+'"'
+              ignore_case: {}
+              multi_line: {}
+              output_format:
+                iscontext: true
+                value:
+                  simple: GenerateKey.ID
+              period_matches_newline: {}
+              regex:
+                value:
+                  simple: '"APIKEY.ID:12345678901234567890123456789012"'
+            operator: RegexReplace
+          - args:
+              action_dt: {}
+              ignore_case: {}
+              multi_line: {}
+              output_format:
+                value:
+                  simple: '"Advanced"'
+              period_matches_newline: {}
+              regex:
+                value:
+                  simple: '"APIKEY.AuthMeth:12345678901234567890123456789012"'
+            operator: RegexReplace
+          - operator: ParseJSON
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs.paloaltonetworks.com/cortex/cortex-xsoar/6-2/cortex-xsoar-admin/playbooks/automations.html
+      id: cd62968b-0ba3-46c0-8b1d-63b43afcb09c
+      iscommand: false
+      name: Replace with the API Key generated
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: cd62968b-0ba3-46c0-8b1d-63b43afcb09c
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 60,
+          "y": 3575
+        }
+      }
+  "157":
+    continueonerrortype: ""
+    id: "157"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "156"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      body:
+        simple: |-
+          {
+            "request_data": {
+              "roles": [
+                "Instance Administrator"
+              ],
+              "security_level": "advanced",
+              "comment": "API Key for Pack Installed via Auto Setup"
+            }
+          }
+      extend-context:
+        simple: GenerateKey=.response.reply
+      uri:
+        simple: /public_api/v1/api_keys/generate
+      using:
+        complex:
+          accessor: name
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.brand
+              operator: isEqualString
+              right:
+                value:
+                  simple: Core REST API
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          root: modules
+          transformers:
+          - operator: StringifyArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs:
+                iscontext: true
+                value:
+                  simple: inputs
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: send HTTP POST request
+      id: 0182d85d-4256-4376-811c-e612525b2d38
+      iscommand: true
+      name: Generate Core REST API Key
+      script: Core REST API|||core-api-post
+      type: regular
+      version: -1
+    taskid: 0182d85d-4256-4376-811c-e612525b2d38
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 60,
+          "y": 3400
+        }
+      }
+  "158":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: IntegrationPacks
+          operator: isNotEmpty
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "158"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "170"
+      "yes":
+      - "155"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: b52756a8-ec59-4995-8e00-471f81b77213
+      iscommand: false
+      name: Any content packs to install for integrations?
+      type: condition
+      version: -1
+    taskid: b52756a8-ec59-4995-8e00-471f81b77213
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 3925
+        }
+      }
+  "161":
+    continueonerrortype: ""
+    id: "161"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "13"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      packs_to_install:
+        complex:
+          root: ContentPacks
+          transformers:
+          - args:
+              dt:
+                value:
+                  simple: '.={[val.packID]: val.currentVersion}'
+            operator: DT
+          - operator: StringifyArray
+      using:
+        complex:
+          accessor: name
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.brand
+              operator: isEqualString
+              right:
+                value:
+                  simple: Core REST API
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          root: modules
+          transformers:
+          - operator: StringifyArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs:
+                iscontext: true
+                value:
+                  simple: inputs
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: Upload packs to Demisto server from url or the marketplace.
+      id: 910a0b80-5cf8-49a1-8f09-c488aeb7e1bb
+      iscommand: true
+      name: Install Content Packs
+      script: Core REST API|||core-api-install-packs
+      type: regular
+      version: -1
+    taskid: 910a0b80-5cf8-49a1-8f09-c488aeb7e1bb
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 500,
+          "y": 2730
+        }
+      }
+  "162":
+    continueonerrortype: ""
+    id: "162"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "143"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: ContentPacks
+      value:
+        complex:
+          accessor: pack_ids
+          root: XSOAR.ContentPackList
+          transformers:
+          - args:
+              dt:
+                value:
+                  simple: '.={packID: val}'
+            operator: DT
+          - args:
+              appendable:
+                value:
+                  simple: "false"
+              array_path: {}
+              conflict_strategy:
+                value:
+                  simple: source
+              mapping:
+                value:
+                  simple: packID:packID
+              merge_with:
+                iscontext: true
+                value:
+                  simple: XSOAR.MarketPlacePacks
+              out_key: {}
+              out_path: {}
+              overwrite_by_destination: {}
+              overwrite_by_source: {}
+            operator: MergeDictArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{..=val.mppack ? val : ""}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+          - args:
+              empty_values:
+                value:
+                  simple: None
+              remove_keys: {}
+            operator: RemoveEmpty
+          - args:
+              appendable:
+                value:
+                  simple: "false"
+              array_path: {}
+              conflict_strategy:
+                value:
+                  simple: destination
+              mapping:
+                value:
+                  simple: packID:packID
+              merge_with:
+                iscontext: true
+                value:
+                  simple: InstalledPacks
+              out_key: {}
+              out_path: {}
+              overwrite_by_destination: {}
+              overwrite_by_source: {}
+            operator: MergeDictArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{..=val.installedVersion == val.currentVersion ? "" : val}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+          - args:
+              empty_values:
+                value:
+                  simple: None
+              remove_keys: {}
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs.paloaltonetworks.com/cortex/cortex-xsoar/6-2/cortex-xsoar-admin/playbooks/automations.html
+      id: 224f1a79-a5fe-4cce-8c11-f51d34ed4b4f
+      iscommand: false
+      name: Prepare to install content packs
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 224f1a79-a5fe-4cce-8c11-f51d34ed4b4f
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 387.5,
+          "y": 2380
+        }
+      }
+  "164":
+    continueonerrortype: ""
+    id: "164"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "165"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: StalePacks
+      value:
+        complex:
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: InstalledPacks.updateAvailable
+              operator: isTrue
+          root: InstalledPacks
+          transformers:
+          - args:
+              appendable:
+                value:
+                  simple: "false"
+              array_path: {}
+              conflict_strategy:
+                value:
+                  simple: source
+              mapping:
+                value:
+                  simple: name:name
+              merge_with:
+                iscontext: true
+                value:
+                  simple: XSOAR.MarketPlacePacks
+              out_key: {}
+              out_path: {}
+              overwrite_by_destination: {}
+              overwrite_by_source: {}
+            operator: MergeDictArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{..=val.mppack ? val : ""}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+          - args:
+              empty_values:
+                value:
+                  simple: None
+              remove_keys: {}
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: "Set a value in context under the key you entered. If no value
+        is entered, the script doesn't do anything.\n\nThis automation runs using
+        the default Limited User role, unless you explicitly change the permissions.\nFor
+        more information, see the section about permissions here:\n- For Cortex XSOAR
+        6 see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+        \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n-
+        For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+      id: b7901c9d-b6d3-40a1-8230-1d48a4466acc
+      iscommand: false
+      name: Prepare to update content packs
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: b7901c9d-b6d3-40a1-8230-1d48a4466acc
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 6315
+        }
+      }
+  "165":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: StalePacks
+          operator: isNotEmpty
+          right:
+            value: {}
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                filters:
+                - - left:
+                      iscontext: true
+                      value:
+                        simple: inputs.UpdateInstalledPacks
+                    operator: isTrue
+                root: inputs.UpdateInstalledPacks
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "165"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "117"
+      "yes":
+      - "166"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 48f70057-4870-481b-8359-113f86ef1a24
+      iscommand: false
+      name: Any content packs to update?
+      type: condition
+      version: -1
+    taskid: 48f70057-4870-481b-8359-113f86ef1a24
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 6490
+        }
+      }
+  "166":
+    continueonerrortype: ""
+    id: "166"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "117"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      execution-timeout:
+        simple: "3600"
+      packs_to_install:
+        complex:
+          root: StalePacks
+          transformers:
+          - args:
+              dt:
+                value:
+                  simple: '.={[val.packID]: val.currentVersion}'
+            operator: DT
+          - operator: StringifyArray
+      using:
+        complex:
+          accessor: name
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.brand
+              operator: isEqualString
+              right:
+                value:
+                  simple: Core REST API
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          root: modules
+          transformers:
+          - operator: StringifyArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs:
+                iscontext: true
+                value:
+                  simple: inputs
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: Upload packs to Demisto server from url or the marketplace.
+      id: 9142b50c-68ae-46db-8005-88f7ef945e83
+      iscommand: true
+      name: Update Content Packs
+      script: Core REST API|||core-api-install-packs
+      type: regular
+      version: -1
+    taskid: 9142b50c-68ae-46db-8005-88f7ef945e83
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 162.5,
+          "y": 6665
+        }
+      }
+  "167":
+    continueonerrortype: ""
+    id: "167"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "85"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      body:
+        complex:
+          root: ImportInstances
+          transformers:
+          - operator: Stringify
+      uri:
+        simple: /public/v1/settings/integration
+      using:
+        complex:
+          accessor: name
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.brand
+              operator: isEqualString
+              right:
+                value:
+                  simple: Core REST API
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          root: modules
+          transformers:
+          - operator: StringifyArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs:
+                iscontext: true
+                value:
+                  simple: inputs
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: send HTTP PUT request.
+      id: df7fe6fe-38c8-4b8f-8386-03f35b62bdf9
+      iscommand: true
+      name: Add Integration Instances
+      script: Core REST API|||core-api-put
+      type: regular
+      version: -1
+    taskid: df7fe6fe-38c8-4b8f-8386-03f35b62bdf9
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 387.5,
+          "y": 4800
+        }
+      }
+  "168":
+    continueonerrortype: ""
+    id: "168"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "169"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: ImportInstances
+      value:
+        complex:
+          root: IntegrationConfigurations
+          transformers:
+          - args:
+              appendable:
+                value:
+                  simple: "false"
+              array_path: {}
+              conflict_strategy:
+                value:
+                  simple: destination
+              mapping:
+                value:
+                  simple: name:name
+              merge_with:
+                iscontext: true
+                value:
+                  simple: CurrentInstances
+              out_key:
+                value:
+                  simple: current_instance
+              out_path: {}
+              overwrite_by_destination: {}
+              overwrite_by_source: {}
+            operator: MergeDictArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{..=(() => val.current_instance ? "" : (delete val.current_instance,
+                    val))()}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+          - args:
+              empty_values:
+                value:
+                  simple: None
+              remove_keys: {}
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: "Set a value in context under the key you entered. If no value
+        is entered, the script doesn't do anything.\n\nThis automation runs using
+        the default Limited User role, unless you explicitly change the permissions.\nFor
+        more information, see the section about permissions here:\n- For Cortex XSOAR
+        6 see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+        \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n-
+        For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+      id: 0d62e8d7-b6c3-40f2-8a7b-43b8c556fc23
+      iscommand: false
+      name: Prepare to add integration instances
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 0d62e8d7-b6c3-40f2-8a7b-43b8c556fc23
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 4450
+        }
+      }
+  "169":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              simple: ImportInstances
+          operator: isNotEmpty
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "169"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "85"
+      "yes":
+      - "167"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 491ed6f4-8cef-4ccd-8b86-6f705a9c5578
+      iscommand: false
+      name: Any integration instances to add?
+      type: condition
+      version: -1
+    taskid: 491ed6f4-8cef-4ccd-8b86-6f705a9c5578
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 4625
+        }
+      }
+  "170":
+    continueonerrortype: ""
+    id: "170"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "168"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      extend-context:
+        simple: CurrentInstances=.response.instances
+      uri:
+        simple: /public/v1/settings/integration/search
+      using:
+        complex:
+          accessor: name
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.brand
+              operator: isEqualString
+              right:
+                value:
+                  simple: Core REST API
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          root: modules
+          transformers:
+          - operator: StringifyArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs:
+                iscontext: true
+                value:
+                  simple: inputs
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: send HTTP POST request
+      id: ca949e76-b0d3-4f36-8994-a00251ae7407
+      iscommand: true
+      name: Get Current Integration Instances
+      script: Core REST API|||core-api-post
+      type: regular
+      version: -1
+    taskid: ca949e76-b0d3-4f36-8994-a00251ae7407
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 4275
+        }
+      }
+  "171":
+    continueonerrortype: ""
+    id: "171"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "174"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "false"
+      extend-context:
+        simple: GenerateKey=.response.reply
+      key:
+        simple: NewIncidentFields
+      value:
+        complex:
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: IncidentFieldsConfiguration.add
+              operator: isNotEmpty
+          root: IncidentFieldsConfiguration
+          transformers:
+          - args:
+              field:
+                value:
+                  simple: add
+            operator: getField
+          - args:
+              dt:
+                value:
+                  simple: |-
+                    .=Object.keys(val).map(k => (
+                    {
+                      name: k,
+                      associatedTypes: val[k].associatedTypes,
+                      associatedToAll: val[k].associatedToAll
+                    }))
+            operator: DT
+          - args:
+              appendable:
+                value:
+                  simple: "false"
+              array_path: {}
+              conflict_strategy:
+                value:
+                  simple: source
+              mapping:
+                value:
+                  simple: name:name
+              merge_with:
+                iscontext: true
+                value:
+                  simple: CurrentIncidentFields
+              out_key:
+                value:
+                  simple: current_fields
+              out_path: {}
+              overwrite_by_destination: {}
+              overwrite_by_source: {}
+            operator: MergeDictArray
+          - args:
+              dt:
+                value:
+                  simple: |-
+                    .=(() => {
+                      if (val && val.current_fields) {
+                        let fields = val.current_fields;
+                        let types1 = Array.isArray(fields.associatedTypes) ? fields.associatedTypes : [];
+                        let types2 = Array.isArray(val.associatedTypes) ? val.associatedTypes : [];
+                        fields.associatedTypes = Array.from(new Set(types1.concat(types2)));
+                        fields.associatedToAll = val.associatedToAll || fields.associatedToAll;
+                        return fields;
+                      }
+                      return {};
+                    })()
+            operator: DT
+          - args:
+              empty_values: {}
+              remove_keys: {}
+            operator: RemoveEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: "Set a value in context under the key you entered. If no value
+        is entered, the script doesn't do anything.\n\nThis automation runs using
+        the default Limited User role, unless you explicitly change the permissions.\nFor
+        more information, see the section about permissions here:\n- For Cortex XSOAR
+        6 see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+        \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n-
+        For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+      id: f675417d-48c2-4c2a-82fe-57c681e3eac7
+      iscommand: false
+      name: Prepare to update incident fields
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: f675417d-48c2-4c2a-82fe-57c681e3eac7
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 162.5,
+          "y": 5645
+        }
+      }
+  "172":
+    continueonerrortype: ""
+    id: "172"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "171"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      extend-context:
+        simple: CurrentIncidentFields=.response
+      uri:
+        simple: /public/v1/incidentfields
+      using:
+        complex:
+          accessor: name
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.brand
+              operator: isEqualString
+              right:
+                value:
+                  simple: Core REST API
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          root: modules
+          transformers:
+          - operator: StringifyArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs:
+                iscontext: true
+                value:
+                  simple: inputs
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: send HTTP GET requests.
+      id: 2cea2d6e-87bd-41f5-8e2f-b285a9e6a97a
+      iscommand: true
+      name: Get Current Incident Fields
+      script: Core REST API|||core-api-get
+      type: regular
+      version: -1
+    taskid: 2cea2d6e-87bd-41f5-8e2f-b285a9e6a97a
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 162.5,
+          "y": 5470
+        }
+      }
+  "173":
+    continueonerrortype: ""
+    id: "173"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "95"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      body:
+        complex:
+          root: NewIncidentFields
+          transformers:
+          - operator: Stringify
+      extend-context:
+        simple: GenerateKey=.response.reply
+      uri:
+        simple: /public/v1/incidentfield
+      using:
+        complex:
+          accessor: name
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.brand
+              operator: isEqualString
+              right:
+                value:
+                  simple: Core REST API
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          root: modules
+          transformers:
+          - operator: StringifyArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs:
+                iscontext: true
+                value:
+                  simple: inputs
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: send HTTP POST request
+      id: 2ece39bb-d88f-434c-80fe-2711c4a5d999
+      iscommand: true
+      name: Update incident fields
+      script: Core REST API|||core-api-post
+      type: regular
+      version: -1
+    taskid: 2ece39bb-d88f-434c-80fe-2711c4a5d999
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 5995
+        }
+      }
+  "174":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: NewIncidentFields
+          operator: isNotEmpty
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "174"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "95"
+      "yes":
+      - "173"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: a9213748-e3d3-40af-894a-120918a12c1a
+      iscommand: false
+      name: Any incident fields to update?
+      type: condition
+      version: -1
+    taskid: a9213748-e3d3-40af-894a-120918a12c1a
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 162.5,
+          "y": 5820
+        }
+      }
+  "175":
+    continueonerrortype: ""
+    id: "175"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "154"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "false"
+      force:
+        simple: "true"
+      key:
+        simple: IntegrationConfigurations
+      value:
+        complex:
+          root: IntegrationConfigurations
+          transformers:
+          - operator: ParseJSON
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: |-
+        Set a value in context under the key you entered. If no value is entered, the script doesn't do anything.
+
+        This automation runs using the default Limited User role, unless you explicitly change the permissions.
+        For more information, see the section about permissions here:
+        https://docs.paloaltonetworks.com/cortex/cortex-xsoar/6-2/cortex-xsoar-admin/playbooks/automations.html
+      id: 17522ddb-04ac-4b8f-8e13-06a2f7f2560b
+      iscommand: false
+      name: Set IntegrationConfigurations
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 17522ddb-04ac-4b8f-8e13-06a2f7f2560b
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 490,
+          "y": 3575
+        }
+      }
+  "176":
+    continueonerrortype: ""
+    id: "176"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "177"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 317ee077-6679-4753-850d-5329b5a09c53
+      iscommand: false
+      name: Verify the requirements
+      type: title
+      version: -1
+    taskid: 317ee077-6679-4753-850d-5329b5a09c53
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 370
+        }
+      }
+  "177":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                accessor: name
+                filters:
+                - - left:
+                      iscontext: true
+                      value:
+                        simple: modules.brand
+                    operator: isEqualString
+                    right:
+                      value:
+                        simple: Core REST API
+                - - left:
+                      iscontext: true
+                      value:
+                        simple: modules.state
+                    operator: isEqualString
+                    right:
+                      value:
+                        simple: active
+                root: modules
+                transformers:
+                - operator: StringifyArray
+                - args:
+                    ctx_data: {}
+                    ctx_inc: {}
+                    ctx_inputs:
+                      iscontext: true
+                      value:
+                        simple: inputs
+                    keep_symbol_to_null: {}
+                    template:
+                      value:
+                        simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
+                    template_type: {}
+                    variable_markers:
+                      value:
+                        simple: '{,}'
+                  operator: FormatTemplate
+                - operator: count
+          operator: isEqualNumber
+          right:
+            value:
+              simple: "1"
+      label: "yes"
+    continueonerrortype: ""
+    id: "177"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "178"
+      "yes":
+      - "179"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: c67c2f19-a1ff-433c-8fbb-e1adad125511
+      iscommand: false
+      name: Can this be installed on only one instance?
+      type: condition
+      version: -1
+    taskid: c67c2f19-a1ff-433c-8fbb-e1adad125511
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 515
+        }
+      }
+  "178":
+    continueonerrortype: ""
+    id: "178"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    note: false
+    quietmode: 0
+    scriptarguments:
+      message:
+        simple: Either no Core REST instances or two or more are available.
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Prints an error entry with a given message.
+      id: 29b067e3-1f42-4b5b-8966-d755650651f1
+      iscommand: false
+      name: Either no Core REST instances or two or more are available
+      script: PrintErrorEntry
+      type: regular
+      version: -1
+    taskid: 29b067e3-1f42-4b5b-8966-d755650651f1
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 60,
+          "y": 690
+        }
+      }
+  "179":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.PackageFileEntryID
+                transformers:
+                - operator: count
+          operator: isEqualNumber
+          right:
+            value:
+              simple: "1"
+      label: "yes"
+    continueonerrortype: ""
+    id: "179"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "180"
+      "yes":
+      - "111"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 3dd58cfd-ffea-43fd-86a6-68a18eb4c659
+      iscommand: false
+      name: Is only one package file provided?
+      type: condition
+      version: -1
+    taskid: 3dd58cfd-ffea-43fd-86a6-68a18eb4c659
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 490,
+          "y": 690
+        }
+      }
+  "180":
+    continueonerrortype: ""
+    id: "180"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    note: false
+    quietmode: 0
+    scriptarguments:
+      message:
+        simple: Two or more package files were provided.
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Prints an error entry with a given message.
+      id: cdeb4b15-dc6b-44ea-890e-b1662d4e23f4
+      iscommand: false
+      name: Were two or more package files provided
+      script: PrintErrorEntry
+      type: regular
+      version: -1
+    taskid: cdeb4b15-dc6b-44ea-890e-b1662d4e23f4
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 705,
+          "y": 865
+        }
+      }
+  "181":
+    continueonerrortype: ""
+    id: "181"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "153"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      extend-context:
+        simple: |-
+          InstalledPacks=.response={
+            packID: val.id,
+            name: val.name,
+            installedVersion: val.currentVersion,
+            updateAvailable: val.updateAvailable,
+            installed_pack: true
+          }
+      uri:
+        simple: /public/v1/contentpacks/metadata/installed
+      using:
+        complex:
+          accessor: name
+          filters:
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.brand
+              operator: isEqualString
+              right:
+                value:
+                  simple: Core REST API
+          - - left:
+                iscontext: true
+                value:
+                  simple: modules.state
+              operator: isEqualString
+              right:
+                value:
+                  simple: active
+          root: modules
+          transformers:
+          - operator: StringifyArray
+          - args:
+              ctx_data: {}
+              ctx_inc: {}
+              ctx_inputs:
+                iscontext: true
+                value:
+                  simple: inputs
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
+              template_type: {}
+              variable_markers:
+                value:
+                  simple: '{,}'
+            operator: FormatTemplate
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: send HTTP GET requests.
+      id: 15607444-4119-49e1-8710-8a6b8c96006c
+      iscommand: true
+      name: Get Installed Content Packs
+      script: Core REST API|||core-api-get
+      type: regular
+      version: -1
+    taskid: 15607444-4119-49e1-8710-8a6b8c96006c
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 1680
+        }
+      }
+  "182":
+    continueonerrortype: ""
+    id: "182"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "176"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      all:
+        simple: "yes"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: "Delete field from context.\n\nThis automation runs using the default
+        Limited User role, unless you explicitly change the permissions.\nFor more
+        information, see the section about permissions here:\n- For Cortex XSOAR 6
+        see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+        \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n-
+        For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+      id: 7010ba6f-1fcf-4b12-8146-e90edc8423fd
+      iscommand: false
+      name: Delete Context
+      script: DeleteContext
+      type: regular
+      version: -1
+    taskid: 7010ba6f-1fcf-4b12-8146-e90edc8423fd
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 275,
+          "y": 195
+        }
+      }
+version: -1
+view: |-
+  {
+    "linkLabelsPosition": {},
+    "paper": {
+      "dimensions": {
+        "height": 6855,
+        "width": 1035,
+        "x": 50,
+        "y": 50
+      }
+    }
+  }

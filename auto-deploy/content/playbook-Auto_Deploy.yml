@@ -1,0 +1,1151 @@
+description: This playbook deploys and configures deployment packages on a target
+  server.
+id: Auto Deploy
+inputs: []
+name: Auto Deploy
+outputs: []
+quiet: true
+sourceplaybookid: ed37203c-ffb6-4d5f-8cf2-d88c1ebb621b
+starttaskid: "0"
+tags:
+- auto-deploy
+tasks:
+  "0":
+    continueonerrortype: ""
+    id: "0"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "32"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 319c0605-5652-4a36-8e0f-b7b2a5099b06
+      iscommand: false
+      name: ""
+      version: -1
+    taskid: 319c0605-5652-4a36-8e0f-b7b2a5099b06
+    timertriggers: []
+    type: start
+    view: |-
+      {
+        "position": {
+          "x": 327.5,
+          "y": 50
+        }
+      }
+  "19":
+    continueonerrortype: ""
+    id: "19"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 84627327-eacc-43ee-875d-753e4579ef96
+      iscommand: false
+      name: Done
+      type: title
+      version: -1
+    taskid: 84627327-eacc-43ee-875d-753e4579ef96
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 2075
+        }
+      }
+  "20":
+    continueonerrortype: ""
+    id: "20"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "35"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      name:
+        complex:
+          accessor: autodeployonlinepackages
+          root: incident
+          transformers:
+          - args:
+              item:
+                iscontext: true
+                value:
+                  simple: incident.autodeploypackagefile.name
+            operator: append
+          - args:
+              empty_values: {}
+              remove_keys: {}
+            operator: RemoveEmpty
+          - args:
+              separator:
+                value:
+                  simple: ', '
+            operator: join
+          - args:
+              prefix:
+                value:
+                  simple: 'Auto Deploy - '
+              suffix: {}
+            operator: concat
+          - args:
+              regex:
+                value:
+                  simple: ^Auto Deploy - $
+              replaceWith:
+                value:
+                  simple: Auto Deploy
+            operator: replaceMatch
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: commands.local.cmd.set.incident
+      id: 09736c60-dbf8-4e6c-8e47-fe7497aa30c0
+      iscommand: true
+      name: Set Incident Name
+      script: Builtin|||setIncident
+      type: regular
+      version: -1
+    taskid: 09736c60-dbf8-4e6c-8e47-fe7497aa30c0
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 592.5,
+          "y": 690
+        }
+      }
+  "21":
+    continueonerrortype: ""
+    id: "21"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    loop:
+      exitCondition: ""
+      forEach: true
+      iscommand: false
+      max: 100
+      wait: 1
+    nexttasks:
+      '#none#':
+      - "27"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      APIInstance:
+        complex:
+          accessor: Name
+          root: DeploymentInstance
+      PackageFileEntryID:
+        complex:
+          accessor: EntryID
+          filters:
+          - - ignorecase: true
+              left:
+                iscontext: true
+                value:
+                  simple: File.Name
+              operator: in
+              right:
+                iscontext: true
+                value:
+                  simple: DeploymentPackageFileName
+          root: File
+      PackageFilePassword:
+        complex:
+          accessor: autodeploypackagepassword
+          root: incident
+      UpdateInstalledPacks:
+        complex:
+          accessor: autodeployupdateinstalledcontentpacks
+          root: incident
+    separatecontext: true
+    skipunavailable: false
+    task:
+      brand: ""
+      id: a1a08bb8-db49-496e-8b59-9ab7399c046b
+      iscommand: false
+      name: Deployment Process
+      playbookId: 'Auto Deploy - M: Deployment Process'
+      type: playbook
+      version: -1
+    taskid: a1a08bb8-db49-496e-8b59-9ab7399c046b
+    timertriggers: []
+    type: playbook
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1040
+        }
+      }
+  "22":
+    continueonerrortype: ""
+    id: "22"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "19"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: commands.local.cmd.close.inv
+      id: 66a19c0d-ebd4-4c87-8649-eca641479a52
+      iscommand: true
+      name: Close
+      script: Builtin|||closeInvestigation
+      type: regular
+      version: -1
+    taskid: 66a19c0d-ebd4-4c87-8649-eca641479a52
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1885
+        }
+      }
+  "23":
+    continueonerrortype: ""
+    id: "23"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "38"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 8970f0a8-ae7b-40d5-865b-1e1fe41980a8
+      iscommand: false
+      name: Set up a connection to the target
+      type: title
+      version: -1
+    taskid: 8970f0a8-ae7b-40d5-865b-1e1fe41980a8
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 592.5,
+          "y": 1740
+        }
+      }
+  "24":
+    continueonerrortype: ""
+    id: "24"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "39"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      body:
+        complex:
+          root: .
+          transformers:
+          - operator: Stringify
+          - args:
+              ctx_data:
+                iscontext: true
+                value:
+                  simple: .
+              ctx_inc:
+                iscontext: true
+                value:
+                  simple: incident
+              ctx_inputs: {}
+              keep_symbol_to_null: {}
+              template:
+                value:
+                  simple: |-
+                    {
+                      "brand": "Core REST API",
+                      "name": "${DeploymentInstance.Name}",
+                      "packID": "",
+                      "defaultIgnore": true,
+                      "enabled": "true",
+                      "canSample": false,
+                      "isIntegrationScript": true,
+                      "isLongRunning": null,
+                      "mappingId": "",
+                      "incomingMapperId": "",
+                      "outgoingMapperId": "",
+                      "data": [
+                        {
+                          "name": "insecure",
+                          "type": 8,
+                          "value": true,
+                          "hasvalue": true
+                        },
+                        {
+                          "name": "marketplace_url",
+                          "type": 0,
+                          "value": "https://marketplace.xsoar.paloaltonetworks.com/content/packs/",
+                          "hasvalue": true
+                        },
+                        {
+                          "name": "url",
+                          "type": 0,
+                          "value": "${incident.autodeploytargetserverurl}",
+                          "hasvalue": true
+                        },
+                        {
+                          "name": "auth_method",
+                          "type": 15,
+                          "value": "${incident.autodeployapiauthmethod}",
+                          "hasvalue": true
+                        },
+                        {
+                          "name": "creds_apikey",
+                          "type": 9,
+                          "value": {
+                            "identifier": "${incident.autodeployapiid}",
+                            "credential": "",
+                            "password": "${incident.autodeployapikey}",
+                            "passwordChanged": false
+                          },
+                          "hasvalue": true
+                        }
+                      ]
+                    }
+              template_type:
+                value:
+                  simple: json
+              variable_markers: {}
+            operator: FormatTemplate
+          - operator: Stringify
+      extend-context:
+        simple: DeploymentInstance.ID=.response.id
+      uri:
+        simple: /public/v1/settings/integration
+      using:
+        complex:
+          accessor: autodeploylocalmanagementcorerestapiinstance
+          root: incident
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: send HTTP PUT request.
+      id: 6aee5250-4b7d-4cc1-8af4-abf541f21452
+      iscommand: true
+      name: Add an integration instance for deployment
+      script: Core REST API|||core-api-put
+      type: regular
+      version: -1
+    taskid: 6aee5250-4b7d-4cc1-8af4-abf541f21452
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 592.5,
+          "y": 2060
+        }
+      }
+  "26":
+    continueonerrortype: ""
+    id: "26"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "21"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 7c7f4a77-530e-46a1-8542-cd60cefdb3f4
+      iscommand: false
+      name: Deployment
+      type: title
+      version: -1
+    taskid: 7c7f4a77-530e-46a1-8542-cd60cefdb3f4
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 880
+        }
+      }
+  "27":
+    continueonerrortype: ""
+    id: "27"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "28"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 60bca0d2-a992-4fb2-8f32-7ae7259c0299
+      iscommand: false
+      name: Finalize
+      type: title
+      version: -1
+    taskid: 60bca0d2-a992-4fb2-8f32-7ae7259c0299
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1255
+        }
+      }
+  "28":
+    continueonerrortype: ""
+    id: "28"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "43"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      uri:
+        complex:
+          accessor: ID
+          root: DeploymentInstance
+          transformers:
+          - args:
+              prefix:
+                value:
+                  simple: /public/v1/settings/integration/
+              suffix: {}
+            operator: concat
+      using:
+        complex:
+          accessor: autodeploylocalmanagementcorerestapiinstance
+          root: incident
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: send HTTP DELETE request.
+      id: 0f7a29f6-3e69-47fc-8f36-aaa1f8c8d81c
+      iscommand: true
+      name: Delete the integration instance for deployment
+      script: Core REST API|||core-api-delete
+      type: regular
+      version: -1
+    taskid: 0f7a29f6-3e69-47fc-8f36-aaa1f8c8d81c
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1470
+        }
+      }
+  "30":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: DeploymentPackageFileName
+          operator: isNotEmpty
+          right:
+            value: {}
+      label: "yes"
+    continueonerrortype: ""
+    id: "30"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "43"
+      "yes":
+      - "23"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 170f5bec-e8d8-4107-8b70-27eef570b46d
+      iscommand: false
+      name: Are any package files available?
+      type: condition
+      version: -1
+    taskid: 170f5bec-e8d8-4107-8b70-27eef570b46d
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 592.5,
+          "y": 1565
+        }
+      }
+  "32":
+    continueonerrortype: ""
+    id: "32"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "42"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      restrict:
+        simple: "true"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: commands.local.cmd.restrictInvestigation
+      id: 09ba70dc-9f74-45e9-863d-fef4a2207464
+      iscommand: true
+      name: Restrict Investigation
+      script: Builtin|||restrictInvestigation
+      type: regular
+      version: -1
+    taskid: 09ba70dc-9f74-45e9-863d-fef4a2207464
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 327.5,
+          "y": 195
+        }
+      }
+  "33":
+    continueonerrortype: ""
+    id: "33"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "37"
+    note: false
+    quietmode: 2
+    scriptarguments:
+      filename:
+        complex:
+          accessor: autodeployonlinepackages
+          root: incident
+          transformers:
+          - args:
+              prefix: {}
+              suffix:
+                value:
+                  simple: .zip
+            operator: concat
+      ignore-outputs:
+        simple: "true"
+      method:
+        simple: GET
+      save_as_file:
+        simple: "yes"
+      url:
+        complex:
+          accessor: autodeployonlinepackages
+          root: incident
+          transformers:
+          - args:
+              limit: {}
+              replaceWith:
+                value:
+                  simple: _
+              toReplace:
+                value:
+                  simple: ' '
+            operator: replace
+          - operator: toLowerCase
+          - args:
+              prefix:
+                value:
+                  simple: https://github.com/spearmin10/xsoar-utils/blob/main/auto-deploy/packages/
+              suffix:
+                value:
+                  simple: .zip?raw=true
+            operator: concat
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Sends a HTTP request with advanced capabilities
+      id: c3b8eb6f-b9d0-41f3-88cc-d491f270f85b
+      iscommand: false
+      name: Download package files
+      script: HttpV2
+      type: regular
+      version: -1
+    taskid: c3b8eb6f-b9d0-41f3-88cc-d491f270f85b
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 480,
+          "y": 1215
+        }
+      }
+  "35":
+    continueonerrortype: ""
+    id: "35"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "36"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 717c458f-d9f6-4797-8c30-cf92a07e29f8
+      iscommand: false
+      name: Prepare Packages
+      type: title
+      version: -1
+    taskid: 717c458f-d9f6-4797-8c30-cf92a07e29f8
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 592.5,
+          "y": 880
+        }
+      }
+  "36":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                accessor: autodeployonlinepackages
+                root: incident
+          operator: isNotEmpty
+      label: "yes"
+    continueonerrortype: ""
+    id: "36"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "37"
+      "yes":
+      - "33"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 4e2995c3-3ff3-4d5a-8ece-6a52755a024e
+      iscommand: false
+      name: Need to download packages online?
+      type: condition
+      version: -1
+    taskid: 4e2995c3-3ff3-4d5a-8ece-6a52755a024e
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 592.5,
+          "y": 1040
+        }
+      }
+  "37":
+    continueonerrortype: ""
+    id: "37"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "30"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: DeploymentPackageFileName
+      value:
+        complex:
+          accessor: autodeployonlinepackages
+          root: incident
+          transformers:
+          - args:
+              prefix: {}
+              suffix:
+                value:
+                  simple: .zip
+            operator: concat
+          - args:
+              empty_values:
+                value:
+                  simple: .zip
+              remove_keys: {}
+            operator: RemoveEmpty
+          - args:
+              item:
+                iscontext: true
+                value:
+                  simple: incident.autodeploypackagefile.name
+              raw: {}
+            operator: AppendIfNotEmpty
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Builtin
+      description: "Set a value in context under the key you entered. If no value
+        is entered, the script doesn't do anything.\n\nThis automation runs using
+        the default Limited User role, unless you explicitly change the permissions.\nFor
+        more information, see the section about permissions here:\n- For Cortex XSOAR
+        6 see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/6.x/Cortex-XSOAR-Playbook-Design-Guide/Automations
+        \n- For Cortex XSOAR 8 Cloud see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8/Cortex-XSOAR-Cloud-Documentation/Create-a-script\n-
+        For Cortex XSOAR 8.7 On-prem see https://docs-cortex.paloaltonetworks.com/r/Cortex-XSOAR/8.7/Cortex-XSOAR-On-prem-Documentation/Create-a-script"
+      id: 15033d4d-7eae-46b2-81b3-64c81db223bd
+      iscommand: false
+      name: Set package files
+      script: SetAndHandleEmpty
+      type: regular
+      version: -1
+    taskid: 15033d4d-7eae-46b2-81b3-64c81db223bd
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 592.5,
+          "y": 1390
+        }
+      }
+  "38":
+    continueonerrortype: ""
+    id: "38"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "24"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      append:
+        simple: "false"
+      key:
+        simple: DeploymentInstance.Name
+      value:
+        complex:
+          root: DeploymentPackageFileName
+          transformers:
+          - operator: FirstArrayElement
+          - args:
+              prefix: {}
+              suffix:
+                value:
+                  simple: _
+            operator: concat
+          - args:
+              dt:
+                value:
+                  simple: .=val + Math.floor(Math.random() * 100000000).toString().padStart(8,
+                    '0')
+            operator: DT
+          - args:
+              prefix:
+                value:
+                  simple: _instance_auto_deploy_
+              suffix: {}
+            operator: concat
+          - operator: toLowerCase
+          - args:
+              limit: {}
+              replaceWith: {}
+              toReplace:
+                value:
+                  simple: .zip
+            operator: replace
+          - args:
+              limit: {}
+              replaceWith:
+                value:
+                  simple: _
+              toReplace:
+                value:
+                  simple: ' '
+            operator: replace
+          - args:
+              prefix:
+                value:
+                  simple: Core REST API
+              suffix: {}
+            operator: concat
+          - args:
+              regex:
+                value:
+                  simple: '[^\x20-\x7E]'
+              replaceWith: {}
+            operator: replaceMatch
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Set a value in context under the key you entered.
+      id: 75c1b5fc-3629-4c52-82fa-a08760a250fb
+      iscommand: false
+      name: Generate an instance name for deployment
+      script: Set
+      type: regular
+      version: -1
+    taskid: 75c1b5fc-3629-4c52-82fa-a08760a250fb
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 592.5,
+          "y": 1885
+        }
+      }
+  "39":
+    continueonerrortype: ""
+    id: "39"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "40"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 6a844fe7-3c77-49d0-84c0-080c9af9b6c2
+      iscommand: false
+      name: Schedule Phase-2 Transition
+      type: title
+      version: -1
+    taskid: 6a844fe7-3c77-49d0-84c0-080c9af9b6c2
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 592.5,
+          "y": 2235
+        }
+      }
+  "40":
+    continueonerrortype: ""
+    id: "40"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "41"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      command:
+        simple: '!setPlaybook name="Auto Deploy"'
+      cron:
+        simple: '* * * * *'
+      times:
+        simple: "1"
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Schedule a command to run inside the war room at a future time
+        (once or reoccurring)
+      id: 97b63c8e-9f26-4597-8e0a-654aa4bad981
+      iscommand: false
+      name: Set a schedule for the switch
+      script: ScheduleCommand
+      type: regular
+      version: -1
+    taskid: 97b63c8e-9f26-4597-8e0a-654aa4bad981
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 592.5,
+          "y": 2380
+        }
+      }
+  "41":
+    continueonerrortype: ""
+    id: "41"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      description: Sleep for X seconds.
+      id: ec098f83-30b4-40a2-8123-b648e4627356
+      iscommand: false
+      name: Await the transition to Phase-2
+      type: title
+      version: -1
+    taskid: ec098f83-30b4-40a2-8123-b648e4627356
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 592.5,
+          "y": 2555
+        }
+      }
+  "42":
+    conditions:
+    - condition:
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                accessor: Name
+                root: DeploymentInstance
+          operator: isEmpty
+          right:
+            value: {}
+      label: phase-1
+    continueonerrortype: ""
+    id: "42"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#default#':
+      - "45"
+      phase-1:
+      - "44"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 6d344159-4293-40e3-8e12-f8143567570d
+      iscommand: false
+      name: Check the current phase
+      type: condition
+      version: -1
+    taskid: 6d344159-4293-40e3-8e12-f8143567570d
+    timertriggers: []
+    type: condition
+    view: |-
+      {
+        "position": {
+          "x": 327.5,
+          "y": 370
+        }
+      }
+  "43":
+    continueonerrortype: ""
+    id: "43"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "22"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 298e3269-8ef5-4469-875d-60f75f60abe8
+      iscommand: false
+      name: Close
+      type: title
+      version: -1
+    taskid: 298e3269-8ef5-4469-875d-60f75f60abe8
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 1740
+        }
+      }
+  "44":
+    continueonerrortype: ""
+    id: "44"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "20"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 4e93e0c5-6c3a-4a1a-83d2-54384910488d
+      iscommand: false
+      name: Phase 1
+      type: title
+      version: -1
+    taskid: 4e93e0c5-6c3a-4a1a-83d2-54384910488d
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 592.5,
+          "y": 545
+        }
+      }
+  "45":
+    continueonerrortype: ""
+    id: "45"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "46"
+    note: false
+    quietmode: 0
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: ""
+      id: 07c8bf74-64e9-4696-8b7e-c5773526efa4
+      iscommand: false
+      name: Phase 2
+      type: title
+      version: -1
+    taskid: 07c8bf74-64e9-4696-8b7e-c5773526efa4
+    timertriggers: []
+    type: title
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 545
+        }
+      }
+  "46":
+    continueonerrortype: ""
+    id: "46"
+    ignoreworker: false
+    isautoswitchedtoquietmode: false
+    isoversize: false
+    nexttasks:
+      '#none#':
+      - "26"
+    note: false
+    quietmode: 0
+    scriptarguments:
+      ignore-outputs:
+        simple: "true"
+      uri:
+        simple: /public/v1/settings/integration-commands
+      using:
+        complex:
+          accessor: Name
+          root: DeploymentInstance
+    separatecontext: false
+    skipunavailable: false
+    task:
+      brand: Core REST API
+      description: send HTTP GET requests.
+      id: 4c4b23fb-b915-46fc-89c8-76f8d47911f7
+      iscommand: true
+      name: Test the connection to the target
+      script: Core REST API|||core-api-get
+      type: regular
+      version: -1
+    taskid: 4c4b23fb-b915-46fc-89c8-76f8d47911f7
+    timertriggers: []
+    type: regular
+    view: |-
+      {
+        "position": {
+          "x": 50,
+          "y": 690
+        }
+      }
+version: -1
+view: |-
+  {
+    "linkLabelsPosition": {},
+    "paper": {
+      "dimensions": {
+        "height": 2570,
+        "width": 922.5,
+        "x": 50,
+        "y": 50
+      }
+    }
+  }
