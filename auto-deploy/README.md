@@ -29,6 +29,7 @@ Below are two ways to deploy it depending on whether the Core REST API instance 
 
 | Step | Action                                                                                                                                                                                                                               |
 | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0    | Ensure a Core REST API instance is configured **for the target server**. |
 | 1    | Navigate to **Playground**                                                                                                                                                                                                           |
 | 2    | Run the **Auto Deploy - Standalone** playbook in the Work Plan                                                                                                                                                                       |
 | 3    | The playbook pauses at **Deployment Configuration**. Fill in: <br> - **Online Packages**: `Phishing Report` <br> - **Core REST API instance**: select the configured target <br> - **Update Installed Content Packs**: `Yes` or `No` |
