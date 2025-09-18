@@ -1,6 +1,15 @@
 description: This playbook deploys and configures a deployment package on a target
   server.
+dirtyInputs: true
 id: 'Auto Deploy - M: Deployment Process'
+inputSections:
+- description: Generic group for inputs
+  inputs:
+  - PackageFileEntryID
+  - PackageFilePassword
+  - UpdateInstalledPacks
+  - APIInstance
+  name: General (Inputs group)
 inputs:
 - description: The entry ID of the installation package
   key: PackageFileEntryID
@@ -22,15 +31,14 @@ inputs:
 - description: The name of the Core REST API integration instance for the target server.
   key: APIInstance
   playbookInputQuery: null
-  required: false
+  required: true
   value: {}
 name: 'Auto Deploy - M: Deployment Process'
-outputs:
-- contextPath: SetupConfig
-  type: unknown
-- contextPath: SetupConfig.no-self-destruction
-  description: True if self destruction is not allowed, otherwise False.
-  type: boolean
+outputSections:
+- description: Generic group for outputs
+  name: General (Outputs group)
+  outputs: []
+outputs: []
 quiet: true
 sourceplaybookid: Auto Setup - Main
 starttaskid: "0"
@@ -728,56 +736,19 @@ tasks:
       uri:
         simple: /public/v1/content/bundle
       using:
-        complex:
-          accessor: name
-          filters:
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.brand
-              operator: isEqualString
-              right:
-                value:
-                  simple: Core REST API
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.state
-              operator: isEqualString
-              right:
-                value:
-                  simple: active
-          root: modules
-          transformers:
-          - operator: StringifyArray
-          - args:
-              ctx_data: {}
-              ctx_inc: {}
-              ctx_inputs:
-                iscontext: true
-                value:
-                  simple: inputs
-              keep_symbol_to_null: {}
-              template:
-                value:
-                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
-              template_type: {}
-              variable_markers:
-                value:
-                  simple: '{,}'
-            operator: FormatTemplate
+        simple: ${inputs.APIInstance}
     separatecontext: false
     skipunavailable: false
     task:
       brand: Core REST API
       description: Send HTTP Multipart request to upload files to Demisto server
-      id: 5c9d1d93-99ad-4482-8402-b5c685961eb6
+      id: 0ff6287c-5beb-429e-a942-ac98089280a1
       iscommand: true
       name: Upload Content Bundle
       script: Core REST API|||core-api-multipart
       type: regular
       version: -1
-    taskid: 5c9d1d93-99ad-4482-8402-b5c685961eb6
+    taskid: 0ff6287c-5beb-429e-a942-ac98089280a1
     timertriggers: []
     type: regular
     view: |-
@@ -812,56 +783,19 @@ tasks:
       uri:
         simple: /public/v1/contentpacks/marketplace/search
       using:
-        complex:
-          accessor: name
-          filters:
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.brand
-              operator: isEqualString
-              right:
-                value:
-                  simple: Core REST API
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.state
-              operator: isEqualString
-              right:
-                value:
-                  simple: active
-          root: modules
-          transformers:
-          - operator: StringifyArray
-          - args:
-              ctx_data: {}
-              ctx_inc: {}
-              ctx_inputs:
-                iscontext: true
-                value:
-                  simple: inputs
-              keep_symbol_to_null: {}
-              template:
-                value:
-                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
-              template_type: {}
-              variable_markers:
-                value:
-                  simple: '{,}'
-            operator: FormatTemplate
+        simple: ${inputs.APIInstance}
     separatecontext: false
     skipunavailable: false
     task:
       brand: Core REST API
       description: send HTTP POST request
-      id: d50aa216-a951-4641-8585-f292bea397ef
+      id: 2edf96cd-06af-4093-84d9-fb679a3183c1
       iscommand: true
       name: List content packs from MP
       script: Core REST API|||core-api-post
       type: regular
       version: -1
-    taskid: d50aa216-a951-4641-8585-f292bea397ef
+    taskid: 2edf96cd-06af-4093-84d9-fb679a3183c1
     timertriggers: []
     type: regular
     view: |-
@@ -979,56 +913,19 @@ tasks:
             operator: DT
           - operator: StringifyArray
       using:
-        complex:
-          accessor: name
-          filters:
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.brand
-              operator: isEqualString
-              right:
-                value:
-                  simple: Core REST API
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.state
-              operator: isEqualString
-              right:
-                value:
-                  simple: active
-          root: modules
-          transformers:
-          - operator: StringifyArray
-          - args:
-              ctx_data: {}
-              ctx_inc: {}
-              ctx_inputs:
-                iscontext: true
-                value:
-                  simple: inputs
-              keep_symbol_to_null: {}
-              template:
-                value:
-                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
-              template_type: {}
-              variable_markers:
-                value:
-                  simple: '{,}'
-            operator: FormatTemplate
+        simple: ${inputs.APIInstance}
     separatecontext: false
     skipunavailable: false
     task:
       brand: Core REST API
       description: Upload packs to Demisto server from url or the marketplace.
-      id: faed847f-2648-4066-8964-77a1e075529d
+      id: a37cb373-f349-40fa-b685-0f0e48a675e9
       iscommand: true
       name: Install Content Packs for integrations
       script: Core REST API|||core-api-install-packs
       type: regular
       version: -1
-    taskid: faed847f-2648-4066-8964-77a1e075529d
+    taskid: a37cb373-f349-40fa-b685-0f0e48a675e9
     timertriggers: []
     type: regular
     view: |-
@@ -1155,56 +1052,19 @@ tasks:
       uri:
         simple: /public_api/v1/api_keys/generate
       using:
-        complex:
-          accessor: name
-          filters:
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.brand
-              operator: isEqualString
-              right:
-                value:
-                  simple: Core REST API
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.state
-              operator: isEqualString
-              right:
-                value:
-                  simple: active
-          root: modules
-          transformers:
-          - operator: StringifyArray
-          - args:
-              ctx_data: {}
-              ctx_inc: {}
-              ctx_inputs:
-                iscontext: true
-                value:
-                  simple: inputs
-              keep_symbol_to_null: {}
-              template:
-                value:
-                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
-              template_type: {}
-              variable_markers:
-                value:
-                  simple: '{,}'
-            operator: FormatTemplate
+        simple: ${inputs.APIInstance}
     separatecontext: false
     skipunavailable: false
     task:
       brand: Core REST API
       description: send HTTP POST request
-      id: 0182d85d-4256-4376-811c-e612525b2d38
+      id: 3ca539e3-4fb7-4bb3-820e-1b9c11fe5fd1
       iscommand: true
       name: Generate Core REST API Key
       script: Core REST API|||core-api-post
       type: regular
       version: -1
-    taskid: 0182d85d-4256-4376-811c-e612525b2d38
+    taskid: 3ca539e3-4fb7-4bb3-820e-1b9c11fe5fd1
     timertriggers: []
     type: regular
     view: |-
@@ -1280,56 +1140,19 @@ tasks:
             operator: DT
           - operator: StringifyArray
       using:
-        complex:
-          accessor: name
-          filters:
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.brand
-              operator: isEqualString
-              right:
-                value:
-                  simple: Core REST API
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.state
-              operator: isEqualString
-              right:
-                value:
-                  simple: active
-          root: modules
-          transformers:
-          - operator: StringifyArray
-          - args:
-              ctx_data: {}
-              ctx_inc: {}
-              ctx_inputs:
-                iscontext: true
-                value:
-                  simple: inputs
-              keep_symbol_to_null: {}
-              template:
-                value:
-                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
-              template_type: {}
-              variable_markers:
-                value:
-                  simple: '{,}'
-            operator: FormatTemplate
+        simple: ${inputs.APIInstance}
     separatecontext: false
     skipunavailable: false
     task:
       brand: Core REST API
       description: Upload packs to Demisto server from url or the marketplace.
-      id: 910a0b80-5cf8-49a1-8f09-c488aeb7e1bb
+      id: ba47d4b0-a07e-497a-821f-8c509854dd6b
       iscommand: true
       name: Install Content Packs
       script: Core REST API|||core-api-install-packs
       type: regular
       version: -1
-    taskid: 910a0b80-5cf8-49a1-8f09-c488aeb7e1bb
+    taskid: ba47d4b0-a07e-497a-821f-8c509854dd6b
     timertriggers: []
     type: regular
     view: |-
@@ -1641,56 +1464,19 @@ tasks:
             operator: DT
           - operator: StringifyArray
       using:
-        complex:
-          accessor: name
-          filters:
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.brand
-              operator: isEqualString
-              right:
-                value:
-                  simple: Core REST API
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.state
-              operator: isEqualString
-              right:
-                value:
-                  simple: active
-          root: modules
-          transformers:
-          - operator: StringifyArray
-          - args:
-              ctx_data: {}
-              ctx_inc: {}
-              ctx_inputs:
-                iscontext: true
-                value:
-                  simple: inputs
-              keep_symbol_to_null: {}
-              template:
-                value:
-                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
-              template_type: {}
-              variable_markers:
-                value:
-                  simple: '{,}'
-            operator: FormatTemplate
+        simple: ${inputs.APIInstance}
     separatecontext: false
     skipunavailable: false
     task:
       brand: Core REST API
       description: Upload packs to Demisto server from url or the marketplace.
-      id: 9142b50c-68ae-46db-8005-88f7ef945e83
+      id: 1ee3fa5c-b268-432f-8b1b-7a723ac108b1
       iscommand: true
       name: Update Content Packs
       script: Core REST API|||core-api-install-packs
       type: regular
       version: -1
-    taskid: 9142b50c-68ae-46db-8005-88f7ef945e83
+    taskid: 1ee3fa5c-b268-432f-8b1b-7a723ac108b1
     timertriggers: []
     type: regular
     view: |-
@@ -1720,56 +1506,19 @@ tasks:
       uri:
         simple: /public/v1/settings/integration
       using:
-        complex:
-          accessor: name
-          filters:
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.brand
-              operator: isEqualString
-              right:
-                value:
-                  simple: Core REST API
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.state
-              operator: isEqualString
-              right:
-                value:
-                  simple: active
-          root: modules
-          transformers:
-          - operator: StringifyArray
-          - args:
-              ctx_data: {}
-              ctx_inc: {}
-              ctx_inputs:
-                iscontext: true
-                value:
-                  simple: inputs
-              keep_symbol_to_null: {}
-              template:
-                value:
-                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
-              template_type: {}
-              variable_markers:
-                value:
-                  simple: '{,}'
-            operator: FormatTemplate
+        simple: ${inputs.APIInstance}
     separatecontext: false
     skipunavailable: false
     task:
       brand: Core REST API
       description: send HTTP PUT request.
-      id: df7fe6fe-38c8-4b8f-8386-03f35b62bdf9
+      id: f8a75d5d-52fb-4a88-a823-856cfe7e239b
       iscommand: true
       name: Add Integration Instances
       script: Core REST API|||core-api-put
       type: regular
       version: -1
-    taskid: df7fe6fe-38c8-4b8f-8386-03f35b62bdf9
+    taskid: f8a75d5d-52fb-4a88-a823-856cfe7e239b
     timertriggers: []
     type: regular
     view: |-
@@ -1927,56 +1676,19 @@ tasks:
       uri:
         simple: /public/v1/settings/integration/search
       using:
-        complex:
-          accessor: name
-          filters:
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.brand
-              operator: isEqualString
-              right:
-                value:
-                  simple: Core REST API
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.state
-              operator: isEqualString
-              right:
-                value:
-                  simple: active
-          root: modules
-          transformers:
-          - operator: StringifyArray
-          - args:
-              ctx_data: {}
-              ctx_inc: {}
-              ctx_inputs:
-                iscontext: true
-                value:
-                  simple: inputs
-              keep_symbol_to_null: {}
-              template:
-                value:
-                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
-              template_type: {}
-              variable_markers:
-                value:
-                  simple: '{,}'
-            operator: FormatTemplate
+        simple: ${inputs.APIInstance}
     separatecontext: false
     skipunavailable: false
     task:
       brand: Core REST API
       description: send HTTP POST request
-      id: ca949e76-b0d3-4f36-8994-a00251ae7407
+      id: 5b57446f-3b48-45dc-bb60-97e6ede99297
       iscommand: true
       name: Get Current Integration Instances
       script: Core REST API|||core-api-post
       type: regular
       version: -1
-    taskid: ca949e76-b0d3-4f36-8994-a00251ae7407
+    taskid: 5b57446f-3b48-45dc-bb60-97e6ede99297
     timertriggers: []
     type: regular
     view: |-
@@ -2116,56 +1828,19 @@ tasks:
       uri:
         simple: /public/v1/incidentfields
       using:
-        complex:
-          accessor: name
-          filters:
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.brand
-              operator: isEqualString
-              right:
-                value:
-                  simple: Core REST API
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.state
-              operator: isEqualString
-              right:
-                value:
-                  simple: active
-          root: modules
-          transformers:
-          - operator: StringifyArray
-          - args:
-              ctx_data: {}
-              ctx_inc: {}
-              ctx_inputs:
-                iscontext: true
-                value:
-                  simple: inputs
-              keep_symbol_to_null: {}
-              template:
-                value:
-                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
-              template_type: {}
-              variable_markers:
-                value:
-                  simple: '{,}'
-            operator: FormatTemplate
+        simple: ${inputs.APIInstance}
     separatecontext: false
     skipunavailable: false
     task:
       brand: Core REST API
       description: send HTTP GET requests.
-      id: 2cea2d6e-87bd-41f5-8e2f-b285a9e6a97a
+      id: 43a6cac3-730c-4bd2-9d56-14bff6a3da6e
       iscommand: true
       name: Get Current Incident Fields
       script: Core REST API|||core-api-get
       type: regular
       version: -1
-    taskid: 2cea2d6e-87bd-41f5-8e2f-b285a9e6a97a
+    taskid: 43a6cac3-730c-4bd2-9d56-14bff6a3da6e
     timertriggers: []
     type: regular
     view: |-
@@ -2197,56 +1872,19 @@ tasks:
       uri:
         simple: /public/v1/incidentfield
       using:
-        complex:
-          accessor: name
-          filters:
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.brand
-              operator: isEqualString
-              right:
-                value:
-                  simple: Core REST API
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.state
-              operator: isEqualString
-              right:
-                value:
-                  simple: active
-          root: modules
-          transformers:
-          - operator: StringifyArray
-          - args:
-              ctx_data: {}
-              ctx_inc: {}
-              ctx_inputs:
-                iscontext: true
-                value:
-                  simple: inputs
-              keep_symbol_to_null: {}
-              template:
-                value:
-                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
-              template_type: {}
-              variable_markers:
-                value:
-                  simple: '{,}'
-            operator: FormatTemplate
+        simple: ${inputs.APIInstance}
     separatecontext: false
     skipunavailable: false
     task:
       brand: Core REST API
       description: send HTTP POST request
-      id: 2ece39bb-d88f-434c-80fe-2711c4a5d999
+      id: 623fb253-a299-4446-89f0-7158700a8826
       iscommand: true
       name: Update incident fields
       script: Core REST API|||core-api-post
       type: regular
       version: -1
-    taskid: 2ece39bb-d88f-434c-80fe-2711c4a5d999
+    taskid: 623fb253-a299-4446-89f0-7158700a8826
     timertriggers: []
     type: regular
     view: |-
@@ -2403,25 +2041,28 @@ tasks:
                     right:
                       value:
                         simple: active
-                root: modules
-                transformers:
-                - operator: StringifyArray
-                - args:
-                    ctx_data: {}
-                    ctx_inc: {}
-                    ctx_inputs:
+                - - left:
                       iscontext: true
                       value:
-                        simple: inputs
-                    keep_symbol_to_null: {}
-                    template:
+                        simple: modules.name
+                    operator: containsGeneral
+                    right:
+                      iscontext: true
                       value:
-                        simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
-                    template_type: {}
-                    variable_markers:
-                      value:
-                        simple: '{,}'
-                  operator: FormatTemplate
+                        simple: inputs.APIInstance
+                root: modules
+                transformers:
+                - operator: count
+          operator: isEqualNumber
+          right:
+            value:
+              simple: "1"
+      - - left:
+            iscontext: true
+            value:
+              complex:
+                root: inputs.APIInstance
+                transformers:
                 - operator: count
           operator: isEqualNumber
           right:
@@ -2444,12 +2085,12 @@ tasks:
     skipunavailable: false
     task:
       brand: ""
-      id: c67c2f19-a1ff-433c-8fbb-e1adad125511
+      id: 4e4fb3aa-5fe3-4400-ac1d-7c26e2e78b42
       iscommand: false
       name: Can this be installed on only one instance?
       type: condition
       version: -1
-    taskid: c67c2f19-a1ff-433c-8fbb-e1adad125511
+    taskid: 4e4fb3aa-5fe3-4400-ac1d-7c26e2e78b42
     timertriggers: []
     type: condition
     view: |-
@@ -2475,13 +2116,13 @@ tasks:
     task:
       brand: ""
       description: Prints an error entry with a given message.
-      id: 29b067e3-1f42-4b5b-8966-d755650651f1
+      id: cb6e3477-6266-415e-a66e-0cbcb4a44f6e
       iscommand: false
       name: Either no Core REST instances or two or more are available
       script: PrintErrorEntry
       type: regular
       version: -1
-    taskid: 29b067e3-1f42-4b5b-8966-d755650651f1
+    taskid: cb6e3477-6266-415e-a66e-0cbcb4a44f6e
     timertriggers: []
     type: regular
     view: |-
@@ -2522,12 +2163,12 @@ tasks:
     skipunavailable: false
     task:
       brand: ""
-      id: 3dd58cfd-ffea-43fd-86a6-68a18eb4c659
+      id: 49f87b07-3313-4fd4-b335-aec367cab69a
       iscommand: false
       name: Is only one package file provided?
       type: condition
       version: -1
-    taskid: 3dd58cfd-ffea-43fd-86a6-68a18eb4c659
+    taskid: 49f87b07-3313-4fd4-b335-aec367cab69a
     timertriggers: []
     type: condition
     view: |-
@@ -2593,56 +2234,19 @@ tasks:
       uri:
         simple: /public/v1/contentpacks/metadata/installed
       using:
-        complex:
-          accessor: name
-          filters:
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.brand
-              operator: isEqualString
-              right:
-                value:
-                  simple: Core REST API
-          - - left:
-                iscontext: true
-                value:
-                  simple: modules.state
-              operator: isEqualString
-              right:
-                value:
-                  simple: active
-          root: modules
-          transformers:
-          - operator: StringifyArray
-          - args:
-              ctx_data: {}
-              ctx_inc: {}
-              ctx_inputs:
-                iscontext: true
-                value:
-                  simple: inputs
-              keep_symbol_to_null: {}
-              template:
-                value:
-                  simple: '{inputs=val.APIInstance? val.APIInstance: {..}}'
-              template_type: {}
-              variable_markers:
-                value:
-                  simple: '{,}'
-            operator: FormatTemplate
+        simple: ${inputs.APIInstance}
     separatecontext: false
     skipunavailable: false
     task:
       brand: Core REST API
       description: send HTTP GET requests.
-      id: 15607444-4119-49e1-8710-8a6b8c96006c
+      id: 4cf0265a-38cf-4e94-bfaa-30f977d140fa
       iscommand: true
       name: Get Installed Content Packs
       script: Core REST API|||core-api-get
       type: regular
       version: -1
-    taskid: 15607444-4119-49e1-8710-8a6b8c96006c
+    taskid: 4cf0265a-38cf-4e94-bfaa-30f977d140fa
     timertriggers: []
     type: regular
     view: |-
@@ -2698,8 +2302,8 @@ view: |-
     "linkLabelsPosition": {},
     "paper": {
       "dimensions": {
-        "height": 6855,
-        "width": 1035,
+        "height": 6850,
+        "width": 1036,
         "x": 50,
         "y": 50
       }

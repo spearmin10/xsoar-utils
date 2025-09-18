@@ -1,5 +1,6 @@
 description: This playbook deploys and configures deployment packages on a target
   server.
+dirtyInputs: true
 id: Auto Deploy
 inputs: []
 name: Auto Deploy
