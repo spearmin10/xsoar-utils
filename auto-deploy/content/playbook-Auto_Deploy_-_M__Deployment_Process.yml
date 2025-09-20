@@ -97,7 +97,7 @@ tasks:
               operator: isEqualString
               right:
                 value:
-                  simple: instances-config.json
+                  simple: integration-instances.json
           root: File
           transformers:
           - args:
@@ -106,7 +106,7 @@ tasks:
                   simple: EntryID
             operator: getField
       extend-context:
-        simple: IntegrationConfigurations=.=val.Data
+        simple: IntegrationInstances=.=val.Data
       input_encoding:
         simple: utf-8
       output_metadata:
@@ -267,7 +267,7 @@ tasks:
                     operator: isEqualString
                     right:
                       value:
-                        simple: incident-fields-config.json
+                        simple: incident-fields.json
                 root: File
           operator: isNotEmpty
       label: "yes"
@@ -326,7 +326,7 @@ tasks:
               operator: isEqualString
               right:
                 value:
-                  simple: incident-fields-config.json
+                  simple: incident-fields.json
           root: File
           transformers:
           - args:
@@ -335,7 +335,7 @@ tasks:
                   simple: EntryID
             operator: getField
       extend-context:
-        simple: IncidentFieldsConfiguration=.=JSON.parse(val.Data)
+        simple: IncidentFields=.=JSON.parse(val.Data)
       output_metadata:
         simple: "true"
     separatecontext: false
@@ -823,7 +823,7 @@ tasks:
         simple: IntegrationPacks
       value:
         complex:
-          root: IntegrationConfigurations
+          root: IntegrationInstances
           transformers:
           - args:
               appendable:
@@ -950,10 +950,10 @@ tasks:
       append:
         simple: "false"
       key:
-        simple: IntegrationConfigurations
+        simple: IntegrationInstances
       value:
         complex:
-          root: IntegrationConfigurations
+          root: IntegrationInstances
           transformers:
           - args:
               action_dt:
@@ -1546,7 +1546,7 @@ tasks:
         simple: ImportInstances
       value:
         complex:
-          root: IntegrationConfigurations
+          root: IntegrationInstances
           transformers:
           - args:
               appendable:
@@ -1722,9 +1722,9 @@ tasks:
           - - left:
                 iscontext: true
                 value:
-                  simple: IncidentFieldsConfiguration.add
+                  simple: IncidentFields.add
               operator: isNotEmpty
-          root: IncidentFieldsConfiguration
+          root: IncidentFields
           transformers:
           - args:
               field:
@@ -1954,10 +1954,10 @@ tasks:
       force:
         simple: "true"
       key:
-        simple: IntegrationConfigurations
+        simple: IntegrationInstances
       value:
         complex:
-          root: IntegrationConfigurations
+          root: IntegrationInstances
           transformers:
           - operator: ParseJSON
     separatecontext: false
@@ -1972,7 +1972,7 @@ tasks:
         https://docs.paloaltonetworks.com/cortex/cortex-xsoar/6-2/cortex-xsoar-admin/playbooks/automations.html
       id: 17522ddb-04ac-4b8f-8e13-06a2f7f2560b
       iscommand: false
-      name: Set IntegrationConfigurations
+      name: Set IntegrationInstances
       script: SetAndHandleEmpty
       type: regular
       version: -1
