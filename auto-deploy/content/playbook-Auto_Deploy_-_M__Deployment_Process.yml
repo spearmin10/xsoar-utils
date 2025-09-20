@@ -902,6 +902,8 @@ tasks:
     note: false
     quietmode: 0
     scriptarguments:
+      execution-timeout:
+        simple: "3600"
       packs_to_install:
         complex:
           root: IntegrationPacks
@@ -919,13 +921,13 @@ tasks:
     task:
       brand: Core REST API
       description: Upload packs to Demisto server from url or the marketplace.
-      id: a37cb373-f349-40fa-b685-0f0e48a675e9
+      id: d92e3354-7e65-4f05-a910-139b9a020eef
       iscommand: true
       name: Install Content Packs for integrations
       script: Core REST API|||core-api-install-packs
       type: regular
       version: -1
-    taskid: a37cb373-f349-40fa-b685-0f0e48a675e9
+    taskid: d92e3354-7e65-4f05-a910-139b9a020eef
     timertriggers: []
     type: regular
     view: |-
@@ -1880,13 +1882,13 @@ tasks:
     task:
       brand: Core REST API
       description: send HTTP POST request
-      id: 623fb253-a299-4446-89f0-7158700a8826
+      id: 8f190b91-9811-4382-8d4e-e999d0a5d958
       iscommand: true
       name: Update incident fields
       script: Core REST API|||core-api-post
       type: regular
       version: -1
-    taskid: 623fb253-a299-4446-89f0-7158700a8826
+    taskid: 8f190b91-9811-4382-8d4e-e999d0a5d958
     timertriggers: []
     type: regular
     view: |-
