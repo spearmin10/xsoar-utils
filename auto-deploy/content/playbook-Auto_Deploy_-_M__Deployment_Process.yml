@@ -102,38 +102,38 @@ collapsedTasks:
         "13": false,
         "140": {
           "type": "regular",
-          "x": 387.5,
-          "y": 2205
+          "x": 162.5,
+          "y": 1360
         },
         "143": {
           "type": "condition",
-          "x": 387.5,
-          "y": 2555
+          "x": 162.5,
+          "y": 1700
         },
         "153": {
           "type": "regular",
-          "x": 275,
-          "y": 1855
+          "x": 50,
+          "y": 1020
         },
         "161": {
           "type": "regular",
-          "x": 500,
-          "y": 2730
+          "x": 275,
+          "y": 1870
         },
         "162": {
           "type": "regular",
-          "x": 387.5,
-          "y": 2380
+          "x": 162.5,
+          "y": 1530
         },
         "181": {
           "type": "regular",
-          "x": 275,
-          "y": 1680
+          "x": 50,
+          "y": 850
         },
         "97": {
           "type": "condition",
-          "x": 275,
-          "y": 2030
+          "x": 50,
+          "y": 1190
         }
       },
       "nextTasks": [
@@ -318,7 +318,7 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 275,
+          "x": 50,
           "y": 50
         }
       }
@@ -406,8 +406,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 1215
+          "x": 50,
+          "y": 530
         }
       }
   "13":
@@ -436,8 +436,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 2905
+          "x": 50,
+          "y": 2040
         }
       }
   "28":
@@ -466,8 +466,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 1535
+          "x": 50,
+          "y": 690
         }
       }
   "85":
@@ -496,8 +496,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 4975
+          "x": 50,
+          "y": 2200
         }
       }
   "86":
@@ -633,8 +633,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 6170
+          "x": 50,
+          "y": 2360
         }
       }
   "97":
@@ -652,7 +652,7 @@ tasks:
                     operator: isEqualString
                     right:
                       value:
-                        simple: content-pack-list.json
+                        simple: content-packs.json
                 root: File
           operator: isNotEmpty
           right:
@@ -675,19 +675,19 @@ tasks:
     task:
       brand: ""
       description: Load the contents of a file into context.
-      id: 76ded618-6d8a-4cbe-89b4-7bc9eaab51ac
+      id: b374aa57-dc14-4260-aa28-fa067e396a5a
       iscommand: false
       name: Has content pack list?
       type: condition
       version: -1
-    taskid: 76ded618-6d8a-4cbe-89b4-7bc9eaab51ac
+    taskid: b374aa57-dc14-4260-aa28-fa067e396a5a
     timertriggers: []
     type: condition
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 1535
+          "x": 50,
+          "y": 690
         }
       }
   "105":
@@ -762,8 +762,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 880
+          "x": 50,
+          "y": 370
         }
       }
   "117":
@@ -789,8 +789,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 6840
+          "x": 50,
+          "y": 2520
         }
       }
   "124":
@@ -874,7 +874,7 @@ tasks:
               operator: isEqualString
               right:
                 value:
-                  simple: content-pack-list.json
+                  simple: content-packs.json
           root: File
           transformers:
           - args:
@@ -891,20 +891,20 @@ tasks:
     task:
       brand: ""
       description: Load the contents of a file into context.
-      id: 9a69d711-b7b9-46a1-8c5e-0d976e804d78
+      id: cb5edd2c-582f-43df-8241-bae00a6667d1
       iscommand: false
       name: Load content pack list file
       script: ReadFile
       type: regular
       version: -1
-    taskid: 9a69d711-b7b9-46a1-8c5e-0d976e804d78
+    taskid: cb5edd2c-582f-43df-8241-bae00a6667d1
     timertriggers: []
     type: regular
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 1535
+          "x": 50,
+          "y": 690
         }
       }
   "143":
@@ -946,8 +946,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 1535
+          "x": 50,
+          "y": 690
         }
       }
   "152":
@@ -1049,8 +1049,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 1535
+          "x": 50,
+          "y": 690
         }
       }
   "154":
@@ -1398,20 +1398,20 @@ tasks:
     task:
       brand: Core REST API
       description: Upload packs to Demisto server from url or the marketplace.
-      id: 88069898-de6b-4de1-818e-2638f925b01c
+      id: bef4ab1c-2a16-4c47-aa6e-feef80386392
       iscommand: true
       name: Install Content Packs
       script: Core REST API|||core-api-install-packs
       type: regular
       version: -1
-    taskid: 88069898-de6b-4de1-818e-2638f925b01c
+    taskid: bef4ab1c-2a16-4c47-aa6e-feef80386392
     timertriggers: []
     type: regular
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 1535
+          "x": 50,
+          "y": 690
         }
       }
   "162":
@@ -1540,8 +1540,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 1535
+          "x": 50,
+          "y": 690
         }
       }
   "164":
@@ -2268,8 +2268,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 370
+          "x": 50,
+          "y": 210
         }
       }
   "177":
@@ -2508,8 +2508,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 275,
-          "y": 1535
+          "x": 50,
+          "y": 690
         }
       }
   "182":
@@ -2558,9 +2558,9 @@ view: |-
     "linkLabelsPosition": {},
     "paper": {
       "dimensions": {
-        "height": 6850,
-        "width": 380,
-        "x": 275,
+        "height": 6190,
+        "width": 605,
+        "x": 50,
         "y": 50
       }
     }
