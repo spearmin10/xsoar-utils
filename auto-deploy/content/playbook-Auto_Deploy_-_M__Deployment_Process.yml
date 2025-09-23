@@ -1,3 +1,251 @@
+collapsedTasks:
+  "0": |-
+    {
+      "children": {
+        "176": false,
+        "182": {
+          "type": "regular",
+          "x": 275,
+          "y": 195
+        }
+      },
+      "nextTasks": [
+        "176"
+      ]
+    }
+  "12": |-
+    {
+      "children": {
+        "152": {
+          "type": "regular",
+          "x": 275,
+          "y": 1360
+        },
+        "28": false
+      },
+      "nextTasks": [
+        "28"
+      ]
+    }
+  "13": |-
+    {
+      "children": {
+        "11": {
+          "type": "regular",
+          "x": 275,
+          "y": 3050
+        },
+        "124": {
+          "type": "condition",
+          "x": 275,
+          "y": 3225
+        },
+        "154": {
+          "type": "regular",
+          "x": 275,
+          "y": 3750
+        },
+        "155": {
+          "type": "regular",
+          "x": 162.5,
+          "y": 4100
+        },
+        "156": {
+          "type": "regular",
+          "x": 60,
+          "y": 3575
+        },
+        "157": {
+          "type": "regular",
+          "x": 60,
+          "y": 3400
+        },
+        "158": {
+          "type": "condition",
+          "x": 275,
+          "y": 3925
+        },
+        "167": {
+          "type": "regular",
+          "x": 387.5,
+          "y": 4800
+        },
+        "168": {
+          "type": "regular",
+          "x": 275,
+          "y": 4450
+        },
+        "169": {
+          "type": "condition",
+          "x": 275,
+          "y": 4625
+        },
+        "170": {
+          "type": "regular",
+          "x": 275,
+          "y": 4275
+        },
+        "175": {
+          "type": "regular",
+          "x": 490,
+          "y": 3575
+        },
+        "85": false
+      },
+      "nextTasks": [
+        "85"
+      ]
+    }
+  "28": |-
+    {
+      "children": {
+        "13": false,
+        "140": {
+          "type": "regular",
+          "x": 387.5,
+          "y": 2205
+        },
+        "143": {
+          "type": "condition",
+          "x": 387.5,
+          "y": 2555
+        },
+        "153": {
+          "type": "regular",
+          "x": 275,
+          "y": 1855
+        },
+        "161": {
+          "type": "regular",
+          "x": 500,
+          "y": 2730
+        },
+        "162": {
+          "type": "regular",
+          "x": 387.5,
+          "y": 2380
+        },
+        "181": {
+          "type": "regular",
+          "x": 275,
+          "y": 1680
+        },
+        "97": {
+          "type": "condition",
+          "x": 275,
+          "y": 2030
+        }
+      },
+      "nextTasks": [
+        "13"
+      ]
+    }
+  "85": |-
+    {
+      "children": {
+        "171": {
+          "type": "regular",
+          "x": 162.5,
+          "y": 5645
+        },
+        "172": {
+          "type": "regular",
+          "x": 162.5,
+          "y": 5470
+        },
+        "173": {
+          "type": "regular",
+          "x": 50,
+          "y": 5995
+        },
+        "174": {
+          "type": "condition",
+          "x": 162.5,
+          "y": 5820
+        },
+        "86": {
+          "type": "condition",
+          "x": 275,
+          "y": 5120
+        },
+        "87": {
+          "type": "regular",
+          "x": 162.5,
+          "y": 5295
+        },
+        "95": false
+      },
+      "nextTasks": [
+        "95"
+      ]
+    }
+  "95": |-
+    {
+      "children": {
+        "117": false,
+        "164": {
+          "type": "regular",
+          "x": 275,
+          "y": 6315
+        },
+        "165": {
+          "type": "condition",
+          "x": 275,
+          "y": 6490
+        },
+        "166": {
+          "type": "regular",
+          "x": 162.5,
+          "y": 6665
+        }
+      },
+      "nextTasks": [
+        "117"
+      ]
+    }
+  "111": |-
+    {
+      "children": {
+        "105": {
+          "type": "regular",
+          "x": 275,
+          "y": 1040
+        },
+        "12": false
+      },
+      "nextTasks": [
+        "12"
+      ]
+    }
+  "176": |-
+    {
+      "children": {
+        "111": false,
+        "177": {
+          "type": "condition",
+          "x": 275,
+          "y": 515
+        },
+        "178": {
+          "type": "regular",
+          "x": 60,
+          "y": 690
+        },
+        "179": {
+          "type": "condition",
+          "x": 490,
+          "y": 690
+        },
+        "180": {
+          "type": "regular",
+          "x": 705,
+          "y": 865
+        }
+      },
+      "nextTasks": [
+        "111"
+      ]
+    }
 description: This playbook deploys and configures a deployment package on a target
   server.
 dirtyInputs: true
@@ -129,7 +377,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 3050
+          "y": 2905
         }
       }
   "12":
@@ -300,7 +548,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 5120
+          "y": 4975
         }
       }
   "87":
@@ -355,8 +603,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 162.5,
-          "y": 5295
+          "x": 275,
+          "y": 4975
         }
       }
   "95":
@@ -439,7 +687,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 2030
+          "y": 1535
         }
       }
   "105":
@@ -485,7 +733,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 1040
+          "y": 880
         }
       }
   "111":
@@ -600,7 +848,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 3225
+          "y": 2905
         }
       }
   "140":
@@ -655,8 +903,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 387.5,
-          "y": 2205
+          "x": 275,
+          "y": 1535
         }
       }
   "143":
@@ -698,8 +946,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 387.5,
-          "y": 2555
+          "x": 275,
+          "y": 1535
         }
       }
   "152":
@@ -755,7 +1003,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 1360
+          "y": 1215
         }
       }
   "153":
@@ -802,7 +1050,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 1855
+          "y": 1535
         }
       }
   "154":
@@ -887,7 +1135,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 3750
+          "y": 2905
         }
       }
   "155":
@@ -903,7 +1151,7 @@ tasks:
     quietmode: 0
     scriptarguments:
       execution-timeout:
-        simple: "3600"
+        simple: "86400"
       packs_to_install:
         complex:
           root: IntegrationPacks
@@ -921,20 +1169,20 @@ tasks:
     task:
       brand: Core REST API
       description: Upload packs to Demisto server from url or the marketplace.
-      id: d92e3354-7e65-4f05-a910-139b9a020eef
+      id: 0a72de6e-98e2-453a-8414-b992dfe056fc
       iscommand: true
       name: Install Content Packs for integrations
       script: Core REST API|||core-api-install-packs
       type: regular
       version: -1
-    taskid: d92e3354-7e65-4f05-a910-139b9a020eef
+    taskid: 0a72de6e-98e2-453a-8414-b992dfe056fc
     timertriggers: []
     type: regular
     view: |-
       {
         "position": {
-          "x": 162.5,
-          "y": 4100
+          "x": 275,
+          "y": 2905
         }
       }
   "156":
@@ -1022,8 +1270,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 60,
-          "y": 3575
+          "x": 275,
+          "y": 2905
         }
       }
   "157":
@@ -1072,8 +1320,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 60,
-          "y": 3400
+          "x": 275,
+          "y": 2905
         }
       }
   "158":
@@ -1116,7 +1364,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 3925
+          "y": 2905
         }
       }
   "161":
@@ -1162,8 +1410,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 500,
-          "y": 2730
+          "x": 275,
+          "y": 1535
         }
       }
   "162":
@@ -1292,8 +1540,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 387.5,
-          "y": 2380
+          "x": 275,
+          "y": 1535
         }
       }
   "164":
@@ -1385,7 +1633,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 6315
+          "y": 6170
         }
       }
   "165":
@@ -1440,7 +1688,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 6490
+          "y": 6170
         }
       }
   "166":
@@ -1456,7 +1704,7 @@ tasks:
     quietmode: 0
     scriptarguments:
       execution-timeout:
-        simple: "3600"
+        simple: "86400"
       packs_to_install:
         complex:
           root: StalePacks
@@ -1474,20 +1722,20 @@ tasks:
     task:
       brand: Core REST API
       description: Upload packs to Demisto server from url or the marketplace.
-      id: 1ee3fa5c-b268-432f-8b1b-7a723ac108b1
+      id: 7a49bb9e-d7de-49cb-8594-9e486245313c
       iscommand: true
       name: Update Content Packs
       script: Core REST API|||core-api-install-packs
       type: regular
       version: -1
-    taskid: 1ee3fa5c-b268-432f-8b1b-7a723ac108b1
+    taskid: 7a49bb9e-d7de-49cb-8594-9e486245313c
     timertriggers: []
     type: regular
     view: |-
       {
         "position": {
-          "x": 162.5,
-          "y": 6665
+          "x": 275,
+          "y": 6170
         }
       }
   "167":
@@ -1507,6 +1755,8 @@ tasks:
           root: ImportInstances
           transformers:
           - operator: Stringify
+      execution-timeout:
+        simple: "86400"
       uri:
         simple: /public/v1/settings/integration
       using:
@@ -1516,20 +1766,20 @@ tasks:
     task:
       brand: Core REST API
       description: send HTTP PUT request.
-      id: f8a75d5d-52fb-4a88-a823-856cfe7e239b
+      id: 37ce0a9a-9ee0-482c-adbc-7f8ee815a644
       iscommand: true
       name: Add Integration Instances
       script: Core REST API|||core-api-put
       type: regular
       version: -1
-    taskid: f8a75d5d-52fb-4a88-a823-856cfe7e239b
+    taskid: 37ce0a9a-9ee0-482c-adbc-7f8ee815a644
     timertriggers: []
     type: regular
     view: |-
       {
         "position": {
-          "x": 387.5,
-          "y": 4800
+          "x": 275,
+          "y": 2905
         }
       }
   "168":
@@ -1618,7 +1868,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 4450
+          "y": 2905
         }
       }
   "169":
@@ -1660,7 +1910,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 4625
+          "y": 2905
         }
       }
   "170":
@@ -1699,7 +1949,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 4275
+          "y": 2905
         }
       }
   "171":
@@ -1811,8 +2061,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 162.5,
-          "y": 5645
+          "x": 275,
+          "y": 4975
         }
       }
   "172":
@@ -1850,8 +2100,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 162.5,
-          "y": 5470
+          "x": 275,
+          "y": 4975
         }
       }
   "173":
@@ -1871,6 +2121,8 @@ tasks:
           root: NewIncidentFields
           transformers:
           - operator: Stringify
+      execution-timeout:
+        simple: "86400"
       extend-context:
         simple: GenerateKey=.response.reply
       uri:
@@ -1882,20 +2134,20 @@ tasks:
     task:
       brand: Core REST API
       description: send HTTP POST request
-      id: 8f190b91-9811-4382-8d4e-e999d0a5d958
+      id: cd0a6c96-29a0-44e2-bbe9-c1ba894e66bc
       iscommand: true
       name: Update incident fields
       script: Core REST API|||core-api-post
       type: regular
       version: -1
-    taskid: 8f190b91-9811-4382-8d4e-e999d0a5d958
+    taskid: cd0a6c96-29a0-44e2-bbe9-c1ba894e66bc
     timertriggers: []
     type: regular
     view: |-
       {
         "position": {
-          "x": 50,
-          "y": 5995
+          "x": 275,
+          "y": 4975
         }
       }
   "174":
@@ -1937,8 +2189,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 162.5,
-          "y": 5820
+          "x": 275,
+          "y": 4975
         }
       }
   "175":
@@ -1986,8 +2238,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 490,
-          "y": 3575
+          "x": 275,
+          "y": 2905
         }
       }
   "176":
@@ -2101,7 +2353,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 515
+          "y": 370
         }
       }
   "178":
@@ -2132,8 +2384,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 60,
-          "y": 690
+          "x": 275,
+          "y": 370
         }
       }
   "179":
@@ -2178,8 +2430,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 490,
-          "y": 690
+          "x": 275,
+          "y": 370
         }
       }
   "180":
@@ -2210,8 +2462,8 @@ tasks:
     view: |-
       {
         "position": {
-          "x": 705,
-          "y": 865
+          "x": 275,
+          "y": 370
         }
       }
   "181":
@@ -2257,7 +2509,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 1680
+          "y": 1535
         }
       }
   "182":
@@ -2297,7 +2549,7 @@ tasks:
       {
         "position": {
           "x": 275,
-          "y": 195
+          "y": 50
         }
       }
 version: -1
@@ -2307,8 +2559,8 @@ view: |-
     "paper": {
       "dimensions": {
         "height": 6850,
-        "width": 1036,
-        "x": 50,
+        "width": 380,
+        "x": 275,
         "y": 50
       }
     }
