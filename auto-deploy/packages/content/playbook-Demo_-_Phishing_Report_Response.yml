@@ -439,19 +439,19 @@ tasks:
     quietmode: 0
     scriptarguments:
       closeReason:
-        simple: 不審メール報告対処完了
+        simple: Phishing report handled.
     separatecontext: false
     skipunavailable: false
     task:
       brand: Builtin
       description: commands.local.cmd.close.inv
-      id: 4386c15b-6413-4c5e-83f3-ebe2e29bb802
+      id: 28ccc1f5-aa83-4b6b-bdf5-6320e82e9f6b
       iscommand: true
       name: Close
       script: Builtin|||closeInvestigation
       type: regular
       version: -1
-    taskid: 4386c15b-6413-4c5e-83f3-ebe2e29bb802
+    taskid: 28ccc1f5-aa83-4b6b-bdf5-6320e82e9f6b
     timertriggers: []
     type: regular
     view: |-
@@ -1442,7 +1442,7 @@ view: |-
     "paper": {
       "dimensions": {
         "height": 2903,
-        "width": 1824.5,
+        "width": 1823.5,
         "x": 49.5,
         "y": 54
       }
